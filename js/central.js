@@ -31,6 +31,7 @@
   const BATCH_SIZE = 100;
   const PAGE_SIZE = 1000;
   const RETRY_MS = 30000;
+  const REJECTED_STATUS = [400, 409, 413, 422];
 
   let config = null;
   let base = '';
@@ -144,11 +145,14 @@
             drop = true;
             lastSent = new Date();
             lastError = '';
-          } else if (response.status >= 400 && response.status < 500 && response.status !== 401 && response.status !== 429) {
-            // Afgewezen door de database (bijv. ongeldige waarde): niet eindeloos opnieuw proberen.
+          } else if (REJECTED_STATUS.includes(response.status)) {
+            // Afgewezen om de inhoud (bijv. ongeldige waarde): niet eindeloos opnieuw proberen.
+            // Ontbreekt de tabel of het recht (404/401/403: instellingen nog niet klaar), dan blijft alles in de wachtrij.
             drop = true;
             lastError = `Supabase weigerde ${items.length} regel(s) voor ${table} (${response.status}).`;
             console.warn('[AI Snackbar]', lastError, await response.text());
+          } else if (response.status === 404) {
+            lastError = `Tabel ${table} ontbreekt in Supabase: voer tools/supabase-setup.sql uit (alles blijft in de wachtrij).`;
           } else {
             lastError = `Supabase gaf ${response.status} bij ${table}; later opnieuw.`;
           }

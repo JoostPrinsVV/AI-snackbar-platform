@@ -69,8 +69,8 @@ window.AISnackbar.config = {
   // Smileys, opmerkingen, anonieme tellers en 'Mail mij'-verzoeken van álle telefoons en tablets
   // komen samen in jouw Supabase-project. Leeg = alles blijft lokaal (export per tablet).
   // Instellen: zie docs/SUPABASE.md. De sleutel is de publieke 'anon'/'publishable' key, nooit de service_role key.
-  centralUrl: '',                       // bijv. 'https://abcdefghijklmnop.supabase.co'
-  centralKey: '',                       // bijv. 'sb_publishable_...' of de lange 'anon public' key
+  centralUrl: 'https://czxyhgthbpexxqmudgdu.supabase.co',
+  centralKey: 'sb_publishable_xELIX8sqJNueqdZCf4rWEw_h8K688mF',
 
   /* ---- Admin (dashboard en beheer) ------------------------------------- */
   // Tablets staan standaard in de rol 'Collega'. Admin opent via 'Beheer' onderaan
