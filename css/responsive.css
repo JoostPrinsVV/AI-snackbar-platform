@@ -1,0 +1,639 @@
+/* ==========================================================================
+   AI SNACKBAR — RESPONSIVE, BEWEGING EN TOEGANKELIJKHEID
+   Primair ontwerp: tablet landscape (ca. 1280 x 800).
+   Het aantal kolommen van de snackkaart kiest js/menu-view.js automatisch
+   op basis van de beschikbare breedte en het aantal snacks.
+   ========================================================================== */
+
+/* ---- Landscape (tablets, laptops, groot scherm tot 1920x1200) -----------
+   Doel: alle snacks in één oogopslag, zonder scrollen. De kaarten rekken
+   daarna op tot ze het scherm vullen (zie --fit-row-height).             */
+@media (min-width: 900px) and (max-height: 1200px) and (orientation: landscape) {
+  :root {
+    --card-min-height: 0px;
+    --card-padding: 1.05rem 1.15rem;
+    --awning-stripe: 44px;
+    --grid-gap: 1rem;
+  }
+
+  .topbar__inner {
+    min-height: 3.25rem;
+    padding-block: 0.2rem;
+  }
+
+  .hero__eyebrow {
+    display: none;
+  }
+
+  .hero__inner {
+    padding-block: 0.1rem 1rem;
+  }
+
+  .hero__title {
+    margin-top: 0;
+    font-size: clamp(2.1rem, 1.2rem + 2.4vw, 3.25rem);
+  }
+
+  .hero__subtitle {
+    margin-top: var(--space-1);
+    font-size: clamp(1.05rem, 0.8rem + 0.8vw, 1.4rem);
+  }
+
+  .menu {
+    padding-top: calc(var(--awning-stripe) / 2 + var(--space-3));
+    padding-bottom: var(--space-2);
+  }
+
+  .snack-card .chip {
+    padding: 0.25rem 0.6rem;
+  }
+
+  .menu__header {
+    margin-bottom: 0.65rem;
+  }
+
+  .snack-card {
+    gap: 0.65rem;
+  }
+
+  .snack-card__icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.9rem;
+  }
+
+  .snack-card__icon img {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .snack-card__number strong {
+    font-size: 1.7rem;
+  }
+
+  .snack-card__subtitle {
+    margin-top: var(--space-1);
+  }
+
+  .snack-card__go {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .detail__header {
+    margin-bottom: var(--space-3);
+  }
+
+  /* Titel naast de terugknop houden (en desnoods over twee regels), niet eronder:
+     dat scheelt een hele rij hoogte. */
+  .detail__heading {
+    flex-basis: 16rem;
+  }
+
+  /* Echte titels zijn vaak twee regels; dan moeten video en knoppen nog steeds in beeld passen */
+  .detail__title {
+    font-size: clamp(1.6rem, 0.9rem + 1.4vw, 2.2rem);
+  }
+}
+
+/* Lage schermen (1280x800, 1024x768, 1536x864) en tablet portrait: echte titels en
+   ondertitels zijn vaak twee regels. Iets compacter, zodat twee (portrait:
+   drie) rijen toch in één scherm passen. */
+@media (min-width: 900px) and (max-height: 900px) and (orientation: landscape),
+  (min-width: 600px) and (max-width: 1100px) and (orientation: portrait) {
+  :root {
+    --card-padding: 0.85rem 1.15rem;
+  }
+
+  .snack-card {
+    gap: 0.5rem;
+  }
+
+  .snack-card__icon {
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 0.8rem;
+  }
+
+  .snack-card__icon img {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .snack-card__title {
+    font-size: var(--fs-lg);
+  }
+
+  .snack-card__subtitle {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-snug);
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
+
+/* Laptops van 1366x768 en vergelijkbaar: nog een tikje compacter */
+@media (min-width: 900px) and (max-height: 800px) and (orientation: landscape) {
+  :root {
+    --card-padding: 0.7rem 1.1rem;
+  }
+
+  .hero__inner {
+    padding-block: 0 0.75rem;
+  }
+
+  .snack-card {
+    gap: 0.4rem;
+  }
+
+  .snack-card__go {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+}
+
+/* Heel lage schermen (1280x720 = Full HD-laptop op 150%): de knop 'Verras mij'
+   spreekt voor zich, het zinnetje eronder maakt plaats voor de snacks. */
+@media (min-width: 900px) and (max-height: 740px) and (orientation: landscape) {
+  .hero__cta-hint {
+    display: none;
+  }
+
+  /* Afspelen en opnieuw afspelen kan hier via de grote knop op de video en de bedieningsbalk */
+  .detail__actions {
+    display: none;
+  }
+}
+
+/* Smallere landscape (bijv. 1024x768): de hint past niet meer naast de kop;
+   de instructie zegt hetzelfde. */
+@media (min-width: 900px) and (max-width: 1199px) and (max-height: 1200px) and (orientation: landscape) {
+  .menu__hint {
+    display: none;
+  }
+}
+
+/* Detail in landscape: video plus knoppen passen altijd volledig in beeld.
+   De aftrek (--detail-chrome) is de hoogte van kopbalk, titel (twee regels), bediening en knoppen. */
+@media (min-width: 960px) and (orientation: landscape) {
+  .detail__layout {
+    --detail-chrome: 25rem;
+    grid-template-columns: minmax(0, max(30rem, calc((100vh - var(--detail-chrome)) * 16 / 9))) minmax(19rem, 1fr);
+    grid-template-columns: minmax(0, max(30rem, calc((100dvh - var(--detail-chrome)) * 16 / 9))) minmax(19rem, 1fr);
+  }
+}
+
+/* ---- Smalle kaarten (container queries): chips en pijl passen altijd ---- */
+@container snack (max-width: 340px) {
+  /* Lange titel: de duur schuift door naar de volgende regel i.p.v. de titel samen te drukken */
+  .snack-card__heading {
+    flex-wrap: wrap;
+  }
+
+  .snack-card .chip {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .snack-card__go {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .snack-card__footer {
+    gap: var(--space-2);
+  }
+}
+
+/* De pijl is decoratief (de hele kaart is aanraakbaar); bij smalle kaarten
+   krijgen de labels voorrang. */
+@container snack (max-width: 320px) {
+  .snack-card__go {
+    display: none;
+  }
+}
+
+/* ---- Tablet portrait: drie rijen van twee passen op één scherm ---------- */
+@media (min-width: 600px) and (max-width: 1100px) and (orientation: portrait) {
+  :root {
+    --card-min-height: 0px;
+    --grid-gap: 1rem;
+  }
+
+  .hero__inner {
+    padding-block: 0.5rem 1.4rem;
+  }
+
+  .menu {
+    padding-bottom: var(--space-4);
+  }
+
+  .menu__header {
+    margin-bottom: var(--space-4);
+  }
+}
+
+/* ---- Eindscherm van de video: past zich aan de hoogte van de speler aan -- */
+.player__stage {
+  container: player-stage / size;
+}
+
+@container player-stage (max-height: 360px) {
+  .player__endcard-icon {
+    display: none;
+  }
+
+  .player__endcard {
+    gap: var(--space-2);
+  }
+}
+
+/* Weinig hoogte: smileys als pillen naast elkaar, het vinkje op de hoek */
+@container player-stage (max-height: 330px) {
+  .rating--endcard .rating__option {
+    width: auto;
+    min-height: var(--touch-min);
+    grid-auto-flow: column;
+    gap: 0.5rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: var(--radius-pill);
+  }
+
+  .rating--endcard .rating__option > .icon {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+
+  .rating--endcard .rating__check {
+    top: -0.45rem;
+    right: -0.45rem;
+  }
+}
+
+/* Heel weinig hoogte (telefoon): de beoordeling gaat vóór de knoppen,
+   want opnieuw afspelen en terug kan ook via de bedieningsbalk en de kopbalk. */
+@container player-stage (max-height: 260px) {
+  .player__endcard {
+    padding: var(--space-3);
+  }
+
+  .player__endcard-text,
+  .player__endcard--rating .player__endcard-actions {
+    display: none;
+  }
+}
+
+/* Smalle speler: alleen de smileys; de tekst blijft voor schermlezers */
+@container player-stage (max-width: 480px) {
+  .rating--endcard .rating__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .rating--endcard .rating__option {
+    padding-inline: 0.75rem;
+  }
+}
+
+/* ---- Tablet portrait en smalle laptops ----------------------------------- */
+@media (max-width: 959px) {
+  .detail__layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'main'
+      'aside'
+      'feedback';
+    grid-template-rows: none;
+  }
+
+  .detail__aside {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .detail__more {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .topbar__event {
+    display: none;
+  }
+}
+
+@media (max-width: 820px) {
+  .hero__inner {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .hero__cta {
+    justify-items: start;
+    grid-auto-flow: column;
+    align-items: center;
+    justify-content: start;
+    gap: var(--space-4);
+  }
+
+  .menu__header {
+    align-items: flex-start;
+  }
+
+  .steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .intro .steps {
+    max-width: 26rem;
+  }
+}
+
+/* ---- Telefoon (veel bezoekers openen de snackbar op hun eigen telefoon) -- */
+@media (max-width: 599px) {
+  :root {
+    --card-min-height: 0px;
+    --awning-stripe: 40px;
+    --card-padding: 1rem 1.1rem;
+  }
+
+  /* Invulvelden minstens 16px: anders zoomt een iPhone in bij het aantikken */
+  .feedback__textarea,
+  .dash__label-input,
+  .code__input {
+    font-size: max(1rem, 16px);
+  }
+
+  /* Snackkaart: compacte kaarten, zodat je meer snacks tegelijk ziet */
+  .snack-card {
+    gap: 0.6rem;
+  }
+
+  .snack-card::before {
+    top: -3.5rem;
+    right: -3.5rem;
+    width: 8.5rem;
+    height: 8.5rem;
+  }
+
+  .snack-card__icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.85rem;
+  }
+
+  .snack-card__icon img {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+
+  .snack-card__title {
+    font-size: var(--fs-lg);
+  }
+
+  .snack-card__go {
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+
+  /* Detail: 'Bekijk demo' breed, 'Opnieuw afspelen' als icoonknop ernaast */
+  .detail__actions {
+    flex-wrap: nowrap;
+  }
+
+  .detail__actions .btn {
+    flex: 1 1 auto;
+  }
+
+  .detail__actions .detail__restart {
+    flex: 0 0 auto;
+    width: 3.5rem;
+    padding: 0;
+  }
+
+  .detail__restart span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* De hele prompt in één keer leesbaar: geen klein scrolvenster op een telefoon */
+  .prompt-box__text {
+    max-height: none;
+    padding: var(--space-3) var(--space-4);
+    font-size: 0.9rem;
+  }
+
+  /* Smileys altijd met z'n drieën naast elkaar */
+  .feedback__rating .rating {
+    flex-wrap: nowrap;
+    gap: var(--space-2);
+  }
+
+  .feedback__rating .rating__option {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 5.25rem;
+    padding: 0.65rem 0.25rem;
+    font-size: var(--fs-xs);
+    text-align: center;
+  }
+
+  .feedback__rating .rating__option > .icon {
+    width: 2.1rem;
+    height: 2.1rem;
+  }
+
+  /* Beheer en dashboard: één kolom, meer ruimte */
+  .modal--wide .modal__panel {
+    width: calc(100vw - 1rem);
+    max-height: calc(100dvh - 1rem);
+    padding: 1.25rem 1rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .dash__source {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--space-4);
+  }
+
+  .dash__label-form .dash__label-input {
+    flex: 1 1 10rem;
+    width: auto;
+  }
+
+  .dash__tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .topbar__actions .btn--sm span {
+    display: none;
+  }
+
+  .topbar__actions .btn--sm {
+    width: var(--touch-min);
+    padding: 0;
+  }
+
+  .hero__cta {
+    grid-auto-flow: row;
+    justify-items: stretch;
+    width: 100%;
+  }
+
+  .hero__cta .btn {
+    width: 100%;
+  }
+
+  .hero__cta-hint {
+    text-align: center;
+  }
+
+  .detail__more {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .player__time--total,
+  .player__restart {
+    display: none;
+  }
+
+  /* Bij een HTML-demo is er geen tijdlijn, dus wel ruimte voor 'opnieuw' */
+  .player[data-media='demo'] .player__restart {
+    display: grid;
+  }
+
+  /* Schermvullend op een telefoon: 'Verkleinen' als ronde knop, bedekt minder van de demo */
+  .player__shrink {
+    width: var(--touch-min);
+    padding: 0;
+    justify-content: center;
+  }
+
+  .player__shrink span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .qr-block {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    text-align: center;
+  }
+
+  .snack-card__number strong {
+    font-size: 1.75rem;
+  }
+}
+
+/* ---- Groot scherm (1920 x 1080 en hoger) --------------------------------- */
+@media (min-width: 1700px) {
+  .snack-card__icon {
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+
+  .snack-card__icon img {
+    width: 2.9rem;
+    height: 2.9rem;
+  }
+}
+
+/* ---- Minder beweging --------------------------------------------------- */
+/* Overgangen echt op 0s: een heel korte duur laat élk element (ook zonder eigen
+   transition) één frame overgaan, waardoor bijv. het eindscherm van de video
+   dat frame nog 'onzichtbaar' en dus niet focusbaar is. Animaties houden
+   0.01ms, zodat 'animationend' (toasts, schermovergang) blijft vuren. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0s !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Zelfde gedrag als reduceMotion: true in js/config.js */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-delay: 0ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0s !important;
+  transition-delay: 0ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* De spinner mag ook bij minder beweging duidelijk maken dat er geladen wordt */
+@media (prefers-reduced-motion: reduce) {
+  .player[data-buffering='true'] .player__spinner {
+    animation: none !important;
+    border-color: var(--vv-white);
+    border-style: dotted;
+  }
+}
+
+.reduce-motion .player[data-buffering='true'] .player__spinner {
+  animation: none !important;
+  border-color: var(--vv-white);
+  border-style: dotted;
+}
+
+/* ---- Windows hoog contrast / geforceerde kleuren ----------------------- */
+@media (forced-colors: active) {
+  .snack-card,
+  .takeaway,
+  .modal__panel,
+  .ticket,
+  .toast,
+  .chip,
+  .badge,
+  .meta {
+    border: 2px solid CanvasText;
+  }
+
+  .btn,
+  .player__btn,
+  .player__shrink {
+    border: 2px solid ButtonText;
+  }
+
+  .awning-edge,
+  .snack-card::before,
+  .art__glow {
+    display: none;
+  }
+
+  /* Eigen sliderstijl gebruikt achtergronden (die hier wegvallen): terug naar de systeemslider */
+  .player__progress {
+    -webkit-appearance: auto;
+    appearance: auto;
+  }
+
+  /* Gevulde niveaustippen behouden in de systeemtekstkleur */
+  .level-dots i {
+    forced-color-adjust: none;
+    border-color: CanvasText;
+  }
+
+  .level-dots[data-level='1'] i:nth-child(-n + 1),
+  .level-dots[data-level='2'] i:nth-child(-n + 2),
+  .level-dots[data-level='3'] i:nth-child(-n + 3) {
+    background: CanvasText;
+  }
+}

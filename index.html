@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="nl" class="no-js" data-theme="licht">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- Veiligheid: alleen eigen bestanden. De enige verbinding naar buiten is de (optionele)
+       centrale opslag in Supabase; HTML-demo's draaien als eigen bestand in een afgeschermd iframe. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src https://*.supabase.co; object-src 'none'; frame-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#101d4f">
+  <title>AI Snackbar</title>
+  <link rel="icon" href="assets/branding/favicon.svg" type="image/svg+xml">
+
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+
+  <!-- Wordt direct uitgevoerd: vangt opstartfouten op, zodat er nooit een wit scherm ontstaat. -->
+  <script src="js/error-guard.js"></script>
+
+  <!-- Inhoud en instellingen (deze bestanden mag je aanpassen) -->
+  <script defer src="js/config.js"></script>
+  <script defer src="data/texts.js"></script>
+  <script defer src="data/snacks.js"></script>
+
+  <!-- Applicatie (volgorde is belangrijk) -->
+  <script defer src="js/ui.js"></script>
+  <script defer src="js/accessibility.js"></script>
+  <script defer src="js/storage.js"></script>
+  <script defer src="js/central.js"></script>
+  <script defer src="js/content.js"></script>
+  <script defer src="js/navigation.js"></script>
+  <script defer src="js/video-player.js"></script>
+  <script defer src="js/feedback.js"></script>
+  <script defer src="js/prompt-mail.js"></script>
+  <script defer src="js/menu-view.js"></script>
+  <script defer src="js/detail-view.js"></script>
+  <script defer src="js/surprise.js"></script>
+  <script defer src="js/kiosk.js"></script>
+  <script defer src="js/intro.js"></script>
+  <script defer src="js/dashboard.js"></script>
+  <script defer src="js/admin.js"></script>
+  <script defer src="js/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-text="skipLink">Direct naar de inhoud</a>
+
+  <div class="app" id="app">
+    <!-- ================= Kopbalk (luifel) ================= -->
+    <header class="topbar on-dark" id="topbar">
+      <div class="topbar__inner container">
+        <div class="brand" id="brand">
+          <img class="brand__logo" id="brand-logo" alt="" hidden draggable="false">
+          <span class="brand__wordmark" id="brand-wordmark">Visser &amp; Visser</span>
+          <span class="brand__press" aria-hidden="true"></span>
+        </div>
+        <p class="topbar__event" id="event-label"></p>
+        <div class="topbar__actions">
+          <button class="btn btn--ghost-dark btn--sm" type="button" id="about-button">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-info"></use></svg>
+            <span data-text="aboutButton">Over de AI Snackbar</span>
+          </button>
+          <a class="btn btn--ghost-dark btn--icon" id="home-button" href="#/" hidden data-label="homeButton" aria-label="Terug naar de snackkaart">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-home"></use></svg>
+          </a>
+        </div>
+      </div>
+      <div class="awning-edge awning-edge--topbar" aria-hidden="true"></div>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <!-- ================= Snackkaart ================= -->
+      <section class="view view--menu" id="view-menu" aria-labelledby="menu-title">
+        <div class="hero on-dark">
+          <div class="hero__inner container">
+            <div class="hero__text">
+              <p class="hero__eyebrow" id="hero-eyebrow"></p>
+              <h1 class="hero__title" id="menu-title" tabindex="-1">
+                <span id="app-title">AI Snackbar</span>
+                <span class="hero__discipline" id="app-discipline"></span>
+              </h1>
+              <p class="hero__subtitle" id="app-subtitle"></p>
+            </div>
+            <div class="hero__cta" id="hero-cta">
+              <button class="btn btn--surprise btn--xl" type="button" id="surprise-button">
+                <svg class="icon icon--dice" aria-hidden="true" focusable="false"><use href="#i-dice"></use></svg>
+                <span data-text="surpriseButton">Verras mij</span>
+              </button>
+              <p class="hero__cta-hint" data-text="surpriseHint">Wij kiezen een snack voor je</p>
+            </div>
+          </div>
+          <div class="awning-edge" aria-hidden="true"></div>
+        </div>
+
+        <div class="menu container">
+          <div class="menu__header">
+            <div class="menu__heading">
+              <!-- Kop alleen voor schermlezers: houdt de koppenstructuur (h1 → h2 → h3) kloppend -->
+              <h2 class="sr-only" data-text="menuTitle">Vandaag op de kaart</h2>
+              <p class="menu__instruction" id="menu-instruction"></p>
+            </div>
+            <p class="menu__hint">
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-tap"></use></svg>
+              <span data-text="menuHint">Raak een snack aan om te beginnen</span>
+            </p>
+          </div>
+          <ul class="snack-grid" id="snack-grid" role="list"></ul>
+          <div class="menu-state" id="menu-state" hidden></div>
+        </div>
+      </section>
+
+      <!-- ================= Snackdetail ================= -->
+      <section class="view view--detail" id="view-detail" hidden aria-labelledby="detail-title">
+        <div class="detail container" id="detail">
+          <div class="detail__layout">
+            <div class="detail__main">
+              <header class="detail__header">
+                <button class="btn btn--back" type="button" id="detail-back" data-label="backButtonLabel">
+                  <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow-left"></use></svg>
+                  <span data-text="backButton">Snackkaart</span>
+                </button>
+                <div class="detail__heading">
+                  <p class="detail__eyebrow">
+                    <span class="detail__number" id="detail-number"></span>
+                    <span class="detail__category" id="detail-category"></span>
+                  </p>
+                  <h1 class="detail__title" id="detail-title" tabindex="-1"></h1>
+                  <ul class="meta-list" id="detail-meta" role="list"></ul>
+                </div>
+              </header>
+
+              <div class="player" id="player"></div>
+
+              <div class="detail__actions">
+                <button class="btn btn--primary btn--lg" type="button" id="detail-play">
+                  <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-play"></use></svg>
+                  <span id="detail-play-label" data-text="detailPlay">Bekijk demo</span>
+                </button>
+                <button class="btn btn--secondary btn--lg detail__restart" type="button" id="detail-restart">
+                  <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-replay"></use></svg>
+                  <span data-text="detailRestart">Opnieuw afspelen</span>
+                </button>
+              </div>
+
+              <p class="detail__intro" id="detail-intro"></p>
+              <p class="detail__audience" id="detail-audience"></p>
+            </div>
+
+            <aside class="detail__aside" aria-labelledby="takeaway-title">
+              <div class="takeaway" id="takeaway">
+                <div class="takeaway__head">
+                  <span class="takeaway__icon" aria-hidden="true">
+                    <svg class="icon" focusable="false"><use href="#i-bag"></use></svg>
+                  </span>
+                  <div>
+                    <p class="takeaway__eyebrow" data-text="takeawayEyebrow">Om mee te nemen</p>
+                    <h2 class="takeaway__title" id="takeaway-title" tabindex="-1" data-text="takeawayTitle">Jouw AI-tip</h2>
+                  </div>
+                </div>
+
+                <div class="takeaway__perforation" aria-hidden="true"></div>
+
+                <div class="prompt-box" id="prompt-box">
+                  <div class="prompt-box__head">
+                    <p class="prompt-box__label" id="prompt-label" data-text="promptLabel">Voorbeeldprompt</p>
+                    <button class="btn btn--copy" type="button" id="copy-prompt">
+                      <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-copy"></use></svg>
+                      <span id="copy-prompt-label" data-text="copyPrompt">Kopieer prompt</span>
+                    </button>
+                  </div>
+                  <pre class="prompt-box__text is-selectable" id="prompt-text" aria-labelledby="prompt-label" tabindex="0"></pre>
+                  <p class="prompt-box__note" id="prompt-note"></p>
+
+                  <!-- 'Mail mij deze prompt': alleen met centrale opslag (zie js/prompt-mail.js) -->
+                  <div class="prompt-mail" id="prompt-mail" hidden>
+                    <button class="btn btn--secondary btn--block" type="button" id="prompt-mail-toggle" aria-expanded="false" aria-controls="prompt-mail-form">
+                      <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-mail"></use></svg>
+                      <span data-text="promptMailButton">Mail mij deze prompt</span>
+                    </button>
+                    <form class="prompt-mail__form" id="prompt-mail-form" novalidate hidden>
+                      <label class="prompt-mail__label" for="prompt-mail-email" data-text="promptMailLabel">Je e-mailadres</label>
+                      <div class="prompt-mail__row">
+                        <input class="prompt-mail__input" id="prompt-mail-email" name="email" type="email" inputmode="email" autocapitalize="off" spellcheck="false" maxlength="254" enterkeyhint="send" aria-describedby="prompt-mail-privacy prompt-mail-error" data-placeholder="promptMailPlaceholder">
+                        <button class="btn btn--primary" type="submit" id="prompt-mail-submit">
+                          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-send"></use></svg>
+                          <span data-text="promptMailSubmit">Versturen</span>
+                        </button>
+                      </div>
+                      <p class="prompt-mail__privacy" id="prompt-mail-privacy">
+                        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-shield"></use></svg>
+                        <span id="prompt-mail-privacy-text"></span>
+                      </p>
+                      <p class="prompt-mail__error" id="prompt-mail-error" role="alert"></p>
+                    </form>
+                    <p class="prompt-mail__done" id="prompt-mail-done" role="status" hidden></p>
+                  </div>
+                </div>
+
+                <div class="qr-block" id="qr-block">
+                  <div class="qr-block__code" id="qr-code"></div>
+                  <p class="qr-block__label" id="qr-label"></p>
+                </div>
+
+                <div class="tip" id="tip-block">
+                  <span class="tip__icon" aria-hidden="true">
+                    <svg class="icon" focusable="false"><use href="#i-bulb"></use></svg>
+                  </span>
+                  <p><strong class="tip__label" data-text="tipLabel">Tip</strong> <span id="tip-text"></span></p>
+                </div>
+              </div>
+
+              <div class="detail__more">
+                <button class="btn btn--secondary btn--lg btn--block" type="button" id="detail-other">
+                  <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-grid"></use></svg>
+                  <span data-text="detailOther">Kies een andere snack</span>
+                </button>
+                <button class="btn btn--surprise-outline btn--lg btn--block" type="button" id="detail-surprise">
+                  <svg class="icon icon--dice" aria-hidden="true" focusable="false"><use href="#i-dice"></use></svg>
+                  <span data-text="detailSurprise">Verras mij</span>
+                </button>
+              </div>
+            </aside>
+
+            <!-- Feedback: beoordeling en anonieme opmerking/vraag (lokaal opgeslagen, export via beheer) -->
+            <section class="feedback" id="feedback" aria-labelledby="feedback-title">
+              <div class="feedback__rating" id="feedback-rating-block">
+                <h2 class="feedback__title" id="feedback-title" data-text="feedbackTitle">Hoe smaakte deze snack?</h2>
+                <div class="rating" id="feedback-rating" role="group" aria-labelledby="feedback-title"></div>
+              </div>
+              <form class="feedback__comment" id="feedback-form" novalidate>
+                <label class="feedback__label" for="feedback-text">
+                  <span data-text="commentLabel">Opmerking of vraag?</span>
+                  <span class="feedback__optional" data-text="commentOptional">(optioneel)</span>
+                </label>
+                <textarea class="feedback__textarea is-selectable" id="feedback-text" name="comment" rows="3" maxlength="280" aria-describedby="feedback-privacy feedback-counter" data-placeholder="commentPlaceholder"></textarea>
+                <div class="feedback__meta">
+                  <p class="feedback__privacy" id="feedback-privacy">
+                    <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-shield"></use></svg>
+                    <span data-text="commentPrivacy">Anoniem. Noem geen namen, klant- of dossiergegevens.</span>
+                  </p>
+                  <span class="feedback__counter" id="feedback-counter">0/280</span>
+                </div>
+                <button class="btn btn--secondary btn--lg" type="submit" id="feedback-submit">
+                  <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-send"></use></svg>
+                  <span data-text="commentSubmit">Versturen</span>
+                </button>
+              </form>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ================= Welkomstscherm ================= -->
+  <dialog class="intro on-dark" id="intro-dialog" aria-labelledby="intro-title" aria-describedby="intro-text">
+    <div class="intro__awning" aria-hidden="true"><div class="awning-edge"></div></div>
+    <div class="intro__content">
+      <span class="intro__mark" aria-hidden="true">
+        <svg class="icon" focusable="false"><use href="#i-cloche"></use></svg>
+      </span>
+      <p class="intro__eyebrow" id="intro-eyebrow"></p>
+      <h2 class="intro__title" id="intro-title" tabindex="-1" data-text="introTitle">Welkom bij de AI Snackbar</h2>
+      <p class="intro__text" id="intro-text" data-text="introText">Kies een snack, bekijk een korte demo en neem een praktische AI-tip mee.</p>
+      <ol class="steps steps--dark" role="list">
+        <li class="steps__item"><span class="steps__number">1</span><span data-text="stepOne">Kies je snack</span></li>
+        <li class="steps__item"><span class="steps__number">2</span><span data-text="stepTwo">Bekijk de demo</span></li>
+        <li class="steps__item"><span class="steps__number">3</span><span data-text="stepThree">Probeer het morgen zelf</span></li>
+      </ol>
+      <div class="intro__actions">
+        <button class="btn btn--surprise btn--xl" type="button" id="intro-open">
+          <span data-text="introOpen">Open de snackkaart</span>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow-right"></use></svg>
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ================= Over de AI Snackbar ================= -->
+  <dialog class="modal" id="about-dialog" aria-labelledby="about-title">
+    <div class="modal__panel">
+      <button class="btn btn--icon btn--quiet modal__close" type="button" data-close data-label="close" aria-label="Sluiten">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-close"></use></svg>
+      </button>
+      <span class="modal__mark" aria-hidden="true">
+        <svg class="icon" focusable="false"><use href="#i-cloche"></use></svg>
+      </span>
+      <h2 class="modal__title" id="about-title" data-text="aboutTitle">Over de AI Snackbar</h2>
+      <p class="modal__lead" data-text="aboutLead"></p>
+      <h3 class="modal__subtitle" data-text="aboutStepsTitle">Zo werkt het</h3>
+      <ol class="steps" role="list">
+        <li class="steps__item"><span class="steps__number">1</span><span data-text="stepOne">Kies je snack</span></li>
+        <li class="steps__item"><span class="steps__number">2</span><span data-text="stepTwo">Bekijk de demo</span></li>
+        <li class="steps__item"><span class="steps__number">3</span><span data-text="stepThree">Probeer het morgen zelf</span></li>
+      </ol>
+      <p class="modal__text" data-text="aboutHost"></p>
+      <p class="modal__small" id="about-organizer"></p>
+      <div class="modal__actions modal__actions--split">
+        <!-- Onopvallende toegang voor de organisatie (vraagt de toegangscode) -->
+        <button class="btn btn--quiet btn--sm modal__admin" type="button" id="about-admin">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-lock"></use></svg>
+          <span>Beheer</span>
+        </button>
+        <button class="btn btn--primary btn--lg" type="button" data-close data-text="close">Sluiten</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ================= Inactiviteit ================= -->
+  <dialog class="modal modal--compact" id="idle-dialog" aria-labelledby="idle-title" aria-describedby="idle-text">
+    <div class="modal__panel idle">
+      <div class="idle__countdown" aria-hidden="true">
+        <svg class="idle__ring" viewBox="0 0 120 120" focusable="false">
+          <circle class="idle__ring-track" cx="60" cy="60" r="52"></circle>
+          <circle class="idle__ring-value" id="idle-ring" cx="60" cy="60" r="52"></circle>
+        </svg>
+        <span class="idle__seconds" id="idle-seconds">15</span>
+        <span class="idle__unit" data-text="idleSecondsLabel">seconden</span>
+      </div>
+      <h2 class="modal__title" id="idle-title" data-text="idleTitle">Ben je er nog?</h2>
+      <p class="modal__text" id="idle-text" data-text="idleText"></p>
+      <div class="modal__actions modal__actions--stack">
+        <button class="btn btn--primary btn--lg btn--block" type="button" id="idle-stay" autofocus data-text="idleStay">Ik kijk nog even</button>
+        <button class="btn btn--secondary btn--lg btn--block" type="button" id="idle-reset" data-text="idleReset">Terug naar het begin</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ================= Verras mij ================= -->
+  <dialog class="surprise" id="surprise-dialog" aria-labelledby="surprise-status">
+    <div class="ticket" id="ticket">
+      <p class="ticket__order" id="ticket-order"></p>
+      <p class="ticket__status" id="surprise-status" aria-live="polite"></p>
+      <div class="ticket__reel" aria-hidden="true">
+        <span class="ticket__reel-item" id="ticket-reel"></span>
+      </div>
+      <p class="ticket__meta" id="ticket-meta" aria-hidden="true"></p>
+      <div class="ticket__progress" aria-hidden="true"><span></span></div>
+    </div>
+  </dialog>
+
+  <!-- ================= Toegangscode admin ================= -->
+  <dialog class="modal modal--compact" id="code-dialog" aria-labelledby="code-title" aria-describedby="code-text">
+    <div class="modal__panel code" id="code-panel">
+      <button class="btn btn--icon btn--quiet modal__close" type="button" data-close aria-label="Sluiten">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-close"></use></svg>
+      </button>
+      <span class="modal__mark" aria-hidden="true">
+        <svg class="icon" focusable="false"><use href="#i-lock"></use></svg>
+      </span>
+      <h2 class="modal__title" id="code-title">Beheer</h2>
+      <p class="modal__text" id="code-text">Voer de toegangscode in.</p>
+      <form class="code__form" id="code-form" novalidate>
+        <label class="sr-only" for="code-input">Toegangscode</label>
+        <input class="code__input" id="code-input" type="password" inputmode="none" autocomplete="off" aria-describedby="code-error">
+        <div class="code__dots" id="code-dots" aria-hidden="true"></div>
+        <p class="code__error" id="code-error" role="alert"></p>
+        <div class="code__keypad">
+          <button class="code__key" type="button" data-key="1">1</button>
+          <button class="code__key" type="button" data-key="2">2</button>
+          <button class="code__key" type="button" data-key="3">3</button>
+          <button class="code__key" type="button" data-key="4">4</button>
+          <button class="code__key" type="button" data-key="5">5</button>
+          <button class="code__key" type="button" data-key="6">6</button>
+          <button class="code__key" type="button" data-key="7">7</button>
+          <button class="code__key" type="button" data-key="8">8</button>
+          <button class="code__key" type="button" data-key="9">9</button>
+          <button class="code__key code__key--muted" type="button" data-key="back" aria-label="Wissen">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow-left"></use></svg>
+          </button>
+          <button class="code__key" type="button" data-key="0">0</button>
+          <button class="code__key code__key--ok" type="button" data-key="ok" aria-label="Bevestigen">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"></use></svg>
+          </button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- ================= Admin (dashboard + beheer) ================= -->
+  <dialog class="modal modal--wide" id="admin-dialog" aria-labelledby="admin-title">
+    <div class="modal__panel admin" id="admin-panel"></div>
+  </dialog>
+
+  <!-- Meldingen en schermlezers -->
+  <div class="toast-region" id="toast-region" role="status" aria-live="polite"></div>
+  <div class="sr-only" id="announcer" aria-live="polite" aria-atomic="true"></div>
+
+  <button class="kiosk-pill" type="button" id="kiosk-pill" hidden>
+    <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-pause-circle"></use></svg>
+    <span data-text="kioskPaused">Automatische reset staat uit</span>
+  </button>
+
+  <!-- Vangnet als het opstarten mislukt (wordt getoond door js/error-guard.js) -->
+  <div class="fatal" id="fatal" hidden>
+    <div class="fatal__panel">
+      <h2 class="fatal__title">Er ging iets mis</h2>
+      <p class="fatal__text">Herlaad de pagina om de AI Snackbar opnieuw te starten.</p>
+      <p class="fatal__detail" id="fatal-detail"></p>
+      <button class="btn btn--primary btn--lg" type="button" id="fatal-reload">Opnieuw laden</button>
+    </div>
+  </div>
+
+  <noscript>
+    <div class="fatal">
+      <div class="fatal__panel">
+        <h2 class="fatal__title">JavaScript staat uit</h2>
+        <p class="fatal__text">De AI Snackbar heeft JavaScript nodig. Zet JavaScript aan in de browser en herlaad de pagina.</p>
+      </div>
+    </div>
+  </noscript>
+
+  <!-- ================= Iconen (lokale SVG-sprite) ================= -->
+  <svg class="sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" hidden>
+    <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.6v12.8a1.1 1.1 0 0 0 1.7.9l10-6.4a1.1 1.1 0 0 0 0-1.8l-10-6.4A1.1 1.1 0 0 0 8 5.6z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4.2" height="14" rx="1.3"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.3"/></symbol>
+    <symbol id="i-replay" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5"/><path d="M3.5 3.5v5h5"/></symbol>
+    <symbol id="i-volume" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></symbol>
+    <symbol id="i-mute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></symbol>
+    <symbol id="i-fullscreen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V5a1 1 0 0 1 1-1h4M15 4h4a1 1 0 0 1 1 1v4M20 15v4a1 1 0 0 1-1 1h-4M9 20H5a1 1 0 0 1-1-1v-4"/></symbol>
+    <symbol id="i-fullscreen-exit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4v4a1 1 0 0 1-1 1H4M20 9h-4a1 1 0 0 1-1-1V4M15 20v-4a1 1 0 0 1 1-1h4M4 15h4a1 1 0 0 1 1 1v4"/></symbol>
+    <symbol id="i-captions" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M10.5 10.3a2.2 2.2 0 1 0 0 3.4M17 10.3a2.2 2.2 0 1 0 0 3.4"/></symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="i-dice" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><g fill="currentColor" stroke="none"><circle cx="8.6" cy="8.6" r="1.35"/><circle cx="15.4" cy="8.6" r="1.35"/><circle cx="12" cy="12" r="1.35"/><circle cx="8.6" cy="15.4" r="1.35"/><circle cx="15.4" cy="15.4" r="1.35"/></g></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="8.5" width="11" height="11" rx="2.5"/><path d="M15.5 8.5V6A1.5 1.5 0 0 0 14 4.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M8.2 12.3l2.6 2.6 5-5.3"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/><circle cx="12" cy="7.8" r="1.1" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-qr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2.5v2.5H14zM17.5 17.5H20V20h-2.5zM14 20h1M20 14v1"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17.5h6M10 20.5h4"/><path d="M12 3.5a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.2h5c0-.9.4-1.7 1.1-2.2A6 6 0 0 0 12 3.5z"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5c.8 5 3.5 7.7 8.5 8.5-5 .8-7.7 3.5-8.5 8.5-.8-5-3.5-7.7-8.5-8.5 5-.8 7.7-3.5 8.5-8.5z"/></symbol>
+    <symbol id="i-hourglass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.5h10M7 20.5h10M8 3.5v3a4 4 0 0 0 1.6 3.2L12 11.5l2.4-1.8A4 4 0 0 0 16 6.5v-3M8 20.5v-3a4 4 0 0 1 1.6-3.2L12 12.5l2.4 1.8a4 4 0 0 1 1.6 3.2v3"/></symbol>
+    <symbol id="i-tap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 12.5V5.8a1.6 1.6 0 0 1 3.2 0v5.7"/><path d="M12.7 10.8a1.6 1.6 0 0 1 3.2 0v1.2"/><path d="M15.9 11.6a1.6 1.6 0 0 1 3.1.4v3.3a6 6 0 0 1-6 6h-.7a6 6 0 0 1-4.7-2.3l-2.5-3.2a1.6 1.6 0 0 1 2.4-2.1l2.2 2"/><path d="M6.2 5.2a4.8 4.8 0 0 1 1.2-2M15.8 3.2A4.8 4.8 0 0 1 17 5.2"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M15.5 5.8a3 3 0 0 1 0 5.4M17.5 14.2a5.5 5.5 0 0 1 3 4.8"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 4.6 3.2 17a2 2 0 0 0 1.7 3h14.2a2 2 0 0 0 1.7-3L13.7 4.6a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4"/><circle cx="12" cy="16.8" r="1" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-film" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><path d="M7.5 5v14M16.5 5v14M3.5 9.5h4M3.5 14.5h4M16.5 9.5h4M16.5 14.5h4"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.6"/><rect x="13" y="4" width="7" height="7" rx="1.6"/><rect x="4" y="13" width="7" height="7" rx="1.6"/><rect x="13" y="13" width="7" height="7" rx="1.6"/></symbol>
+    <symbol id="i-bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 8h13l-1.1 12.1a1.5 1.5 0 0 1-1.5 1.4H8.1a1.5 1.5 0 0 1-1.5-1.4z"/><path d="M9 10.5V7a3 3 0 0 1 6 0v3.5"/></symbol>
+    <symbol id="i-cloche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 17a7.5 7.5 0 0 1 15 0z"/><path d="M2.8 17h18.4M12 9.5V8M10.7 8h2.6M7.6 14.3a4.8 4.8 0 0 1 2-2.5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 5 6v5.5c0 4.3 2.9 7.8 7 9 4.1-1.2 7-4.7 7-9V6z"/><path d="M9 12l2.2 2.2L15.2 10"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-14.2 5M4 12a8 8 0 0 1 14.2-5"/><path d="M18.5 3.5V7H15M5.5 20.5V17H9"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15M10 7V5h4v2M6.5 7l1 12.5A1.5 1.5 0 0 0 9 21h6a1.5 1.5 0 0 0 1.5-1.5l1-12.5"/></symbol>
+    <symbol id="i-face-happy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="10" r="1.2" fill="currentColor" stroke="none"/><path d="M8 14c1 1.6 2.4 2.4 4 2.4s3-.8 4-2.4"/></symbol>
+    <symbol id="i-face-neutral" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="10" r="1.2" fill="currentColor" stroke="none"/><path d="M8.5 15h7"/></symbol>
+    <symbol id="i-face-sad" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="10" r="1.2" fill="currentColor" stroke="none"/><path d="M8 16.5c1-1.5 2.4-2.2 4-2.2s3 .7 4 2.2"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 3.5 10 14"/><path d="M20.5 3.5 14 20.5l-4-6.5-6.5-4z"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7 10.5 5 5 5-5"/><path d="M5 19.5h14"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/><path d="M12 14.5v2"/></symbol>
+    <symbol id="i-pause-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M10 9v6M14 9v6"/></symbol>
+  </svg>
+</body>
+</html>
