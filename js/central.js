@@ -268,6 +268,24 @@
     return true;
   }
 
+  /**
+   * Alles van deze snackbar (namespace) centraal wissen: tellers, smileys, vragen en
+   * e-mailadressen. Alleen voor een ingelogde beheerder (functie snackbar_reset in Supabase).
+   * @returns {Promise<{ events: number, ratings: number, comments: number, requests: number }>}
+   */
+  async function resetAll() {
+    if (!signedIn()) throw new Error('niet ingelogd');
+    const response = await request('/rest/v1/rpc/snackbar_reset', {
+      method: 'POST',
+      headers: headers(admin.token),
+      body: JSON.stringify({ p_namespace: config.storageNamespace })
+    });
+    if (response.status === 404) throw new Error('de resetfunctie ontbreekt nog in Supabase: voer tools/supabase-update-reset.sql uit');
+    if (response.status === 401 || response.status === 403) throw new Error('geen beheerdersrechten (log opnieuw in)');
+    if (!response.ok) throw new Error(`wissen mislukt (${response.status})`);
+    return response.json();
+  }
+
   function status() {
     return {
       enabled,
@@ -294,6 +312,7 @@
     signedIn,
     fetchAll,
     deletePromptRequests,
+    resetAll,
     status
   };
 })(window.AISnackbar);

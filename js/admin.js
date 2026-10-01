@@ -31,6 +31,7 @@
   let unlocked = false;
   let activeTab = 'dashboard';
   let failedAttempts = 0;
+  let resetAttempts = 0;
   let lockedUntil = 0;
   let lockTimer = 0;
   const live = {};
@@ -194,6 +195,7 @@
   function lock() {
     unlocked = false;
     activeTab = 'dashboard';
+    resetAttempts = 0;
     ns.central.signOut();
     ns.dashboard.forget();
     if (dialog && dialog.open) ns.a11y.closeDialog(dialog);
@@ -299,8 +301,9 @@
         renderMediaSection(snacks),
         renderQuickOpenSection(snacks),
         renderStorageSection(),
-        renderDeviceSection()
-      ])
+        renderDeviceSection(),
+        renderResetSection()
+      ].filter(Boolean))
     );
     updateLive();
     runMediaCheck();
@@ -490,6 +493,82 @@
       el('p', { className: 'admin__intro', text: 'Exporteer eerst via het Dashboard als je de gegevens wilt bewaren.' }),
       el('div', { className: 'admin__buttons' }, [clearButton])
     ]);
+  }
+
+  /**
+   * Alles resetten (vlak voor het evenement de testgegevens wissen): centraal alle
+   * telefoons en tablets (alleen als beheerder ingelogd) plus dit apparaat. Met een
+   * eigen pincode (resetCode) als extra slot tegen per ongeluk wissen.
+   */
+  function renderResetSection() {
+    if (!ctx.config.resetCode) return null;
+    const central = ns.central.isEnabled();
+    const signedIn = central && Boolean(ns.central.signedIn());
+    const blocked = resetAttempts >= MAX_ATTEMPTS;
+
+    const pin = el('input', { className: 'dash__label-input admin__pin', attrs: { id: 'admin-reset-pin', type: 'password', inputmode: 'numeric', autocomplete: 'off', maxlength: 8, 'aria-describedby': 'admin-reset-error', disabled: blocked || (central && !signedIn) } });
+    const submit = el('button', { className: 'btn btn--danger btn--sm', attrs: { type: 'submit', disabled: blocked || (central && !signedIn) } }, [icon('trash'), el('span', { text: 'Wis alles' })]);
+    const error = el('p', { className: 'code__error', attrs: { id: 'admin-reset-error', role: 'alert' }, text: blocked ? 'Te vaak een onjuiste pincode. Vergrendel admin en probeer het later opnieuw.' : '' });
+    const form = el('form', { className: 'dash__label-form', attrs: { novalidate: true } }, [
+      el('label', { className: 'dash__label-caption', attrs: { for: 'admin-reset-pin' }, text: 'Pincode voor resetten' }),
+      pin,
+      submit
+    ]);
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (pin.value !== ctx.config.resetCode) {
+        resetAttempts += 1;
+        pin.value = '';
+        if (resetAttempts >= MAX_ATTEMPTS) {
+          error.textContent = 'Te vaak een onjuiste pincode. Vergrendel admin en probeer het later opnieuw.';
+          pin.disabled = true;
+          submit.disabled = true;
+        } else {
+          error.textContent = `Onjuiste pincode (nog ${MAX_ATTEMPTS - resetAttempts} ${MAX_ATTEMPTS - resetAttempts === 1 ? 'poging' : 'pogingen'}).`;
+          pin.focus();
+        }
+        return;
+      }
+      resetAttempts = 0;
+      submit.disabled = true;
+      error.textContent = '';
+      let message = 'Alle gegevens op dit apparaat zijn gewist.';
+      try {
+        if (central) {
+          const n = await ns.central.resetAll();
+          const count = (value, one, many) => `${value} ${value === 1 ? one : many}`;
+          message = `Alles gewist. Centraal: ${count(n.events, 'teller', 'tellers')}, ${count(n.ratings, 'smiley', 'smileys')}, ${count(n.comments, 'vraag', 'vragen')} en ${count(n.requests, 'e-mailadres', 'e-mailadressen')}; plus dit apparaat.`;
+        }
+      } catch (problem) {
+        submit.disabled = false;
+        pin.value = '';
+        error.textContent = 'Centraal wissen mislukt: ' + problem.message + '. Er is nog niets gewist.';
+        return;
+      }
+      ns.storage.clearAll();
+      ns.feedback.clearSession();
+      ns.central.newSession();
+      ns.dashboard.forget();
+      toast(message, { tone: 'success', icon: 'trash', duration: 8000 });
+      render();
+    });
+
+    const scope = central
+      ? 'centraal alle tellers, smileys, vragen en e-mailadressen van álle telefoons en tablets, plus de gegevens op dit apparaat'
+      : 'de tellers, smileys en vragen op dit apparaat';
+    return section(
+      'Alles resetten (testgegevens wissen)',
+      'trash',
+      [
+        el('p', { className: 'admin__intro', text: `Vlak voor het evenement: wist ${scope}. Dit kan niet ongedaan worden gemaakt; exporteer eerst als je iets wilt bewaren.` }),
+        central && !signedIn ? el('p', {}, status('warn', 'Log eerst in via het tabblad Dashboard (Inloggen); daarna kun je hier alles wissen.')) : null,
+        form,
+        error,
+        el('p', { className: 'admin__intro', text: 'Andere tablets houden hun eigen lokale tellers. Wis die op die tablet zelf met "Wis alle gegevens van deze tablet" (of doe daar deze reset).' })
+      ].filter(Boolean),
+      true
+    );
   }
 
   function renderDeviceSection() {

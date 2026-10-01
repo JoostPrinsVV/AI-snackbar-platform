@@ -46,6 +46,7 @@
     centralKey: '',
     enableAdmin: true,
     adminCode: '1234',
+    resetCode: '',
     adminKeySequence: 'beheer',
     adminLongPressSeconds: 3,
     debugMode: false
@@ -142,6 +143,10 @@
     if (!/^\d{4,8}$/.test(config.adminCode)) {
       issues.push(issue('warning', "adminCode moet uit 4 tot 8 cijfers bestaan; standaard '1234' gebruikt."));
       config.adminCode = CONFIG_DEFAULTS.adminCode;
+    }
+    if (config.resetCode && !/^\d{4,8}$/.test(config.resetCode)) {
+      issues.push(issue('warning', "resetCode moet uit 4 tot 8 cijfers bestaan; de knop 'Alles resetten' staat uit."));
+      config.resetCode = '';
     }
     normalizeCentral(config, issues);
     return { config: Object.freeze(config), issues };

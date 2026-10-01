@@ -77,6 +77,8 @@ window.AISnackbar.config = {
   // 'Over de AI Snackbar' (of door 'beheer' te typen / het logo lang in te drukken).
   enableAdmin: true,                    // Admin (dashboard + beheer) beschikbaar
   adminCode: '1234',                    // Toegangscode, 4-8 cijfers. Let op: leesbaar in dit bestand, dus een drempel, geen beveiliging
+  resetCode: '1712',                    // Pincode voor 'Alles resetten' (Beheer & test). Extra slot tegen per ongeluk wissen;
+                                        // centraal wissen kan bovendien alleen na inloggen als beheerder. Leeg = knop uit
   adminKeySequence: 'beheer',           // Typ dit woord op het toetsenbord om de codevraag te openen
   adminLongPressSeconds: 3,             // ...of houd het logo zo lang ingedrukt
   debugMode: false                      // true = extra technische meldingen in de console en op het scherm
