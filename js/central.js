@@ -90,10 +90,10 @@
     return response;
   }
 
-  function insert(table, rows, extraHeaders) {
+  function insert(table, rows) {
     return request('/rest/v1/' + table, {
       method: 'POST',
-      headers: headers(null, Object.assign({ Prefer: 'return=minimal' }, extraHeaders)),
+      headers: headers(null, { Prefer: 'return=minimal' }),
       body: JSON.stringify(rows),
       keepalive: JSON.stringify(rows).length < 60000
     });
@@ -202,9 +202,9 @@
     if (!enabled) return false;
     const rows = [{ namespace: config.storageNamespace, snack_id: snackId, email, device_kind: config.kioskMode ? 'kiosk' : 'persoonlijk' }];
     try {
-      let response = await insert(TABLES.request + '?on_conflict=namespace,snack_id,email', rows, { Prefer: 'return=minimal,resolution=ignore-duplicates' });
-      // Staat 'dubbel negeren' niet toe in deze database? Dan gewoon toevoegen (dubbel = 409 = ook goed).
-      if ([400, 401, 403].includes(response.status)) response = await insert(TABLES.request, rows);
+      // Gewoon toevoegen. Hetzelfde adres voor dezelfde snack staat er al? Dan antwoordt Supabase 409: ook goed.
+      // (Dubbel negeren met on_conflict vraagt leesrecht, en dat krijgen bezoekers bewust niet.)
+      const response = await insert(TABLES.request, rows);
       if (response.ok || response.status === 409) return true;
       console.warn('[AI Snackbar] Mail-verzoek geweigerd:', response.status, await response.text());
       return false;
