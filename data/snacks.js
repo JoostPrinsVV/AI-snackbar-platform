@@ -23,9 +23,9 @@
      available    true = te kiezen, false = 'Binnenkort'.
      featured     true = label 'Specialiteit' op de kaart.
      intro        Korte introductie op de detailpagina (2-3 zinnen).
-     demo         Pad naar een HTML-demo (zie assets/demos/). Heeft voorrang op de video:
-                  scherp en scrollbaar op elk scherm. Werkt die niet, dan speelt de video.
-     video        Pad naar de MP4-video (zie assets/videos/), ook als reserve voor de demo.
+     video        Pad naar de MP4-video (zie assets/videos/). De standaard: pauzeren en spoelen.
+     demo         Optioneel: pad naar een HTML-demo (zie assets/demos/). Heeft dan voorrang op
+                  de video (scherper op telefoons); werkt die niet, dan speelt de video.
      poster       Pad naar de afbeelding vóór het afspelen (zie assets/posters/).
      captions     Pad naar een ondertitelbestand (.vtt), mag leeg blijven.
      prompt       De voorbeeldprompt om te kopiëren.
@@ -54,7 +54,6 @@ window.AISnackbar.snacks = [
     available: true,
     featured: true,
     intro: 'Copilot leest de mails van de afgelopen week en zet alle acties en deadlines in een to-do-lijst met prioriteit. Daarna verdeelt Copilot de taken over je week, rond je bestaande afspraken, en zet een focusblok in je agenda. Drie prompts, en je week staat.',
-    demo: 'assets/demos/snack-01.html',
     video: 'assets/videos/snack-01.mp4',
     poster: 'assets/posters/snack-01.jpg',
     captions: '',
