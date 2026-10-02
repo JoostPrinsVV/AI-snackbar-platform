@@ -92,8 +92,11 @@
     bindGlobalEvents(config);
     reportIssues();
 
-    ns.navigation.start(handleRoute, { resetOnLoad: config.resetOnPageReload });
-    ns.intro.showIntro();
+    // Kiosk: na herladen altijd terug naar de snackkaart. Eigen apparaat: een directe link naar een snack
+    // (bijv. 'Bekijk de demo' op de promptpagina) gaat meteen naar die snack, zonder welkomstscherm.
+    const deepLink = !config.kioskMode && /^#\/snack\//.test(window.location.hash);
+    ns.navigation.start(handleRoute, { resetOnLoad: config.resetOnPageReload && config.kioskMode });
+    if (!deepLink) ns.intro.showIntro();
 
     ns.onRuntimeError = (entry) => {
       if (state.config.debugMode) ns.ui.toast('Technische fout: ' + entry.message, { tone: 'warning', duration: 6000 });

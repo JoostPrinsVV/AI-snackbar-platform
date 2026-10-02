@@ -97,6 +97,16 @@ window.AISnackbar.texts = {
     commentThanks: 'Dank je! We nemen je opmerking of vraag mee.',
     commentEmpty: 'Typ eerst je opmerking of vraag.',
 
+    /* ---- Promptpagina (prompts/, voor de QR-codes op de kaartjes) ------ */
+    promptsDocumentTitle: 'Prompts · {title} {discipline}',
+    promptsTitle: 'Alle prompts',
+    promptsLead: 'Kies een AI-snack, kopieer de prompt en probeer het zelf.',
+    promptsBack: 'Alle prompts',
+    promptsDemo: 'Bekijk de demo',
+    promptsShare: 'Delen',
+    promptsEmpty: 'Er staan nog geen prompts klaar. Kom straks nog eens kijken!',
+    promptsNotFound: 'Deze prompt staat er niet (meer). Hier zijn alle prompts.',
+
     /* ---- Videospeler --------------------------------------------------- */
     playerRegion: 'Demovideo',
     playerPlay: 'Afspelen',
