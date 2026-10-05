@@ -314,6 +314,8 @@
           impact,
           license: normalizeLicense(item.license, `Inspiratieprompt '${id}'`, id, issues),
           didYouKnow: text(item.didYouKnow),
+          description: text(item.description),
+          usefulFor: text(item.usefulFor),
           prompt: text(item.prompt, true),
           promptNote: text(item.promptNote),
           tip: text(item.tip)

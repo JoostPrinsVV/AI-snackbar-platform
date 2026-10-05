@@ -146,8 +146,17 @@
 }
 
 .prompts-detail__meta .prompts-impact,
-.prompts-license {
+.prompts-license,
+.prompts-useful {
   font-size: var(--fs-sm);
+}
+
+.prompts-useful {
+  color: var(--color-text-muted);
+}
+
+.prompts-useful strong {
+  color: var(--color-text);
 }
 
 .prompts-license {

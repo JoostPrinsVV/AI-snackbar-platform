@@ -119,6 +119,8 @@
         number: snack.number,
         title: snack.title,
         subtitle: snack.subtitle,
+        listSubtitle: snack.subtitle,
+        usefulFor: snack.audience.join(' · '),
         eyebrow: t('cardNumber', { number: snack.number }),
         label: snack.category,
         accent: snack.accent,
@@ -134,7 +136,10 @@
       id: item.id,
       kind: 'inspiratie',
       title: item.title,
+      // Lijst: de korte omschrijving; bij de prompt zelf: de 'Wist je dat'-zin (zoals op het kaartje)
       subtitle: item.didYouKnow,
+      listSubtitle: item.description,
+      usefulFor: item.usefulFor,
       eyebrow: t('promptsInspirationEyebrow'),
       label: item.category.label,
       category: item.category,
@@ -186,7 +191,7 @@
           {},
           el('a', { className: 'prompts-item accent-' + entry.accent, attrs: { href: '#' + entry.id } }, [
             el('span', { className: 'prompts-item__number', text: entry.number }),
-            itemBody(entry, true),
+            itemBody(entry),
             icon('arrow-right')
           ])
         )
@@ -220,7 +225,7 @@
                   {},
                   el('a', { className: 'prompts-item prompts-item--inspiration', attrs: { href: '#' + entry.id } }, [
                     el('span', { className: 'prompts-item__mark' }, icon('bulb')),
-                    itemBody(entry, false),
+                    itemBody(entry),
                     icon('arrow-right')
                   ])
                 )
@@ -231,8 +236,8 @@
     );
   }
 
-  /** Titel, eventueel ondertitel, en een regel met impact en (alleen als die nodig is) 'Licentie'. */
-  function itemBody(entry, withSubtitle) {
+  /** Titel, eventueel een korte omschrijving, en een regel met impact en (alleen als die nodig is) 'Licentie'. */
+  function itemBody(entry) {
     const meta = [
       entry.impact ? el('span', { className: 'prompts-impact' }, impactNodes(entry.impact)) : null,
       entry.license
@@ -245,7 +250,7 @@
     ].filter(Boolean);
     return el('span', { className: 'prompts-item__body' }, [
       el('span', { className: 'prompts-item__title', text: entry.title }),
-      withSubtitle && entry.subtitle ? el('span', { className: 'prompts-item__subtitle', text: entry.subtitle }) : null,
+      entry.listSubtitle ? el('span', { className: 'prompts-item__subtitle', text: entry.listSubtitle }) : null,
       meta.length ? el('span', { className: 'prompts-item__meta' }, meta) : null
     ]);
   }
@@ -366,7 +371,10 @@
     refs.subtitle.hidden = !entry.subtitle;
     const meta = [
       entry.impact ? el('span', { className: 'prompts-impact' }, impactNodes(entry.impact)) : null,
-      entry.license === null ? null : licenseLine(entry.license)
+      entry.license === null ? null : licenseLine(entry.license),
+      entry.usefulFor
+        ? el('span', { className: 'prompts-useful' }, [el('strong', { text: t('promptsUsefulFor') }), ' ' + entry.usefulFor])
+        : null
     ].filter(Boolean);
     refs.meta.replaceChildren(...meta);
     refs.meta.hidden = !meta.length;

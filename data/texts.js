@@ -114,6 +114,7 @@ window.AISnackbar.texts = {
     promptsThemeLabel: 'Kies een thema',
     promptsThemeAll: 'Alle thema’s',
     promptsInspirationEyebrow: 'Inspiratie',
+    promptsUsefulFor: 'Handig bij',
     promptsImpactLabel: 'Impact',
     promptsImpactValue: '{level} van 3',   // alleen voor schermlezers, naast de stippen
     promptsPromptMissing: 'De prompt volgt.',
