@@ -64,15 +64,19 @@
         </button>
       </div>
 
+      <!-- Copilot-licentie: Alle / Met licentie / Zonder licentie (alleen als er in deze lijst iets te kiezen is) -->
+      <div class="prompts__chips prompts__license" id="pp-license" role="group" data-label="promptsLicenseLabel" hidden></div>
+
       <div id="pp-snacks">
         <ul class="prompts__list" id="pp-items" role="list"></ul>
       </div>
 
       <div id="pp-inspiration" hidden>
-        <div class="prompts__themes" id="pp-themes" role="group" data-label="promptsThemeLabel"></div>
+        <div class="prompts__chips prompts__themes" id="pp-themes" role="group" data-label="promptsThemeLabel"></div>
         <div id="pp-groups"></div>
       </div>
 
+      <p class="prompts__lead prompts__nomatch" id="pp-nomatch" hidden data-text="promptsNoMatch"></p>
       <p class="prompts__lead" id="pp-empty" hidden data-text="promptsEmpty"></p>
     </section>
 

@@ -27,6 +27,8 @@
   let categories = [];
   let kind = 'snacks';
   let theme = ALL_THEMES;
+  // Copilot-licentie: 'all', 'yes' (licentie nodig) of 'no' (kan zonder)
+  let licenseFilter = 'all';
   let current = null;
   let lastId = '';
   let copiedTimer = 0;
@@ -60,6 +62,8 @@
       list: byId('pp-list'),
       listTitle: byId('pp-list-title'),
       kinds: byId('pp-kinds'),
+      license: byId('pp-license'),
+      noMatch: byId('pp-nomatch'),
       snacks: byId('pp-snacks'),
       items: byId('pp-items'),
       inspiration: byId('pp-inspiration'),
@@ -93,6 +97,7 @@
     refs.share.addEventListener('click', sharePrompt);
     refs.kinds.addEventListener('click', onKindClick);
     refs.themes.addEventListener('click', onThemeClick);
+    refs.license.addEventListener('click', onLicenseClick);
     renderSnacks();
     renderInspiration();
     window.addEventListener('hashchange', route);
@@ -188,7 +193,7 @@
       ...lists.snacks.map((entry) =>
         el(
           'li',
-          {},
+          { dataset: { id: entry.id } },
           el('a', { className: 'prompts-item accent-' + entry.accent, attrs: { href: '#' + entry.id } }, [
             el('span', { className: 'prompts-item__number', text: entry.number }),
             itemBody(entry),
@@ -203,12 +208,10 @@
   }
 
   function renderInspiration() {
-    const total = lists.inspiratie.length;
+    // Aantallen per thema vult applyFilters() in (ze volgen het licentiefilter).
     refs.themes.replaceChildren(
-      themeButton(ALL_THEMES, t('promptsThemeAll'), total, ''),
-      ...categories.map((category) =>
-        themeButton(category.id, category.label, countIn(category), 'accent-' + category.accent)
-      )
+      chip({ category: ALL_THEMES }, t('promptsThemeAll'), theme === ALL_THEMES),
+      ...categories.map((category) => chip({ category: category.id }, category.label, theme === category.id, 'accent-' + category.accent))
     );
     refs.groups.replaceChildren(
       ...categories.map((category) =>
@@ -222,7 +225,7 @@
               .map((entry) =>
                 el(
                   'li',
-                  {},
+                  { dataset: { id: entry.id } },
                   el('a', { className: 'prompts-item prompts-item--inspiration', attrs: { href: '#' + entry.id } }, [
                     el('span', { className: 'prompts-item__mark' }, icon('bulb')),
                     itemBody(entry),
@@ -273,20 +276,77 @@
     ];
   }
 
-  function themeButton(id, label, count, accentClass) {
+  /** Filterknop (thema of licentie) met aantal; het aantal kan applyFilters() later bijwerken. */
+  function chip(dataset, label, pressed, extraClass, iconName, count) {
     return el(
       'button',
       {
-        className: ('prompts__theme ' + accentClass).trim(),
-        attrs: { type: 'button', 'aria-pressed': String(id === theme) },
-        dataset: { category: id }
+        className: ('prompts__chip ' + (extraClass || '')).trim(),
+        attrs: { type: 'button', 'aria-pressed': String(pressed) },
+        dataset
       },
-      [el('span', { text: label }), el('span', { className: 'prompts__count', text: String(count) })]
+      [
+        iconName ? icon(iconName) : null,
+        el('span', { text: label }),
+        el('span', { className: 'prompts__count', text: count === undefined ? '' : String(count) })
+      ]
     );
   }
 
-  function countIn(category) {
-    return lists.inspiratie.filter((entry) => entry.category === category).length;
+  /* ---- Filter: Copilot-licentie ------------------------------------------- */
+  /** Alleen tonen als er in deze lijst echt iets te kiezen is (zowel met als zonder licentie). */
+  function renderLicenseFilter() {
+    const list = lists[kind];
+    const yes = list.filter((entry) => entry.license === true).length;
+    const no = list.filter((entry) => entry.license === false).length;
+    refs.license.hidden = !yes || !no;
+    refs.license.replaceChildren(
+      chip({ license: 'all' }, t('promptsLicenseAll'), licenseFilter === 'all', '', '', list.length),
+      chip({ license: 'yes' }, t('promptsLicenseYes'), licenseFilter === 'yes', '', 'key', yes),
+      chip({ license: 'no' }, t('promptsLicenseNo'), licenseFilter === 'no', '', 'check', no)
+    );
+  }
+
+  function onLicenseClick(event) {
+    const button = event.target.closest('button[data-license]');
+    if (!button || button.dataset.license === licenseFilter) return;
+    licenseFilter = button.dataset.license;
+    renderLicenseFilter();
+    applyFilters();
+    refs.license.querySelector(`button[data-license="${licenseFilter}"]`).focus({ preventScroll: true });
+  }
+
+  function matchesLicense(entry) {
+    if (refs.license.hidden || licenseFilter === 'all') return true;
+    return entry.license === (licenseFilter === 'yes');
+  }
+
+  /** Licentie én thema toepassen: items, groepen, aantallen per thema en 'geen resultaten'. */
+  function applyFilters() {
+    let shown = 0;
+    const showItems = (container) => {
+      let count = 0;
+      container.querySelectorAll('li[data-id]').forEach((item) => {
+        item.hidden = !matchesLicense(entries.get(item.dataset.id));
+        if (!item.hidden) count += 1;
+      });
+      return count;
+    };
+    if (kind === 'snacks') {
+      shown = showItems(refs.items);
+    } else {
+      refs.themes.querySelectorAll('button[data-category]').forEach((button) => {
+        const id = button.dataset.category;
+        const count = lists.inspiratie.filter((entry) => matchesLicense(entry) && (id === ALL_THEMES || entry.category.id === id)).length;
+        button.querySelector('.prompts__count').textContent = String(count);
+      });
+      refs.groups.querySelectorAll('.prompts-group').forEach((group) => {
+        const count = showItems(group);
+        group.hidden = !count || (theme !== ALL_THEMES && group.dataset.category !== theme);
+        if (!group.hidden) shown += count;
+      });
+    }
+    refs.noMatch.hidden = shown > 0 || !lists[kind].length;
   }
 
   function onKindClick(event) {
@@ -309,6 +369,8 @@
     refs.snacks.hidden = kind !== 'snacks';
     refs.inspiration.hidden = kind !== 'inspiratie';
     refs.empty.hidden = lists.snacks.length + lists.inspiratie.length > 0;
+    renderLicenseFilter();
+    applyFilters();
   }
 
   function setTheme(value) {
@@ -318,14 +380,12 @@
       button.setAttribute('aria-pressed', String(pressed));
       if (pressed) revealInRow(button);
     });
-    refs.groups.querySelectorAll('.prompts-group').forEach((group) => {
-      group.hidden = theme !== ALL_THEMES && group.dataset.category !== theme;
-    });
+    applyFilters();
   }
 
   /** Telefoon: de gekozen themaknop in de veegbare rij in beeld houden (alleen opzij, niet de pagina). */
   function revealInRow(button) {
-    const row = refs.themes;
+    const row = button.parentElement;
     const rowBox = row.getBoundingClientRect();
     const box = button.getBoundingClientRect();
     if (box.left >= rowBox.left && box.right <= rowBox.right) return;
@@ -339,7 +399,14 @@
     setKind(value);
     // Terug van een prompt: die prompt moet in de lijst te zien zijn.
     const origin = entries.get(lastId);
-    if (origin && origin.category && theme !== ALL_THEMES && theme !== origin.category.id) setTheme(ALL_THEMES);
+    if (origin && origin.kind === kind) {
+      if (origin.category && theme !== ALL_THEMES && theme !== origin.category.id) setTheme(ALL_THEMES);
+      if (!matchesLicense(origin)) {
+        licenseFilter = 'all';
+        renderLicenseFilter();
+        applyFilters();
+      }
+    }
     refs.detail.hidden = true;
     refs.list.hidden = false;
     document.title = t('promptsDocumentTitle').replace(/\s+/g, ' ').trim();

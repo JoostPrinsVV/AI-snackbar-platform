@@ -180,7 +180,7 @@
   }
 
   .prompts__kind[aria-pressed='false']:hover,
-  .prompts__theme[aria-pressed='false']:hover {
+  .prompts__chip[aria-pressed='false']:hover {
     background: var(--color-surface-muted);
   }
 }
@@ -219,7 +219,7 @@
 }
 
 .prompts__kind[aria-pressed='true'],
-.prompts__theme[aria-pressed='true'] {
+.prompts__chip[aria-pressed='true'] {
   border-color: var(--color-selected);
   background: var(--color-selected);
   color: var(--color-on-selected);
@@ -240,8 +240,8 @@
   background: var(--color-surface);
 }
 
-/* ---- Thema's: op een telefoon één rij om opzij te vegen ----------------- */
-.prompts__themes {
+/* ---- Filterrijen (licentie, thema's): op een telefoon één rij om opzij te vegen */
+.prompts__chips {
   display: flex;
   gap: var(--space-2);
   margin: var(--space-5) calc(-1 * var(--gutter)) 0;
@@ -250,11 +250,16 @@
   scrollbar-width: none;
 }
 
-.prompts__themes::-webkit-scrollbar {
+.prompts__chips::-webkit-scrollbar {
   display: none;
 }
 
-.prompts__theme {
+/* Licentie én thema's in beeld: de tweede rij iets dichter tegen de eerste */
+.prompts__license:not([hidden]) ~ #pp-inspiration .prompts__themes {
+  margin-top: var(--space-3);
+}
+
+.prompts__chip {
   flex: none;
   display: inline-flex;
   align-items: center;
@@ -270,8 +275,18 @@
   white-space: nowrap;
 }
 
+.prompts__chip > .icon {
+  width: 1.05em;
+  height: 1.05em;
+}
+
+/* Lege aantallen (nog niet ingevuld) niet als leeg bolletje tonen */
+.prompts__count:empty {
+  display: none;
+}
+
 /* Kleurstip per thema (de naam staat er altijd bij) */
-.prompts__theme[class*='accent-']::before,
+.prompts__chip[class*='accent-']::before,
 .prompts-group__title::before {
   content: '';
   flex: none;
@@ -281,7 +296,7 @@
   background: var(--accent);
 }
 
-.prompts__theme[aria-pressed='true']::before {
+.prompts__chip[aria-pressed='true']::before {
   box-shadow: 0 0 0 2px var(--color-surface);
 }
 
@@ -302,8 +317,12 @@
   margin-top: var(--space-3);
 }
 
+.prompts__nomatch {
+  margin-top: var(--space-6);
+}
+
 @media (min-width: 600px) {
-  .prompts__themes {
+  .prompts__chips {
     flex-wrap: wrap;
     margin-inline: 0;
     padding-inline: 0;
@@ -360,6 +379,20 @@
 }
 
 @media (max-width: 599px) {
+  /* Licentiefilter: alle drie de knoppen in één keer in beeld (de aantallen staan ook bij de thema's) */
+  .prompts__license {
+    gap: 0.4rem;
+  }
+
+  .prompts__license .prompts__chip {
+    gap: 0.4rem;
+    padding-inline: 0.6rem;
+  }
+
+  .prompts__license .prompts__count {
+    display: none;
+  }
+
   .prompts-item {
     gap: var(--space-3);
     padding: var(--space-3) var(--space-4);
