@@ -91,6 +91,19 @@
       <p class="prompts-detail__subtitle" id="pp-subtitle"></p>
       <p class="prompts-detail__meta" id="pp-meta" hidden></p>
 
+      <!-- Alleen bij een prompt die ook zonder licentie kan (promptBasic in data/inspiration.js) -->
+      <div class="prompts-variant" id="pp-variant" role="group" data-label="promptsVariantLabel" hidden>
+        <button class="prompts-variant__option" type="button" data-variant="licensed" aria-pressed="true">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-key"></use></svg>
+          <span data-text="promptsVariantLicensed">Met licentie</span>
+        </button>
+        <button class="prompts-variant__option" type="button" data-variant="basic" aria-pressed="false">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"></use></svg>
+          <span data-text="promptsVariantBasic">Zonder licentie</span>
+        </button>
+      </div>
+      <p class="prompts-variant__hint" id="pp-variant-hint" aria-live="polite" hidden></p>
+
       <div class="takeaway prompts-detail__card">
         <div class="prompt-box">
           <div class="prompt-box__head">

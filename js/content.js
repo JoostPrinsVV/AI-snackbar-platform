@@ -268,6 +268,8 @@
   /* ---- Inspiratieprompts (data/inspiration.js, alleen de promptpagina) ------- */
   // Deze woorden zijn adressen van de lijsten op de promptpagina (prompts/#inspiratie).
   const RESERVED_IDS = ['snacks', 'inspiratie'];
+  // 'Mail mij' bij de versie zonder licentie: id + dit achtervoegsel (het dashboard zoekt de juiste tekst erbij).
+  const BASIC_SUFFIX = '-zonder-licentie';
 
   function normalizeInspiration(raw, takenIds) {
     const issues = [];
@@ -282,7 +284,7 @@
     raw.forEach((item, index) => {
       const position = index + 1;
       const id = item && typeof item.id === 'string' ? item.id.trim() : '';
-      if (!ID_PATTERN.test(id) || RESERVED_IDS.includes(id)) {
+      if (!ID_PATTERN.test(id) || RESERVED_IDS.includes(id) || id.endsWith(BASIC_SUFFIX)) {
         issues.push(issue('error', `Inspiratieprompt op positie ${position} heeft geen geldige id; overgeslagen.`));
         return;
       }
@@ -306,18 +308,26 @@
       if (item.impact !== undefined && item.impact !== '' && !impact) {
         issues.push(issue('warning', `Inspiratieprompt '${id}': impact moet 1, 2 of 3 zijn; niet getoond.`, id));
       }
+      const license = normalizeLicense(item.license, `Inspiratieprompt '${id}'`, id, issues);
+      // Een versie zonder licentie heeft alleen zin naast een prompt mét licentie.
+      const promptBasic = license === true ? text(item.promptBasic, true) : '';
+      if (text(item.promptBasic) && license !== true) {
+        issues.push(issue('warning', `Inspiratieprompt '${id}': promptBasic hoort bij license: true; niet getoond.`, id));
+      }
       prompts.push(
         Object.freeze({
           id,
           title,
           category,
           impact,
-          license: normalizeLicense(item.license, `Inspiratieprompt '${id}'`, id, issues),
+          license,
           didYouKnow: text(item.didYouKnow),
           description: text(item.description),
           usefulFor: text(item.usefulFor),
           prompt: text(item.prompt, true),
           promptNote: text(item.promptNote),
+          promptBasic,
+          promptNoteBasic: promptBasic ? text(item.promptNoteBasic) : '',
           tip: text(item.tip)
         })
       );
@@ -387,6 +397,7 @@
   }
 
   ns.content = {
+    BASIC_SUFFIX,
     normalizeConfig,
     normalizeSnacks,
     normalizeInspiration

@@ -29,6 +29,9 @@
   let theme = ALL_THEMES;
   // Copilot-licentie: 'all', 'yes' (licentie nodig) of 'no' (kan zonder)
   let licenseFilter = 'all';
+  // Bij een prompt met schakelaar: 'licensed' of 'basic'. Blijft staan voor de volgende prompt.
+  let variant = 'licensed';
+  let currentText = '';
   let current = null;
   let lastId = '';
   let copiedTimer = 0;
@@ -77,6 +80,8 @@
       title: byId('pp-title'),
       subtitle: byId('pp-subtitle'),
       meta: byId('pp-meta'),
+      variant: byId('pp-variant'),
+      variantHint: byId('pp-variant-hint'),
       prompt: byId('pp-prompt'),
       note: byId('pp-note'),
       copy: byId('pp-copy'),
@@ -98,6 +103,7 @@
     refs.kinds.addEventListener('click', onKindClick);
     refs.themes.addEventListener('click', onThemeClick);
     refs.license.addEventListener('click', onLicenseClick);
+    refs.variant.addEventListener('click', onVariantClick);
     renderSnacks();
     renderInspiration();
     window.addEventListener('hashchange', route);
@@ -133,6 +139,8 @@
         license: snack.license,
         prompt: snack.prompt,
         promptNote: snack.promptNote,
+        promptBasic: '',
+        promptNoteBasic: '',
         tip: snack.tip,
         // Naar de snackbar, direct bij deze snack (alleen als er een demo is)
         demoHref: snack.video || snack.demo ? appHref() + '#/snack/' + encodeURIComponent(snack.id) : ''
@@ -153,6 +161,8 @@
       license: item.license,
       prompt: item.prompt,
       promptNote: item.promptNote,
+      promptBasic: item.promptBasic,
+      promptNoteBasic: item.promptNoteBasic,
       tip: item.tip,
       demoHref: ''
     }));
@@ -239,11 +249,24 @@
     );
   }
 
+  /**
+   * Licentie nodig = alleen een versie met licentie (badge 'Licentie').
+   * Zonder licentie = kan zonder, of heeft een versie zonder licentie (schakelaar bij de prompt).
+   * Onbekend (geen license ingevuld) valt onder geen van beide.
+   */
+  function needsLicense(entry) {
+    return entry.license === true && !entry.promptBasic;
+  }
+
+  function worksWithoutLicense(entry) {
+    return entry.license === false || Boolean(entry.promptBasic);
+  }
+
   /** Titel, eventueel een korte omschrijving, en een regel met impact en (alleen als die nodig is) 'Licentie'. */
   function itemBody(entry) {
     const meta = [
       entry.impact ? el('span', { className: 'prompts-impact' }, impactNodes(entry.impact)) : null,
-      entry.license
+      needsLicense(entry)
         ? el('span', { className: 'badge badge--license' }, [
             icon('key'),
             t('cardLicense'),
@@ -294,11 +317,11 @@
   }
 
   /* ---- Filter: Copilot-licentie ------------------------------------------- */
-  /** Alleen tonen als er in deze lijst echt iets te kiezen is (zowel met als zonder licentie). */
+  /** Alleen tonen als er in deze lijst echt iets te kiezen is (zowel 'licentie nodig' als 'zonder licentie'). */
   function renderLicenseFilter() {
     const list = lists[kind];
-    const yes = list.filter((entry) => entry.license === true).length;
-    const no = list.filter((entry) => entry.license === false).length;
+    const yes = list.filter(needsLicense).length;
+    const no = list.filter(worksWithoutLicense).length;
     refs.license.hidden = !yes || !no;
     refs.license.replaceChildren(
       chip({ license: 'all' }, t('promptsLicenseAll'), licenseFilter === 'all', '', '', list.length),
@@ -311,6 +334,8 @@
     const button = event.target.closest('button[data-license]');
     if (!button || button.dataset.license === licenseFilter) return;
     licenseFilter = button.dataset.license;
+    // Wie op 'Zonder licentie' filtert, krijgt bij een prompt met schakelaar ook meteen die versie.
+    if (licenseFilter === 'no') variant = 'basic';
     renderLicenseFilter();
     applyFilters();
     refs.license.querySelector(`button[data-license="${licenseFilter}"]`).focus({ preventScroll: true });
@@ -318,7 +343,7 @@
 
   function matchesLicense(entry) {
     if (refs.license.hidden || licenseFilter === 'all') return true;
-    return entry.license === (licenseFilter === 'yes');
+    return licenseFilter === 'yes' ? needsLicense(entry) : worksWithoutLicense(entry);
   }
 
   /** Licentie én thema toepassen: items, groepen, aantallen per thema en 'geen resultaten'. */
@@ -436,9 +461,11 @@
     refs.title.textContent = entry.title;
     refs.subtitle.textContent = entry.subtitle;
     refs.subtitle.hidden = !entry.subtitle;
+    const hasVariants = Boolean(entry.promptBasic);
     const meta = [
       entry.impact ? el('span', { className: 'prompts-impact' }, impactNodes(entry.impact)) : null,
-      entry.license === null ? null : licenseLine(entry.license),
+      // Met schakelaar zegt de schakelaar het al.
+      entry.license === null || hasVariants ? null : licenseLine(entry.license),
       entry.usefulFor
         ? el('span', { className: 'prompts-useful' }, [el('strong', { text: t('promptsUsefulFor') }), ' ' + entry.usefulFor])
         : null
@@ -446,16 +473,11 @@
     refs.meta.replaceChildren(...meta);
     refs.meta.hidden = !meta.length;
 
-    const hasPrompt = Boolean(entry.prompt);
-    refs.prompt.textContent = hasPrompt ? entry.prompt : t('promptsPromptMissing');
-    refs.prompt.classList.toggle('is-placeholder', !hasPrompt);
-    refs.note.textContent = entry.promptNote;
-    refs.note.hidden = !entry.promptNote;
-    refs.copy.hidden = !hasPrompt;
-    refs.share.hidden = !hasPrompt || typeof navigator.share !== 'function';
+    refs.variant.hidden = !hasVariants;
+    refs.variantHint.hidden = !hasVariants;
+    renderPrompt(entry);
     refs.tip.textContent = entry.tip;
     refs.tipBlock.hidden = !entry.tip;
-    ns.promptMail.mount(entry);
     refs.demo.href = entry.demoHref || '../';
     refs.demo.hidden = !entry.demoHref;
 
@@ -467,13 +489,41 @@
     if (!firstRoute) refs.title.focus({ preventScroll: true });
   }
 
+  /** De prompt in beeld: met of zonder licentie (alleen bij een prompt met schakelaar). */
+  function renderPrompt(entry) {
+    const basic = Boolean(entry.promptBasic) && variant === 'basic';
+    currentText = basic ? entry.promptBasic : entry.prompt;
+    const note = basic ? entry.promptNoteBasic || entry.promptNote : entry.promptNote;
+    resetCopyButton();
+    refs.variant.querySelectorAll('button[data-variant]').forEach((button) => {
+      button.setAttribute('aria-pressed', String((button.dataset.variant === 'basic') === basic));
+    });
+    refs.variantHint.textContent = t(basic ? 'promptsVariantHintBasic' : 'promptsVariantHintLicensed');
+
+    refs.prompt.textContent = currentText || t('promptsPromptMissing');
+    refs.prompt.classList.toggle('is-placeholder', !currentText);
+    refs.note.textContent = note;
+    refs.note.hidden = !note;
+    refs.copy.hidden = !currentText;
+    refs.share.hidden = !currentText || typeof navigator.share !== 'function';
+    // 'Mail mij' bij de versie zonder licentie: eigen id, zodat het dashboard die tekst mailt.
+    ns.promptMail.mount({ id: basic ? entry.id + ns.content.BASIC_SUFFIX : entry.id, prompt: currentText });
+  }
+
+  function onVariantClick(event) {
+    const button = event.target.closest('button[data-variant]');
+    if (!button || !current || button.getAttribute('aria-pressed') === 'true') return;
+    variant = button.dataset.variant;
+    renderPrompt(current);
+  }
+
   /* ---- Kopiëren en delen ---------------------------------------------------- */
   async function copyPrompt() {
-    if (!current || !current.prompt) return;
+    if (!current || !currentText) return;
     let copied = false;
     try {
       if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(current.prompt);
+        await navigator.clipboard.writeText(currentText);
         copied = true;
       }
     } catch (error) {
@@ -511,7 +561,7 @@
   async function sharePrompt() {
     if (!current || typeof navigator.share !== 'function') return;
     try {
-      await navigator.share({ title: current.title, text: current.prompt, url: window.location.href });
+      await navigator.share({ title: current.title, text: currentText, url: window.location.href });
     } catch (error) {
       // Geannuleerd: niets aan de hand.
     }

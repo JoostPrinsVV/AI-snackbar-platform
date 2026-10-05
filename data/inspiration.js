@@ -5,7 +5,8 @@
    QR-codes op de kaartjes. Ze staan níet op de snackkaart van de tablet.
 
    Stand 5 oktober 2026: nr. 1-25 uit de lijst van de organisatie (beoordeeld
-   en waar nodig aangescherpt), nr. 26-30 aanvullende voorstellen.
+   en waar nodig aangescherpt), nr. 26-30 aanvullende voorstellen. 17 prompts
+   met licentie hebben ook een versie zonder licentie (promptBasic).
 
    Zo werkt het:
    - Iedere prompt staat tussen { en }, gescheiden door een komma.
@@ -31,10 +32,15 @@
      promptNote   Korte toelichting onder de prompt: waar gebruik je hem?
      tip          Praktische tip.
      impact       1, 2 of 3: getoond als stippen met het woord 'Impact'.
-     license      true = Microsoft 365 Copilot-licentie nodig (Copilot gebruikt je
-                  eigen mail, Teams, agenda of bestanden): badge 'Licentie'.
-                  false = kan ook met de gratis Copilot Chat (tekst plakken of
-                  bestand toevoegen). Weglaten = niets tonen.
+     license      true = de prompt gebruikt een Microsoft 365 Copilot-licentie (Copilot
+                  haalt zelf je mail, Teams, agenda of bestanden op).
+                  false = kan met de gratis Copilot Chat (tekst plakken of bestand
+                  toevoegen). Weglaten = niets tonen.
+     promptBasic  Optioneel, alleen bij license: true: dezelfde prompt zonder licentie
+                  (je plakt de tekst zelf of voegt het bestand toe). Dan staat bij de
+                  prompt een schakelaar 'Met licentie / Zonder licentie'. Zonder
+                  promptBasic krijgt de prompt de badge 'Licentie' (licentie nodig).
+     promptNoteBasic  Toelichting bij de versie zonder licentie.
    ========================================================================== */
 
 window.AISnackbar = window.AISnackbar || {};
@@ -165,6 +171,25 @@ Sluit af met een samenvatting van maximaal vijf zinnen waarin je de actuele stat
 
 Baseer je uitsluitend op deze e-mailthread. Voeg geen informatie uit andere e-mails of documenten toe.`,
     promptNote: 'Gebruik in Copilot Chat (tabblad Werk) of in Outlook met de mailwisseling geopend.',
+    promptBasic: `Analyseer de e-mailwisseling die ik hieronder plak.
+
+Geef uitsluitend:
+1. Aanleiding van de correspondentie
+2. Belangrijkste feiten
+3. Standpunten of vragen per betrokken partij
+4. Gemaakte afspraken
+5. Toegezegde documenten
+6. Openstaande acties met verantwoordelijke
+7. Genoemde deadlines
+8. Punten waarover nog onduidelijkheid bestaat
+
+Sluit af met een samenvatting van maximaal vijf zinnen waarin je de actuele status van de e-mailwisseling beschrijft.
+
+Baseer je uitsluitend op deze e-mailwisseling. Voeg geen andere informatie toe.
+
+E-mailwisseling:
+[PLAK HIER DE VOLLEDIGE E-MAILWISSELING]`,
+    promptNoteBasic: 'Werkt met de gratis Copilot Chat: kopieer de mailwisseling uit Outlook en plak die onderaan de prompt.',
     tip: ''
   },
   {
@@ -198,6 +223,31 @@ Aanvullende informatie voor het antwoord:
 
 Markeer ontbrekende informatie met [AANVULLEN] in plaats van deze zelf in te vullen.`,
     promptNote: 'Gebruik in Copilot Chat (tabblad Werk) of in Outlook met de e-mail geopend. Lees het concept altijd na voordat je het verstuurt.',
+    promptBasic: `Analyseer de klantmail die ik hieronder plak.
+
+Voer de opdracht in twee stappen uit.
+
+Stap 1:
+Maak een genummerde lijst van iedere afzonderlijke:
+- vraag;
+- verzoek;
+- deadline;
+- toezegging;
+- bijlage waarnaar wordt verwezen.
+
+Stap 2:
+Schrijf een professioneel conceptantwoord waarin ieder punt in dezelfde volgorde wordt behandeld.
+
+Gebruik een vriendelijke en zakelijke toon. Houd het antwoord beknopt, maar volledig. Voeg geen feiten, toezeggingen of deadlines toe die niet uit de e-mail of mijn onderstaande instructies blijken.
+
+Aanvullende informatie voor het antwoord:
+[VOEG HIER EVENTUELE INFORMATIE TOE]
+
+Markeer ontbrekende informatie met [AANVULLEN] in plaats van deze zelf in te vullen.
+
+E-mail:
+[PLAK HIER DE E-MAIL]`,
+    promptNoteBasic: 'Werkt met de gratis Copilot Chat: plak de e-mail onderaan de prompt. Lees het concept altijd na voordat je het verstuurt.',
     tip: ''
   },
   {
@@ -297,6 +347,28 @@ Maak daarnaast afzonderlijke lijsten van:
 
 Als verantwoordelijke, deadline of status niet duidelijk is, vermeld dan "Niet benoemd". Leid deze informatie niet zelf af.`,
     promptNote: 'Gebruik in Copilot Chat (tabblad Werk) of in Teams, in de chat zelf.',
+    promptBasic: `Analyseer de berichten uit een Teams-chat die ik hieronder plak.
+
+Maak een actielijst met:
+1. Actie
+2. Verantwoordelijke
+3. Deadline
+4. Huidige status
+5. Datum waarop de actie is genoemd
+6. Korte verwijzing naar het relevante bericht
+
+Neem alleen acties op die expliciet zijn gevraagd, toegewezen of toegezegd.
+
+Maak daarnaast afzonderlijke lijsten van:
+- genomen besluiten;
+- openstaande vragen;
+- onderwerpen die nog moeten worden besproken.
+
+Als verantwoordelijke, deadline of status niet duidelijk is, vermeld dan "Niet benoemd". Leid deze informatie niet zelf af.
+
+Chatberichten:
+[PLAK HIER DE BERICHTEN UIT DE CHAT]`,
+    promptNoteBasic: 'Werkt met de gratis Copilot Chat: selecteer de berichten in Teams, kopieer ze en plak ze onderaan de prompt.',
     tip: ''
   },
   {
@@ -328,6 +400,24 @@ Maak duidelijk of informatie afkomstig is uit de transcriptie, vergaderchat of n
 
 Presenteer een voorstel of discussiepunt niet als besluit. Vermeld "Niet benoemd" wanneer een verantwoordelijke of deadline ontbreekt.`,
     promptNote: 'Werkt alleen als de vergadering is opgenomen of getranscribeerd. Ook te gebruiken in Teams, bij de vergadering zelf.',
+    promptBasic: `Maak een samenvatting van de vergadering "[NAAM VERGADERING]" op [DATUM].
+
+Gebruik uitsluitend de transcriptie of notities die ik toevoeg.
+
+Structureer de uitkomst als volgt:
+1. Doel van de vergadering
+2. Belangrijkste besproken onderwerpen
+3. Definitief genomen besluiten
+4. Actiepunten met verantwoordelijke en deadline
+5. Openstaande vragen
+6. Verschillen van inzicht
+7. Afgesproken vervolg
+
+Presenteer een voorstel of discussiepunt niet als besluit. Vermeld "Niet benoemd" wanneer een verantwoordelijke of deadline ontbreekt.
+
+Transcriptie of notities:
+[PLAK HIER DE TEKST, OF VOEG HET BESTAND TOE]`,
+    promptNoteBasic: 'Werkt met de gratis Copilot Chat: download de transcriptie uit Teams en voeg die toe, of plak je eigen notities.',
     tip: ''
   },
   {
@@ -360,6 +450,28 @@ Geef:
 
 Vermeld bij ieder feit de gebruikte bron. Maak onderscheid tussen bevestigde informatie en jouw suggesties voor gesprekspunten.`,
     promptNote: 'Gebruik in Microsoft 365 Copilot Chat (tabblad Werk), bijvoorbeeld een dag voor de afspraak.',
+    promptBasic: `Bereid mij voor op mijn afspraak met [KLANTNAAM] op [DATUM] over [ONDERWERP].
+
+Gebruik uitsluitend de informatie die ik hieronder toevoeg:
+- recente e-mails met [KLANTNAAM];
+- notities van eerdere gesprekken;
+- relevante documenten (als bijlage).
+
+Geef:
+1. Doel van de afspraak
+2. Belangrijkste ontwikkelingen sinds het vorige overleg
+3. Eerder gemaakte afspraken
+4. Openstaande acties voor ons
+5. Openstaande acties voor de klant
+6. Mogelijke knelpunten of onduidelijkheden
+7. Vijf concrete vragen die ik tijdens de afspraak kan stellen
+8. Een voorgestelde agenda voor het gesprek
+
+Vermeld bij ieder feit de gebruikte bron. Maak onderscheid tussen bevestigde informatie en jouw suggesties voor gesprekspunten.
+
+Informatie:
+[PLAK HIER DE E-MAILS EN NOTITIES]`,
+    promptNoteBasic: 'Werkt met de gratis Copilot Chat: plak de laatste mails en je notities, of voeg ze toe als bestand.',
     tip: ''
   },
   {
@@ -388,6 +500,25 @@ Maak een agenda voor maximaal [DUUR] minuten, als tabel met:
 
 Neem alleen onderwerpen op die uit de beschikbare informatie volgen. Plaats openstaande acties en beslispunten vooraan.`,
     promptNote: 'Gebruik in Microsoft 365 Copilot Chat (tabblad Werk). Deel de agenda daarna met de deelnemers.',
+    promptBasic: `Stel een agenda op voor de vergadering "[NAAM VERGADERING]" met [KLANT OF DEELNEMERS] op [DATUM].
+
+Gebruik uitsluitend de informatie die ik hieronder toevoeg:
+- relevante e-mails;
+- openstaande acties uit de vorige vergadering;
+- documenten die voor deze vergadering zijn gedeeld (als bijlage).
+
+Maak een agenda voor maximaal [DUUR] minuten, als tabel met:
+1. Onderwerp
+2. Doel van het agendapunt
+3. Benodigde voorbereiding
+4. Gewenste beslissing of uitkomst
+5. Beschikbare tijd
+
+Neem alleen onderwerpen op die uit de informatie volgen. Plaats openstaande acties en beslispunten vooraan.
+
+Informatie:
+[PLAK HIER DE E-MAILS EN ACTIEPUNTEN]`,
+    promptNoteBasic: 'Werkt met de gratis Copilot Chat: plak de mails en actiepunten onderaan de prompt.',
     tip: ''
   },
   {
@@ -418,6 +549,25 @@ Gebruik voor de actielijst een tabel met:
 
 Verwijder herhalingen, stopwoorden en technische transcriptiefouten. Verander de inhoudelijke betekenis niet. Neem uitsluitend informatie op die uit de transcriptie blijkt.`,
     promptNote: 'Werkt alleen als de vergadering is getranscribeerd. Controleer namen en besluiten voordat je de notulen deelt.',
+    promptBasic: `Zet de bijgevoegde transcriptie van de vergadering "[NAAM VERGADERING]" op [DATUM] om in professionele notulen.
+
+Gebruik de volgende structuur:
+1. Datum en onderwerp
+2. Doel van de vergadering
+3. Besproken onderwerpen in logische volgorde
+4. Besluiten
+5. Actiepunten
+6. Openstaande vragen
+7. Vervolgafspraak
+
+Gebruik voor de actielijst een tabel met:
+- Actie
+- Verantwoordelijke
+- Deadline
+- Bronpassage of tijdstip
+
+Verwijder herhalingen, stopwoorden en technische transcriptiefouten. Verander de inhoudelijke betekenis niet. Neem uitsluitend informatie op die uit de transcriptie blijkt.`,
+    promptNoteBasic: 'Werkt met de gratis Copilot Chat: download de transcriptie uit Teams en voeg die toe met de paperclip.',
     tip: ''
   },
 
@@ -519,6 +669,34 @@ Maak een tabel met:
 
 Presenteer dit als mogelijke gespreksonderwerpen, niet als vastgestelde commerciële kansen. Neem alleen signalen op die aantoonbaar uit de bronnen volgen.`,
     promptNote: 'Gebruik in Microsoft 365 Copilot Chat (tabblad Werk). Let bij controleklanten op de onafhankelijkheidsregels voordat je aanvullend advies bespreekt.',
+    promptBasic: `Analyseer de e-mails en gespreksnotities over [KLANTNAAM] die ik hieronder plak.
+
+Zoek naar expliciete signalen over:
+- groei of krimp;
+- financieringsbehoefte;
+- liquiditeitsproblemen;
+- personeelsgroei;
+- investeringsplannen;
+- bedrijfsopvolging;
+- internationalisering;
+- automatisering;
+- veranderende rapportagebehoeften;
+- fiscale of juridische vraagstukken;
+- behoefte aan tussentijdse stuurinformatie.
+
+Maak een tabel met:
+1. Signaal
+2. Letterlijke of zakelijke bronverwijzing
+3. Datum
+4. Mogelijke adviesvraag
+5. Aanbevolen vervolgvraag aan de klant
+6. Betrokken discipline
+
+Presenteer dit als mogelijke gespreksonderwerpen, niet als vastgestelde commerciÃ«le kansen. Neem alleen signalen op die aantoonbaar uit de tekst volgen.
+
+E-mails en notities:
+[PLAK HIER DE TEKST]`,
+    promptNoteBasic: 'Werkt met de gratis Copilot Chat: plak de mails en notities onderaan. Let bij controleklanten op de onafhankelijkheidsregels.',
     tip: ''
   },
   {
@@ -571,7 +749,23 @@ Maak een eerste verkenning met:
 10. Relevante pagina- of paragraafverwijzingen
 
 Gebruik uitsluitend dit bestand. Maak onderscheid tussen letterlijke documentinhoud en jouw interpretatie. Vermeld expliciet wanneer informatie niet in het document staat.`,
-    promptNote: 'Typ / in Copilot Chat (tabblad Werk) en kies het bestand. Zonder licentie: voeg het bestand toe met de paperclip.',
+    promptNote: 'Typ / in Copilot Chat (tabblad Werk) en kies het bestand.',
+    promptBasic: `Analyseer het bijgevoegde bestand [BESTANDSNAAM].
+
+Maak een eerste verkenning met:
+1. Doel en type document
+2. Periode waarop het document betrekking heeft
+3. Managementsamenvatting van maximaal 150 woorden
+4. Belangrijkste bedragen
+5. Belangrijkste data en deadlines
+6. Verplichtingen per betrokken partij
+7. Genoemde risicoâ€™s en onzekerheden
+8. Onderdelen die financiÃ«le verwerking kunnen beÃ¯nvloeden
+9. Vijf vragen voor nadere beoordeling
+10. Relevante pagina- of paragraafverwijzingen
+
+Gebruik uitsluitend dit bestand. Maak onderscheid tussen letterlijke documentinhoud en jouw interpretatie. Vermeld expliciet wanneer informatie niet in het document staat.`,
+    promptNoteBasic: 'Werkt met de gratis Copilot Chat: voeg het bestand toe met de paperclip.',
     tip: ''
   },
   {
@@ -605,7 +799,30 @@ Presenteer de uitkomst in een tabel met:
 6. Pagina of paragraaf in beide bestanden
 
 Negeer wijzigingen die alleen opmaak, spelling of witruimte betreffen. Geef aan wanneer de mogelijke betekenis nader door een medewerker moet worden beoordeeld.`,
-    promptNote: 'Typ / in Copilot Chat (tabblad Werk) en kies beide bestanden. Zonder licentie: voeg ze toe met de paperclip.',
+    promptNote: 'Typ / in Copilot Chat (tabblad Werk) en kies beide bestanden.',
+    promptBasic: `Vergelijk de twee bijgevoegde bestanden: [CONCEPTBESTAND] (concept) en [DEFINITIEF BESTAND] (definitief).
+
+Identificeer alle inhoudelijk relevante wijzigingen in:
+- bedragen;
+- percentages;
+- data;
+- contractvoorwaarden;
+- verantwoordelijkheden;
+- conclusies;
+- risicoâ€™s;
+- toelichtingen;
+- opgenomen of verwijderde paragrafen.
+
+Presenteer de uitkomst in een tabel met:
+1. Onderwerp
+2. Tekst of informatie in de conceptversie
+3. Tekst of informatie in de definitieve versie
+4. Type wijziging
+5. Mogelijke betekenis van de wijziging
+6. Pagina of paragraaf in beide bestanden
+
+Negeer wijzigingen die alleen opmaak, spelling of witruimte betreffen. Geef aan wanneer de mogelijke betekenis nader door een medewerker moet worden beoordeeld.`,
+    promptNoteBasic: 'Werkt met de gratis Copilot Chat: voeg beide bestanden toe met de paperclip.',
     tip: ''
   },
   {
@@ -637,6 +854,26 @@ Maak een zakelijke samenvatting met:
 
 Verwijs per onderdeel naar het relevante artikel of paginanummer. Gebruik uitsluitend het contract. Geef geen juridische of verslaggevingstechnische conclusie zonder een afzonderlijke bronbeoordeling.`,
     promptNote: 'Typ / in Copilot Chat (tabblad Werk) en kies het contract. Gebruik de uitkomst als werkdocument, niet als juridisch oordeel.',
+    promptBasic: `Analyseer het bijgevoegde contract [BESTANDSNAAM] voor [KLANTNAAM].
+
+Maak een zakelijke samenvatting met:
+1. Contractpartijen
+2. Ingangsdatum
+3. Looptijd
+4. Verlengingsvoorwaarden
+5. Opzegvoorwaarden
+6. Producten of diensten
+7. Vergoedingen en betalingsmomenten
+8. Prestatieverplichtingen
+9. Kortingen, bonussen of variabele vergoedingen
+10. Garanties
+11. Boetes en aansprakelijkheid
+12. Bijzondere of afwijkende voorwaarden
+13. Financieel relevante bepalingen
+14. Vragen voor nadere beoordeling
+
+Verwijs per onderdeel naar het relevante artikel of paginanummer. Gebruik uitsluitend het contract. Geef geen juridische of verslaggevingstechnische conclusie zonder een afzonderlijke bronbeoordeling.`,
+    promptNoteBasic: 'Werkt met de gratis Copilot Chat: voeg het contract toe met de paperclip. Gebruik de uitkomst als werkdocument, niet als juridisch oordeel.',
     tip: ''
   },
   {
@@ -673,6 +910,31 @@ Beschrijf per beheersingsmaatregel:
 
 Voeg geen processtappen of beheersingsmaatregelen toe die niet uit de bron blijken. Markeer ontbrekende informatie met [NADER UITVRAGEN].`,
     promptNote: 'Typ / in Copilot Chat (tabblad Werk) en kies het bestand met je notities. Laat de beschrijving daarna bevestigen door de klant.',
+    promptBasic: `Zet de notities in het bijgevoegde bestand [BESTANDSNAAM] om in een conceptprocesbeschrijving van het proces [PROCESNAAM] bij [KLANTNAAM].
+
+Gebruik de structuur:
+1. Doel en afbakening
+2. Startpunt van het proces
+3. Betrokken functies
+4. Gebruikte systemen
+5. Chronologische processtappen
+6. Invoer en bewijsstukken
+7. Registraties en boekingen
+8. Controles en reviews
+9. Afhandeling van uitzonderingen
+10. Rapportages
+11. Einde van het proces
+12. Ontbrekende of onduidelijke informatie
+
+Beschrijf per beheersingsmaatregel:
+- wie de controle uitvoert;
+- wat wordt gecontroleerd;
+- wanneer en hoe vaak;
+- welke documentatie ontstaat;
+- wie afwijkingen opvolgt.
+
+Voeg geen processtappen of beheersingsmaatregelen toe die niet uit de bron blijken. Markeer ontbrekende informatie met [NADER UITVRAGEN].`,
+    promptNoteBasic: 'Werkt met de gratis Copilot Chat: voeg het bestand met je notities toe met de paperclip.',
     tip: ''
   },
   {
@@ -707,6 +969,29 @@ Maak een tabel met:
 
 Maak daarna uitsluitend een herschreven versie van passages waarvoor aanpassing nodig is. Wijzig geen feiten of vaktechnische conclusies.`,
     promptNote: 'Typ / in Copilot Chat (tabblad Werk) en kies je conceptverslag. Jij beslist welke verbeteringen je overneemt.',
+    promptBasic: `Review het bijgevoegde bestand [BESTANDSNAAM] als kritische vakinhoudelijke tweede lezer.
+
+Beoordeel het document op:
+- logische opbouw;
+- duidelijkheid;
+- volledigheid;
+- tegenstrijdigheden;
+- ononderbouwde aannames;
+- conclusies die niet aansluiten op de beschreven feiten;
+- ontbrekende bronverwijzingen;
+- te stellige formuleringen;
+- onduidelijke acties of verantwoordelijkheden;
+- taal en professionaliteit.
+
+Maak een tabel met:
+1. Pagina of paragraaf
+2. Oorspronkelijke passage
+3. Type verbeterpunt
+4. Waarom dit aandacht vraagt
+5. Voorstel voor verbetering
+
+Maak daarna uitsluitend een herschreven versie van passages waarvoor aanpassing nodig is. Wijzig geen feiten of vaktechnische conclusies.`,
+    promptNoteBasic: 'Werkt met de gratis Copilot Chat: voeg je conceptverslag toe met de paperclip.',
     tip: ''
   },
   {
@@ -797,6 +1082,29 @@ Identificeer vervolgens:
 
 Maak een tabel met de resultaten en formuleer per opvallende mutatie één neutrale onderzoeksvraag. Presenteer geen verklaringen als feit; noem een mogelijke verklaring alleen als hypothese die nog moet worden geverifieerd.`,
     promptNote: 'Typ / in Copilot Chat (tabblad Werk) en kies het Excelbestand. Controleer enkele berekeningen zelf.',
+    promptBasic: `Analyseer de tabel in het bijgevoegde bestand [EXCELBESTAND].
+
+Vergelijk [PERIODE A] met [PERIODE B] op basis van de kolommen:
+- [REKENING OF CATEGORIE]
+- [BEDRAG PERIODE A]
+- [BEDRAG PERIODE B]
+
+Bereken per regel:
+1. Absoluut verschil
+2. Procentueel verschil
+3. Aandeel in het totaal van beide perioden
+
+Identificeer vervolgens:
+- de tien grootste absolute mutaties;
+- mutaties groter dan [BEDRAG];
+- mutaties groter dan [PERCENTAGE]%;
+- nieuwe posten;
+- verdwenen posten;
+- tekenwisselingen;
+- ontbrekende of ongeldige waarden.
+
+Maak een tabel met de resultaten en formuleer per opvallende mutatie Ã©Ã©n neutrale onderzoeksvraag. Presenteer geen verklaringen als feit; noem een mogelijke verklaring alleen als hypothese die nog moet worden geverifieerd.`,
+    promptNoteBasic: 'Werkt met de gratis Copilot Chat: voeg het Excelbestand toe met de paperclip. Controleer enkele berekeningen zelf.',
     tip: ''
   },
   {
@@ -838,6 +1146,36 @@ Maak drie categorieën:
 
 Leg de indelingscriteria uit. Trek geen conclusie over inbaarheid zonder aanvullende informatie.`,
     promptNote: 'Typ / in Copilot Chat (tabblad Werk) en kies de openstaande-postenlijst. Controleer enkele uitkomsten zelf.',
+    promptBasic: `Analyseer de openstaande-postenlijst in het bijgevoegde bestand [EXCELBESTAND] per [PEILDATUM].
+
+Gebruik minimaal de kolommen:
+- Relatie
+- Factuurnummer
+- Factuurdatum
+- Vervaldatum
+- Openstaand bedrag
+
+Bereken per post:
+1. Aantal dagen openstaand
+2. Aantal dagen na vervaldatum
+3. Ouderdomscategorie: niet vervallen, 1 tot 30, 31 tot 60, 61 tot 90 of meer dan 90 dagen
+4. Totaal openstaand per relatie
+
+Signaleer:
+- posten ouder dan [AANTAL] dagen;
+- posten groter dan [BEDRAG];
+- creditbedragen;
+- dubbele factuurnummers;
+- relaties met meerdere oude posten;
+- ontbrekende factuur- of vervaldata.
+
+Maak drie categorieÃ«n:
+1. Direct opvolgen
+2. Nader beoordelen
+3. Reguliere opvolging
+
+Leg de indelingscriteria uit. Trek geen conclusie over inbaarheid zonder aanvullende informatie.`,
+    promptNoteBasic: 'Werkt met de gratis Copilot Chat: voeg de openstaande-postenlijst toe met de paperclip. Controleer enkele uitkomsten zelf.',
     tip: ''
   },
   {
@@ -876,6 +1214,33 @@ Maak een overzicht per type signaal met:
 
 Noem dit uitsluitend signalen voor nader onderzoek. Trek geen conclusie over fouten of fraude.`,
     promptNote: 'Typ / in Copilot Chat (tabblad Werk) en kies het Excelbestand. Signalen zijn een startpunt voor onderzoek, geen bevinding.',
+    promptBasic: `Controleer de tabel in het bijgevoegde bestand [EXCELBESTAND] op mogelijke datakwaliteitsproblemen en afwijkende transacties.
+
+Gebruik de volgende kolommen:
+[NOEM DE RELEVANTE KOLOMMEN]
+
+Controleer specifiek op:
+- exacte dubbelen;
+- dubbele document- of factuurnummers;
+- ontbrekende waarden;
+- ongeldige datums;
+- boekingen buiten de periode [STARTDATUM] tot en met [EINDDATUM];
+- negatieve bedragen;
+- ronde bedragen vanaf [BEDRAG];
+- bedragen groter dan [GRENSBEDRAG];
+- ongebruikelijke boekingstijdstippen;
+- afwijkende of lege omschrijvingen;
+- inconsistente namen of coderingen;
+- onverwachte combinaties van rekening en omschrijving.
+
+Maak een overzicht per type signaal met:
+1. Aantal signalen
+2. Betrokken regels
+3. Waarom het signaal opvalt
+4. Aanbevolen vervolgstap
+
+Noem dit uitsluitend signalen voor nader onderzoek. Trek geen conclusie over fouten of fraude.`,
+    promptNoteBasic: 'Werkt met de gratis Copilot Chat: voeg het Excelbestand toe met de paperclip. Signalen zijn een startpunt voor onderzoek, geen bevinding.',
     tip: ''
   },
   {
@@ -966,6 +1331,25 @@ Zet het in een tabel met:
 
 Presenteer de planning als voorstel en verander geen afspraken in mijn agenda.`,
     promptNote: 'Gebruik in Microsoft 365 Copilot Chat (tabblad Werk). Controleer de planning en zet de blokken daarna zelf in je agenda.',
+    promptBasic: `Ik moet [OPDRACHT, bijv. een conceptjaarrekening] uiterlijk [DATUM] opleveren.
+
+Maak een terugrekenplanning vanaf die deadline:
+- verdeel het werk in logische stappen;
+- geef per stap een tijdsinschatting en de datum waarop die stap uiterlijk klaar moet zijn;
+- plan minimaal twee werkdagen buffer in;
+- houd rekening met mijn vaste afspraken hieronder.
+
+Zet het in een tabel met:
+1. Stap
+2. Tijd
+3. Uiterlijk klaar
+4. Wat ik nodig heb van anderen
+
+Presenteer de planning als voorstel.
+
+Mijn vaste afspraken in deze periode:
+[NOEM PER AFSPRAAK DE DATUM, TIJD EN OMSCHRIJVING]`,
+    promptNoteBasic: 'Werkt met de gratis Copilot Chat: noem zelf je vaste afspraken. Copilot kijkt dan niet in je agenda en plant niets in.',
     tip: 'Werk je samen? Vraag daarna: "Maak hier een korte mail van met wat ik van wie nodig heb, en wanneer."'
   },
   {
