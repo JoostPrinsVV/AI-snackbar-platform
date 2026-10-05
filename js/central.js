@@ -44,12 +44,16 @@
   let lastSent = null;
   let admin = null; // { token, email, expiresAt }
 
+  /**
+   * @param {object} options { config, queue } — queue: false voor de promptpagina: alleen 'Mail mij',
+   *   geen wachtrij en geen tellers (die pagina laadt js/storage.js niet).
+   */
   function init(options) {
     config = options.config;
     base = config.centralUrl;
     key = config.centralKey;
     enabled = Boolean(base && key);
-    if (!enabled) return;
+    if (!enabled || options.queue === false) return;
     window.addEventListener('online', () => scheduleFlush(0));
     // Telefoon weggelegd of tabblad dicht: nog snel versturen wat klaarstaat.
     document.addEventListener('visibilitychange', () => {

@@ -12,6 +12,7 @@
   const state = {
     config: null,
     snacks: [],
+    inspiration: [],
     byId: new Map(),
     issues: [],
     view: 'menu',
@@ -33,7 +34,10 @@
     const snackResult = ns.content.normalizeSnacks(ns.snacks);
     state.snacks = snackResult.snacks;
     state.snacks.forEach((snack) => state.byId.set(snack.id, snack));
-    state.issues = configResult.issues.concat(snackResult.issues);
+    // Inspiratieprompts staan alleen op de promptpagina; hier voor de controle en de 'Mail mij'-lijst in het dashboard.
+    const inspirationResult = ns.content.normalizeInspiration(ns.inspiration, state.snacks.map((snack) => snack.id));
+    state.inspiration = inspirationResult.prompts;
+    state.issues = configResult.issues.concat(snackResult.issues, inspirationResult.issues);
     if (!ns.texts) state.issues.unshift({ level: 'error', message: 'data/texts.js kon niet worden gelezen; standaardteksten uit index.html worden gebruikt.', snackId: null });
 
     ns.ui.setTexts(
@@ -84,6 +88,7 @@
       config,
       version: VERSION,
       getSnacks: () => state.snacks,
+      getInspiration: () => state.inspiration,
       getIssues: () => state.issues,
       openSnack,
       goToMenu: () => ns.navigation.toMenu()
@@ -92,9 +97,10 @@
     bindGlobalEvents(config);
     reportIssues();
 
-    // Kiosk: na herladen altijd terug naar de snackkaart. Eigen apparaat: een directe link naar een snack
-    // (bijv. 'Bekijk de demo' op de promptpagina) gaat meteen naar die snack, zonder welkomstscherm.
-    const deepLink = !config.kioskMode && /^#\/snack\//.test(window.location.hash);
+    // Kiosk: na herladen altijd terug naar de snackkaart. Eigen apparaat: een directe link naar de snackkaart
+    // of een snack (bijv. 'Naar de snackbar' of 'Bekijk de demo' op de promptpagina) gaat meteen door,
+    // zonder welkomstscherm. Het kale adres (zonder #) toont het welkomstscherm wel.
+    const deepLink = !config.kioskMode && /^#\/(snack\/|$)/.test(window.location.hash);
     ns.navigation.start(handleRoute, { resetOnLoad: config.resetOnPageReload && config.kioskMode });
     if (!deepLink) ns.intro.showIntro();
 
@@ -115,7 +121,10 @@
       detailTitle: byId('detail-title'),
       homeButton: byId('home-button'),
       aboutButton: byId('about-button'),
+      adminButton: byId('admin-button'),
       surpriseButton: byId('surprise-button'),
+      surpriseHint: byId('surprise-hint'),
+      promptsButton: byId('prompts-button'),
       heroCta: byId('hero-cta')
     });
   }
@@ -176,7 +185,18 @@
     eventLabel.hidden = !config.eventName;
     // 'Verras mij' alleen als er iets te kiezen valt.
     const availableCount = state.snacks.filter((snack) => snack.available).length;
-    dom.heroCta.hidden = !config.showSurpriseButton || availableCount === 0;
+    const surprise = config.showSurpriseButton && availableCount > 0;
+    // 'Alle prompts' alleen op een eigen apparaat: de promptpagina heeft geen kioskreset en
+    // gaat uit van een eigen telefoon (onthoudt bijv. het e-mailadres voor een tweede prompt).
+    const prompts = !config.kioskMode;
+    dom.surpriseButton.hidden = !surprise;
+    dom.promptsButton.hidden = !prompts;
+    // Bij twee knoppen is 'Wij kiezen een snack voor je' niet meer eenduidig.
+    dom.surpriseHint.hidden = !surprise || prompts;
+    dom.heroCta.hidden = !surprise && !prompts;
+    // Vanaf een lokaal bestand opent 'prompts/' een mapoverzicht in plaats van de pagina.
+    // '?kiosk=0' (lokaal testen als eigen apparaat) gaat mee, zodat je ook zo terugkomt.
+    dom.promptsButton.href = (window.location.protocol === 'file:' ? 'prompts/index.html' : 'prompts/') + window.location.search;
     document.getElementById('detail-surprise').hidden = !config.showSurpriseButton || availableCount < 2;
   }
 
@@ -327,6 +347,7 @@
     dom.detailView.hidden = name !== 'detail';
     dom.homeButton.hidden = name === 'menu';
     dom.aboutButton.hidden = name !== 'menu';
+    dom.adminButton.hidden = name !== 'menu' || !state.config.enableAdmin;
     if (name === 'menu') ns.menuView.updateColumns();
 
     // Zonder View Transitions: een eenvoudige CSS-overgang.

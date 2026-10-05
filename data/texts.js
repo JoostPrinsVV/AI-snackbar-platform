@@ -20,7 +20,8 @@ window.AISnackbar.texts = {
     documentTitle: '{title} {discipline} · {organization}',
     skipLink: 'Direct naar de inhoud',
     eventLabel: '{eventName} · {eventDates}',
-    aboutButton: 'Over de AI Snackbar',
+    aboutButton: 'Over de AI Snackbar',   // i-knopje in de kopbalk (voor schermlezers)
+    adminButton: 'Instellingen',          // tandwiel in de kopbalk (vraagt de toegangscode)
     homeButton: 'Terug naar de snackkaart',
     close: 'Sluiten',
 
@@ -28,6 +29,7 @@ window.AISnackbar.texts = {
     heroEyebrow: '{audience} · {eventName}',
     surpriseButton: 'Verras mij',
     surpriseHint: 'Wij kiezen een snack voor je',
+    promptsButton: 'Alle prompts',        // naar de promptpagina (alleen op een eigen apparaat)
     menuTitle: 'Vandaag op de kaart',   // alleen voor schermlezers
     menuHint: 'Raak een snack aan om te beginnen',
     cardNumber: 'Nr. {number}',
@@ -37,6 +39,11 @@ window.AISnackbar.texts = {
     cardSoon: 'Binnenkort',
     cardSoonLong: 'Nog in de keuken',
     cardSoonSr: '(nog niet beschikbaar)',
+    cardLicense: 'Licentie',              // badge: Microsoft 365 Copilot-licentie nodig
+    cardLicenseSr: 'nodig',               // alleen voor schermlezers, na 'Licentie'
+    licenseLabel: 'Copilot',              // alleen voor schermlezers, vóór de licentietekst
+    licenseRequired: 'Licentie nodig',
+    licenseBasic: 'Kan zonder licentie',
     soonToast: '{title} staat nog in de keuken. Kies gerust een andere snack.',
     unknownSnackToast: 'Deze snack staat niet (meer) op de kaart.',
     emptyTitle: 'De snackkaart wordt nog gevuld',
@@ -100,8 +107,18 @@ window.AISnackbar.texts = {
     /* ---- Promptpagina (prompts/, voor de QR-codes op de kaartjes) ------ */
     promptsDocumentTitle: 'Prompts · {title} {discipline}',
     promptsTitle: 'Alle prompts',
-    promptsLead: 'Kies een AI-snack, kopieer de prompt en probeer het zelf.',
+    promptsLead: 'Kies een AI-snack of laat je inspireren. Kopieer de prompt en probeer het zelf.',
+    promptsKindLabel: 'Soort prompts',
+    promptsKindSnacks: 'Snacks',
+    promptsKindInspiration: 'Inspiratie',
+    promptsThemeLabel: 'Kies een thema',
+    promptsThemeAll: 'Alle thema’s',
+    promptsInspirationEyebrow: 'Inspiratie',
+    promptsImpactLabel: 'Impact',
+    promptsImpactValue: '{level} van 3',   // alleen voor schermlezers, naast de stippen
+    promptsPromptMissing: 'De prompt volgt.',
     promptsBack: 'Alle prompts',
+    promptsToApp: 'Naar de snackbar',     // rechtsboven op de promptpagina
     promptsDemo: 'Bekijk de demo',
     promptsShare: 'Delen',
     promptsEmpty: 'Er staan nog geen prompts klaar. Kom straks nog eens kijken!',
@@ -161,7 +178,8 @@ window.AISnackbar.texts = {
     aboutTitle: 'Over de AI Snackbar',
     aboutLead: 'Geen training en geen presentatie: gewoon even snacken. Korte, praktische AI-toepassingen die je morgen direct kunt gebruiken.',
     aboutStepsTitle: 'Zo werkt het',
-    aboutHost: 'Tijdens de lunches staat er een AI-koploper bij de kraam voor live demo’s en vragen.',
+    aboutLicense: 'Staat er "Licentie" bij een snack of prompt? Dan heb je een Microsoft 365 Copilot-licentie nodig, omdat Copilot dan je eigen mail, Teams, agenda of bestanden gebruikt. De rest kan ook met de gratis Copilot Chat.',
+    aboutHost:'Tijdens de lunches staat er een AI-koploper bij de kraam voor live demo’s en vragen.',
     aboutOrganizer: 'Een initiatief van {organization} voor {audience}.',
 
     /* ---- Inactiviteit (kiosk) ----------------------------------------- */

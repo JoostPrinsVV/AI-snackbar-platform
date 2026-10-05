@@ -55,6 +55,8 @@
   --color-primary-text: var(--vv-white);
   --color-secondary: var(--vv-navy);
   --color-secondary-hover: var(--vv-navy-800);
+  --color-selected: var(--vv-navy);        /* gekozen schakelaar/filter; witte tekst 15,5:1 */
+  --color-on-selected: var(--vv-white);
   --color-success: var(--vv-teal-700);
   --color-success-fill: var(--vv-teal);
   --color-warning: #8a5a00;
@@ -219,6 +221,8 @@
   --color-border-strong: #3b4a85;
   --color-link: #6fd6c8;
   --color-focus: var(--vv-teal);
+  --color-selected: var(--vv-teal);
+  --color-on-selected: var(--vv-navy);
 
   --awning-a: #0d1845;
   --awning-b: #112057;

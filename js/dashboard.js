@@ -339,8 +339,11 @@
 
   /* 'Mail mij deze prompt': wie wil welke prompt, plus export en wissen na het mailen */
   function renderRequests(requests, rows) {
+    // Aanvragen komen uit de snackbar én van de promptpagina (snacks en inspiratieprompts).
+    const inspiration = ctx.getInspiration ? ctx.getInspiration() : [];
     const labels = new Map(rows.map((row) => [row.id, row.label]));
-    const prompts = new Map(ctx.getSnacks().map((snack) => [snack.id, snack]));
+    inspiration.forEach((item) => labels.set(item.id, 'Inspiratie: ' + item.title));
+    const prompts = new Map(ctx.getSnacks().concat(inspiration).map((item) => [item.id, item]));
     const people = new Map();
     requests.forEach((row) => {
       const list = people.get(row.email) || [];
@@ -363,7 +366,7 @@
       : el('p', { className: 'admin__intro', text: 'Nog niemand heeft om een prompt gevraagd.' });
 
     const mailingCsv = () => {
-      const lines = [['E-mailadres', 'Snacks', 'Prompts']];
+      const lines = [['E-mailadres', 'Titels', 'Prompts']];
       sorted.forEach(([email, items]) => {
         const snacks = items.map((item) => prompts.get(item.snack_id)).filter(Boolean);
         lines.push([email, snacks.map((snack) => snack.title).join(', '), snacks.map((snack) => `${snack.title}:\n${snack.prompt}`).join('\n\n')]);
@@ -371,7 +374,7 @@
       return toCsv(lines);
     };
     const requestsCsv = () => {
-      const lines = [['E-mailadres', 'Snack', 'Prompt', 'Aangevraagd op']];
+      const lines = [['E-mailadres', 'Titel', 'Prompt', 'Aangevraagd op']];
       requests.forEach((row) => {
         const snack = prompts.get(row.snack_id);
         lines.push([row.email, snack ? snack.title : row.snack_id, snack ? snack.prompt : '', localParts(row.created_at).minute.replace('T', ' ')]);

@@ -89,10 +89,216 @@
   color: var(--accent-ink);
 }
 
+/* Inspiratieprompt: lampje in de themakleur in plaats van een nummer */
+.prompts-item--inspiration {
+  min-height: 4rem;
+}
+
+.prompts-item--inspiration .prompts-item__title {
+  font-size: var(--fs-base);
+}
+
+.prompts-item__mark {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--accent-tint);
+  color: var(--accent-ink);
+}
+
+.prompts-item__mark .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Impact: het woord plus drie stippen (gevuld = niveau), nooit alleen kleur */
+.prompts-impact {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-text-muted);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+}
+
+.prompts-impact .level-dots {
+  color: var(--accent-ink);
+}
+
+/* Regel onder de titel: impact en (indien nodig) de badge 'Licentie' */
+.prompts-item__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 0.75rem;
+  margin-top: 0.35rem;
+}
+
+/* Detail: impact en licentie (altijd uitgeschreven) naast elkaar */
+.prompts-detail__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-5);
+  margin-top: var(--space-3);
+}
+
+.prompts-detail__meta .prompts-impact,
+.prompts-license {
+  font-size: var(--fs-sm);
+}
+
+.prompts-license {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-text);
+  font-weight: var(--fw-semibold);
+}
+
+.prompts-license .icon {
+  width: 1.1em;
+  height: 1.1em;
+  color: var(--accent-ink);
+}
+
 @media (hover: hover) and (pointer: fine) {
   .prompts-item:hover {
     box-shadow: var(--shadow-card-hover);
     transform: translateY(-2px);
+  }
+
+  .prompts__kind[aria-pressed='false']:hover,
+  .prompts__theme[aria-pressed='false']:hover {
+    background: var(--color-surface-muted);
+  }
+}
+
+/* ---- Snacks | Inspiratie (blijft bovenin staan tijdens het scrollen) ---- */
+.prompts__kinds {
+  position: sticky;
+  top: max(var(--space-2), env(safe-area-inset-top));
+  z-index: 5;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-1);
+  margin-top: var(--space-6);
+  padding: var(--space-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  /* Tweede schaduw in de paginakleur: de lijst schuift netjes onder de schakelaar door */
+  box-shadow: var(--shadow-card), 0 0 0 var(--space-2) var(--color-page);
+}
+
+.prompts__kind {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  padding: 0.4rem 1rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  transition: background-color var(--duration) var(--ease-out), color var(--duration) var(--ease-out);
+}
+
+.prompts__kind[aria-pressed='true'],
+.prompts__theme[aria-pressed='true'] {
+  border-color: var(--color-selected);
+  background: var(--color-selected);
+  color: var(--color-on-selected);
+}
+
+.prompts__count {
+  min-width: 1.6rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-muted);
+  color: var(--color-text);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  text-align: center;
+}
+
+[aria-pressed='true'] > .prompts__count {
+  background: var(--color-surface);
+}
+
+/* ---- Thema's: op een telefoon één rij om opzij te vegen ----------------- */
+.prompts__themes {
+  display: flex;
+  gap: var(--space-2);
+  margin: var(--space-5) calc(-1 * var(--gutter)) 0;
+  padding: var(--space-1) var(--gutter);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.prompts__themes::-webkit-scrollbar {
+  display: none;
+}
+
+.prompts__theme {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding: 0.4rem 0.55rem 0.4rem 0.9rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  white-space: nowrap;
+}
+
+/* Kleurstip per thema (de naam staat er altijd bij) */
+.prompts__theme[class*='accent-']::before,
+.prompts-group__title::before {
+  content: '';
+  flex: none;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.prompts__theme[aria-pressed='true']::before {
+  box-shadow: 0 0 0 2px var(--color-surface);
+}
+
+.prompts-group {
+  margin-top: var(--space-7);
+}
+
+.prompts-group__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text);
+  font-size: var(--fs-md);
+  line-height: var(--lh-snug);
+}
+
+.prompts-group .prompts__list {
+  margin-top: var(--space-3);
+}
+
+@media (min-width: 600px) {
+  .prompts__themes {
+    flex-wrap: wrap;
+    margin-inline: 0;
+    padding-inline: 0;
+    overflow: visible;
   }
 }
 

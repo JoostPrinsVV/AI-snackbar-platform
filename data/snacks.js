@@ -34,6 +34,9 @@
      qrLabel      Tekst naast de QR-code, mag leeg blijven.
      tip          Praktische tip.
      audience     Voor wie handig, bijv. ['Administratie', 'Advies'].
+     license      true = Microsoft 365 Copilot-licentie nodig (eigen mail, Teams,
+                  agenda of bestanden): badge 'Licentie' op de kaart.
+                  false = kan ook met de gratis Copilot Chat. Weglaten = niets tonen.
 
    Uitgebreide schrijf- en bestandsrichtlijnen: docs/CONTENT-GUIDE.md
    ========================================================================== */
@@ -62,7 +65,8 @@ window.AISnackbar.snacks = [
     qrCode: 'assets/qr/snack-01.png',
     qrLabel: '',
     tip: 'Zet het grootste blok direct vast: "Plan een focusblok in op [dag] van [tijd] tot [tijd] met de titel: [taak]".',
-    audience: ['Iedereen met een volle inbox']
+    audience: ['Iedereen met een volle inbox'],
+    license: true                       // leest je eigen mailbox en agenda
   },
   {
     id: 'snack-02',

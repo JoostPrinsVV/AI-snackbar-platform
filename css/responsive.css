@@ -472,23 +472,25 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .topbar__actions .btn--sm span {
-    display: none;
-  }
-
-  .topbar__actions .btn--sm {
-    width: var(--touch-min);
-    padding: 0;
-  }
-
   .hero__cta {
     grid-auto-flow: row;
     justify-items: stretch;
     width: 100%;
   }
 
-  .hero__cta .btn {
+  /* Twee knoppen even breed naast elkaar (één knop: de hele breedte) */
+  .hero__buttons {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+
+  .hero__buttons .btn {
     width: 100%;
+    min-height: 3.5rem;
+    padding: 0.75rem 0.85rem;
+    font-size: var(--fs-base);
   }
 
   .hero__cta-hint {

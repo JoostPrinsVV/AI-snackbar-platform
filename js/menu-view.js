@@ -77,7 +77,9 @@
       el('span', { className: 'snack-card__badges' }, [
         snack.featured ? badge('featured', 'sparkle', t('cardFeatured')) : null,
         snack.available ? null : badge('soon', 'hourglass', t('cardSoon')),
-        badge('viewed', 'check', t('cardViewed'), true)
+        snack.license ? badge('license', 'key', [t('cardLicense'), el('span', { className: 'sr-only', text: ' ' + t('cardLicenseSr') })]) : null,
+        // 'Bekeken' als vinkje op de hoek van het icoon (zie CSS); de tekst blijft voor schermlezers.
+        badge('viewed', 'check', el('span', { className: 'sr-only', text: t('cardViewed') }), true)
       ]),
       el('span', { className: 'snack-card__number', attrs: { 'aria-hidden': 'true' } }, [
         el('small', { text: t('cardNumberLabel') }),
@@ -121,7 +123,7 @@
   }
 
   function badge(kind, iconName, label, hidden) {
-    return el('span', { className: 'badge badge--' + kind, attrs: { hidden: Boolean(hidden) } }, [icon(iconName), label]);
+    return el('span', { className: 'badge badge--' + kind, attrs: { hidden: Boolean(hidden) } }, [icon(iconName)].concat(label));
   }
 
   function renderState(kind, detail) {

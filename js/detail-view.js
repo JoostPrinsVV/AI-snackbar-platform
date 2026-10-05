@@ -43,6 +43,7 @@
       promptBox: byId('prompt-box'),
       promptText: byId('prompt-text'),
       promptNote: byId('prompt-note'),
+      promptLicense: byId('prompt-license'),
       copy: byId('copy-prompt'),
       copyLabel: byId('copy-prompt-label'),
       qrBlock: byId('qr-block'),
@@ -151,6 +152,14 @@
     refs.promptText.classList.toggle('is-placeholder', !hasPrompt);
     refs.promptNote.textContent = snack.promptNote;
     refs.promptNote.hidden = !snack.promptNote;
+    // Bij de prompt, niet bij de titel: daar zou een extra regel de video en knoppen uit beeld duwen.
+    refs.promptLicense.replaceChildren(
+      ...(snack.license === null
+        ? []
+        : [icon(snack.license ? 'key' : 'check'), el('span', { className: 'sr-only', text: t('licenseLabel') + ': ' }), t(snack.license ? 'licenseRequired' : 'licenseBasic')])
+    );
+    refs.promptLicense.classList.toggle('meta--license', snack.license === true);
+    refs.promptLicense.hidden = snack.license === null;
     refs.copy.hidden = !canCopy() || !hasPrompt;
     refs.promptText.scrollTop = 0;
 

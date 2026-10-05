@@ -1,7 +1,8 @@
 /* ==========================================================================
    Inhoud valideren
    --------------------------------------------------------------------------
-   Controleert js/config.js en data/snacks.js, vult ontbrekende waarden aan
+   Controleert js/config.js, data/snacks.js en (voor de promptpagina)
+   data/inspiration.js, vult ontbrekende waarden aan
    met veilige standaarden en verzamelt meldingen voor de console en het
    beheerscherm. Een fout in één snack blokkeert nooit de rest.
    ========================================================================== */
@@ -249,7 +250,8 @@
       qrCode: path(item.qrCode, 'qrCode', id, issues),
       qrLabel: text(item.qrLabel),
       tip: text(item.tip),
-      audience: normalizeAudience(item.audience)
+      audience: normalizeAudience(item.audience),
+      license: normalizeLicense(item.license, `Snack '${id}'`, id, issues)
     };
 
     Object.keys(RECOMMENDED).forEach((field) => {
@@ -261,6 +263,68 @@
       issues.push(issue('warning', `Snack '${id}': onbekend niveau '${snack.level}' (gebruik Starter, Gevorderd of Koploper).`, id));
     }
     return Object.freeze(snack);
+  }
+
+  /* ---- Inspiratieprompts (data/inspiration.js, alleen de promptpagina) ------- */
+  // Deze woorden zijn adressen van de lijsten op de promptpagina (prompts/#inspiratie).
+  const RESERVED_IDS = ['snacks', 'inspiratie'];
+
+  function normalizeInspiration(raw, takenIds) {
+    const issues = [];
+    if (raw === undefined) return { prompts: [], categories: [], issues };
+    if (!Array.isArray(raw)) {
+      return { prompts: [], categories: [], issues: [issue('error', 'data/inspiration.js bevat geen lijst met prompts ([ ... ]).')] };
+    }
+
+    const seen = new Set(takenIds || []);
+    const categories = [];
+    const prompts = [];
+    raw.forEach((item, index) => {
+      const position = index + 1;
+      const id = item && typeof item.id === 'string' ? item.id.trim() : '';
+      if (!ID_PATTERN.test(id) || RESERVED_IDS.includes(id)) {
+        issues.push(issue('error', `Inspiratieprompt op positie ${position} heeft geen geldige id; overgeslagen.`));
+        return;
+      }
+      if (seen.has(id)) {
+        issues.push(issue('error', `De id '${id}' bestaat al (bij een snack of een andere prompt); overgeslagen.`, id));
+        return;
+      }
+      const title = text(item.title);
+      const label = text(item.category);
+      if (!title || !label) {
+        issues.push(issue('error', `Inspiratieprompt '${id}' mist een titel of thema en wordt overgeslagen.`, id));
+        return;
+      }
+      seen.add(id);
+      let category = categories.find((entry) => entry.label === label);
+      if (!category) {
+        category = { id: 'thema-' + (categories.length + 1), label, accent: ACCENTS[categories.length % ACCENTS.length] };
+        categories.push(category);
+      }
+      const impact = [1, 2, 3].includes(Number(item.impact)) ? Number(item.impact) : 0;
+      if (item.impact !== undefined && item.impact !== '' && !impact) {
+        issues.push(issue('warning', `Inspiratieprompt '${id}': impact moet 1, 2 of 3 zijn; niet getoond.`, id));
+      }
+      prompts.push(
+        Object.freeze({
+          id,
+          title,
+          category,
+          impact,
+          license: normalizeLicense(item.license, `Inspiratieprompt '${id}'`, id, issues),
+          didYouKnow: text(item.didYouKnow),
+          prompt: text(item.prompt, true),
+          promptNote: text(item.promptNote),
+          tip: text(item.tip)
+        })
+      );
+    });
+
+    if (categories.length > ACCENTS.length) {
+      issues.push(issue('warning', `Er zijn ${categories.length} thema's; vanaf het ${ACCENTS.length + 1}e worden de kleuren herhaald.`));
+    }
+    return { prompts, categories: categories.map((entry) => Object.freeze(entry)), issues };
   }
 
   /* ---- Hulpfuncties ---------------------------------------------------------- */
@@ -303,6 +367,18 @@
     return ACCENTS[0];
   }
 
+  /**
+   * Copilot-licentie: true = Microsoft 365 Copilot-licentie nodig (werkt met je eigen mail, Teams,
+   * agenda of bestanden), false = kan ook met de gratis Copilot Chat. Weggelaten = niets tonen.
+   */
+  function normalizeLicense(value, label, id, issues) {
+    if (value === true || value === false) return value;
+    if (value !== undefined && value !== null && value !== '') {
+      issues.push(issue('warning', `${label}: license moet true of false zijn; niet getoond.`, id));
+    }
+    return null;
+  }
+
   function normalizeAudience(value) {
     const list = Array.isArray(value) ? value : typeof value === 'string' ? value.split(',') : [];
     return list.map((entry) => text(entry)).filter(Boolean);
@@ -310,6 +386,7 @@
 
   ns.content = {
     normalizeConfig,
-    normalizeSnacks
+    normalizeSnacks,
+    normalizeInspiration
   };
 })(window.AISnackbar);

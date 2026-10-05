@@ -2,8 +2,8 @@
    Admin: dashboard + beheer & test
    --------------------------------------------------------------------------
    De tablets staan standaard in de rol 'Collega' (geen login nodig).
-   Admin openen: de onopvallende knop 'Beheer' onderaan 'Over de AI Snackbar',
-   het woord uit adminKeySequence typen, het logo lang indrukken of #/beheer.
+   Admin openen: het tandwiel (Instellingen) in de kopbalk, het woord uit
+   adminKeySequence typen, het logo lang indrukken of #/beheer.
    Daarna vraagt de app de toegangscode (adminCode, standaard 1234).
    Let op: de code staat leesbaar in js/config.js. Het is een drempel voor
    bezoekers, geen echte beveiliging. Na ontgrendelen blijft admin open tot
@@ -38,24 +38,17 @@
   const code = {};
 
   /**
-   * @param {object} context { config, getSnacks, getIssues, openSnack, goToMenu, version }
+   * @param {object} context { config, getSnacks, getInspiration, getIssues, openSnack, goToMenu, version }
    */
   function init(context) {
     ctx = context;
-    const aboutAdmin = document.getElementById('about-admin');
-    if (!ctx.config.enableAdmin) {
-      aboutAdmin.hidden = true;
-      return;
-    }
+    if (!ctx.config.enableAdmin) return;
     dialog = document.getElementById('admin-dialog');
     panel = document.getElementById('admin-panel');
     ns.a11y.registerDialog(dialog, { onClose: handleClose });
     initCodeDialog();
 
-    aboutAdmin.addEventListener('click', () => {
-      ns.a11y.closeDialog(document.getElementById('about-dialog'));
-      requestAccess();
-    });
+    document.getElementById('admin-button').addEventListener('click', requestAccess);
     document.addEventListener('keydown', handleKeySequence);
     ns.a11y.onLongPress(document.getElementById('brand'), ctx.config.adminLongPressSeconds * 1000, requestAccess);
   }

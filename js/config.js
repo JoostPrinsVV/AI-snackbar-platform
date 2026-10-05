@@ -73,8 +73,8 @@ window.AISnackbar.config = {
   centralKey: 'sb_publishable_xELIX8sqJNueqdZCf4rWEw_h8K688mF',
 
   /* ---- Admin (dashboard en beheer) ------------------------------------- */
-  // Tablets staan standaard in de rol 'Collega'. Admin opent via 'Beheer' onderaan
-  // 'Over de AI Snackbar' (of door 'beheer' te typen / het logo lang in te drukken).
+  // Tablets staan standaard in de rol 'Collega'. Admin opent via het tandwiel rechtsboven
+  // (of door 'beheer' te typen / het logo lang in te drukken).
   enableAdmin: true,                    // Admin (dashboard + beheer) beschikbaar
   adminCode: '1234',                    // Toegangscode, 4-8 cijfers. Let op: leesbaar in dit bestand, dus een drempel, geen beveiliging
   resetCode: '1712',                    // Pincode voor 'Alles resetten' (Beheer & test). Extra slot tegen per ongeluk wissen;
