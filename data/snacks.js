@@ -161,18 +161,24 @@ Zet de bevindingen met belang "hoog" om in een korte reviewnotitie voor de opdra
     video: 'assets/videos/snack-03.mp4',
     poster: 'assets/posters/snack-03.jpg',
     captions: '',
-    prompt: `Ik voeg de transcriptie toe van ons overleg met [KLANTNAAM] op [DATUM].
+    prompt: `Ik voeg de transcriptie toe van ons overleg met [KLANTNAAM] op [DATUM]. Vanuit ons kantoor waren aanwezig: [NAMEN]. Vanuit de klant: [NAMEN].
 
 Vat het overleg samen met:
-1. De belangrijkste besproken onderwerpen
+1. De belangrijkste besproken onderwerpen, per onderwerp in 1 à 2 zinnen
 2. Genomen besluiten
-3. Actiepunten in een tabel met Actie, Eigenaar en Deadline
-4. Openstaande vragen
+3. Voorstellen en ideeën waarover nog geen besluit is genomen
+4. Actiepunten in een tabel met: Actie, Eigenaar, Organisatie (wij/klant), Deadline en Fragment uit de transcriptie
+5. Openstaande vragen, met per vraag wie het antwoord moet geven
 
-Gebruik alleen wat in de transcriptie staat. Presenteer een voorstel niet als besluit. Vermeld "Niet benoemd" als een eigenaar of deadline ontbreekt.
+Regels:
+- Gebruik alleen wat in de transcriptie staat en vul niets aan.
+- Iets is pas een besluit als het expliciet is afgesproken. Twijfel je, zet het dan onder voorstellen.
+- Vermeld "Niet benoemd" als een eigenaar of deadline ontbreekt. Neem relatieve deadlines zoals "volgende week" letterlijk over.
+- Is niet duidelijk wie iets zei, markeer dat dan met "Spreker onduidelijk".
+- Zet alles wat besproken is zonder de klant erbij onder een apart kopje "Intern".
 
 Daarna:
-Schrijf een korte, vriendelijke e-mail aan [KLANTNAAM] waarin je de besluiten en de acties van beide kanten bevestigt. Maximaal 150 woorden.`,
+Schrijf een korte, vriendelijke e-mail aan [KLANTNAAM] waarin je de besluiten en de acties van beide kanten bevestigt. Maximaal 150 woorden. Noem alleen besluiten en acties uit de samenvatting, doe geen nieuwe toezeggingen en laat alles onder "Intern" weg. Vraag de klant te laten weten als iets niet klopt. Onderteken met [NAAM].`,
     promptNote: 'Werkt met de gratis Copilot Chat: download de transcriptie uit Teams en voeg die toe met de paperclip.',
     qrCode: 'assets/qr/snack-03.png',
     qrLabel: '',
