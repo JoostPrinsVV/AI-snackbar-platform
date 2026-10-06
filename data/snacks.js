@@ -1,10 +1,10 @@
 /* ==========================================================================
    AI SNACKBAR — DE SNACKKAART
    --------------------------------------------------------------------------
-   Zes snacks, elk een korte demo (1-3 min). Vier werken met de gratis
-   Copilot Chat (2, 3, 5, 6: zelf een bestand toevoegen of tekst plakken),
-   twee laten zien wat een licentie extra geeft (1: je eigen mailbox en
-   agenda, 4: Copilot in PowerPoint). Snack 1 heeft al een video; voor snack 2 t/m 6 toont de
+   Zes snacks, elk een korte demo (1-3 min). Drie werken met de gratis
+   Copilot Chat (2, 3, 6: zelf een bestand toevoegen), drie laten zien wat
+   een licentie extra geeft (1: je mailbox en agenda, 4: een presentatie in
+   de huisstijl, 5: alles over je klant uit Microsoft 365). Snack 1 heeft al een video; voor snack 2 t/m 6 toont de
    app 'Deze demo wordt binnenkort toegevoegd' tot de video er staat
    (assets/videos/snack-0X.mp4). Nog niet klaar voor het evenement? Zet die
    snack dan op available: false ('Binnenkort').
@@ -282,78 +282,94 @@ Lever het resultaat op als .pptx-bestand.`,
     license: true                       // Microsoft 365 Copilot (bestand als PowerPoint opleveren)
   },
   {
-    // Demo (fictieve grootboekexport): Excelbestand als bijlage in Copilot Chat, twee prompts.
+    // Demo (fictieve klant): Microsoft 365 Copilot Chat zoekt in agenda, mail, Teams en bestanden, twee prompts.
     id: 'snack-05',
-    title: 'Van export naar overzicht',
-    subtitle: 'Copilot Chat analyseert je export en geeft de formules erbij',
+    title: 'Klaar voor je klantgesprek',
+    subtitle: 'Copilot zet alles over je klant op een rij vóór de afspraak',
     category: 'Slimmer werken',
-    level: 'Gevorderd',
-    duration: '2,5 min',
-    icon: 'assets/icons/icon-table.svg',
+    level: 'Starter',
+    duration: '2 min',
+    icon: 'assets/icons/icon-calendar.svg',
     accent: 'deepteal',
     available: true,
     featured: false,
-    intro: 'Je geeft Copilot Chat een fictieve export met grootboekmutaties. Copilot spoort dubbele regels en lege velden op, maakt een overzicht per maand en noemt de uitschieters. Daarna krijg je de Excel-formules om het zelf na te rekenen.',
+    intro: 'Morgen een afspraak met een fictieve klant? Copilot zoekt in je agenda, mails, Teams en bestanden wat er speelt: ontwikkelingen, eerdere afspraken en openstaande acties. Je krijgt vijf goede vragen en een voorstel voor de gespreksagenda.',
     video: 'assets/videos/snack-05.mp4',
     poster: 'assets/posters/snack-05.jpg',
     captions: '',
-    prompt: `Het bijgevoegde Excelbestand [BESTANDSNAAM] bevat grootboekmutaties van [PERIODE].
+    prompt: `Bereid mij voor op mijn eerstvolgende vergadering met [KLANTNAAM].
 
-Stap 1:
-Controleer de gegevens op dubbele regels, lege verplichte velden en ongeldige datums. Geef per soort probleem het aantal en de betrokken regels.
+Gebruik relevante informatie uit:
+- de agenda-uitnodiging;
+- e-mails met [KLANTNAAM] uit de afgelopen [AANTAL] dagen;
+- eerdere vergaderingen met [KLANTNAAM] uit de afgelopen [AANTAL] maanden;
+- relevante bestanden waarin [KLANTNAAM] wordt genoemd.
 
-Stap 2:
-Maak een overzicht met per maand de totalen per [GROOTBOEKREKENING OF CATEGORIE].
+Geef:
+1. Datum, tijd en onderwerp van de afspraak
+2. Doel van de afspraak
+3. Belangrijkste ontwikkelingen sinds het vorige overleg
+4. Eerder gemaakte afspraken
+5. Openstaande acties voor ons
+6. Openstaande acties voor de klant
+7. Mogelijke knelpunten of onduidelijkheden
+8. Vijf concrete vragen die ik tijdens de afspraak kan stellen
+9. Een voorgestelde agenda voor het gesprek
 
-Stap 3:
-Noem de vijf grootste afwijkingen ten opzichte van het maandgemiddelde, met per afwijking één neutrale vraag.
+Vermeld bij ieder feit de gebruikte bron. Maak onderscheid tussen bevestigde informatie en jouw suggesties voor gesprekspunten.
 
 Daarna:
-Geef de Excel-formules waarmee ik stap 2 en 3 zelf in mijn bestand kan narekenen, met een korte uitleg per formule.`,
-    promptNote: 'Werkt met de gratis Copilot Chat: voeg het Excelbestand toe met de paperclip. Copilot past je bestand niet aan; met de formules reken je het zelf na.',
+Schrijf een korte, vriendelijke e-mail aan [KLANTNAAM] met de voorgestelde agenda, zodat de klant zich ook kan voorbereiden. Maximaal 120 woorden. Onderteken met [NAAM].`,
+    promptNote: 'Gebruik in Microsoft 365 Copilot Chat (tabblad Werk), bijvoorbeeld een dag voor de afspraak. Copilot gebruikt alleen berichten en bestanden waar jij toegang toe hebt.',
     qrCode: 'assets/qr/snack-05.png',
     qrLabel: '',
-    tip: 'Werk je in een Nederlandse Excel? Vraag om formules met puntkomma’s, dan kun je ze direct plakken.',
-    audience: ['Administratie', 'Samenstellen'],
-    license: false                      // bestand toevoegen kan in de gratis Copilot Chat
+    tip: 'Typ / en kies de afspraak uit je agenda. Dan weet Copilot precies welk gesprek je bedoelt.',
+    audience: ['Advies', 'Samenstellen'],
+    license: true                       // zoekt in je eigen agenda, mail, Teams en bestanden
   },
   {
-    // Demo (verzonnen situatie): rollenspel in Copilot Chat, met feedback als afsluiting.
+    // Demo (fictief Frans contract): bestand als bijlage in Copilot Chat, twee prompts.
     // Nog niet klaar voor het evenement? Zet available op false: de kaart toont dan 'Binnenkort'.
     id: 'snack-06',
-    title: 'Oefen een lastig klantgesprek',
-    subtitle: 'Copilot speelt de klant en geeft je daarna feedback',
+    title: 'Contract in een andere taal',
+    subtitle: 'Copilot vat een Frans contract samen in helder Nederlands',
     category: 'Inspiratie',
-    level: 'Koploper',
-    duration: '3 min',
-    icon: 'assets/icons/icon-chat.svg',
+    level: 'Gevorderd',
+    duration: '2 min',
+    icon: 'assets/icons/icon-search.svg',
     accent: 'navy',
     available: true,
     featured: false,
-    intro: 'Copilot speelt een fictieve klant die niet blij is met een hogere factuur. Jij oefent het gesprek in een paar berichten heen en weer. Daarna krijg je feedback: wat ging goed, wat kan beter en welke zin had je anders kunnen zeggen.',
+    intro: 'Een klant stuurt een fictief contract in het Frans. Copilot vat het samen in helder Nederlands: partijen, looptijd, vergoedingen, verplichtingen en wat financieel relevant is, met per onderdeel het artikel en de originele tekst erbij. Daarna krijg je de vragen die je nog moet stellen.',
     video: 'assets/videos/snack-06.mp4',
     poster: 'assets/posters/snack-06.jpg',
     captions: '',
-    prompt: `Je speelt een rollenspel. Jij bent [NAAM], eigenaar van een fictief [TYPE BEDRIJF]. Je bent ontevreden omdat [SITUATIE, bijv. de factuur voor de jaarrekening 20% hoger is dan vorig jaar]. Ik ben je accountant.
+    prompt: `Je bent een ervaren accountant met kennis van contracten. Het bijgevoegde contract [BESTANDSNAAM] is opgesteld in het [TAAL, bijv. Frans]. Ik spreek die taal niet goed genoeg om het zelf te beoordelen.
+
+Vat het contract in het Nederlands samen met:
+1. Contractpartijen en hun rol
+2. Onderwerp van het contract
+3. Ingangsdatum, looptijd, verlenging en opzegging
+4. Vergoedingen, betalingstermijnen en eventuele indexatie
+5. Belangrijkste verplichtingen per partij
+6. Aansprakelijkheid, boetes en garanties
+7. Toepasselijk recht en bevoegde rechter
+8. Bepalingen die financieel of fiscaal relevant kunnen zijn
 
 Regels:
-- Blijf in je rol en reageer zoals een echte klant: kritisch, maar redelijk.
-- Gebruik per bericht maximaal drie zinnen.
-- Laat mij het gesprek leiden en geef zelf geen oplossingen.
-- Stop met het rollenspel zodra ik "feedback" typ.
+- Verwijs per onderdeel naar het artikel in het originele contract.
+- Neem bij belangrijke bepalingen de oorspronkelijke tekst op, met je Nederlandse vertaling eronder.
+- Is een term lastig te vertalen? Noem dan de originele term en leg uit wat die betekent.
+- Staat iets niet in het contract, schrijf dan "Niet geregeld".
+- Geef geen juridisch oordeel; markeer onduidelijkheden als vraag.
 
-Begin het gesprek met je eerste reactie als klant.
-
-Daarna (als ik "feedback" typ):
-Geef feedback op mijn gespreksvoering met:
-1. Drie dingen die goed gingen
-2. Drie verbeterpunten
-3. Eén zin die ik beter anders had kunnen zeggen, met een betere versie`,
-    promptNote: 'Werkt met de gratis Copilot Chat. Gebruik een verzonnen situatie en noem geen echte klanten.',
+Daarna:
+Maak een lijst met maximaal vijf vragen die ik aan de klant of een jurist moet stellen voordat we dit contract verwerken.`,
+    promptNote: 'Werkt met de gratis Copilot Chat: voeg het contract toe met de paperclip. Gebruik voor de demo een fictief contract en laat belangrijke conclusies altijd controleren.',
     qrCode: 'assets/qr/snack-06.png',
     qrLabel: '',
-    tip: 'Maak het spannender: vraag Copilot om de klant na drie berichten nog wat bozer te laten reageren.',
-    audience: ['Advies', 'Klantcontact'],
-    license: false                      // geen eigen gegevens nodig: gratis Copilot Chat
+    tip: 'Vraag daarna: "Vertaal artikel [NUMMER] volledig naar het Nederlands." Zo lees je het belangrijkste artikel helemaal.',
+    audience: ['Internationale klanten', 'Advies'],
+    license: false                      // bestand toevoegen kan in de gratis Copilot Chat
   }
 ];
