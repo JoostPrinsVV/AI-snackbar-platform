@@ -39,7 +39,7 @@ window.AISnackbar.config = {
   enablePromptCopy: true,               // Knop 'Kopieer prompt' (alleen op eigen telefoon/laptop, niet op een gedeelde tablet)
   enablePromptMail: true,               // 'Mail mij deze prompt': e-mailadres achterlaten (werkt alleen met centrale opslag, zie onder)
   enableQrCodes: true,                  // QR-codeblok bij iedere snack (alleen op een gedeelde tablet; op een telefoon heeft het geen zin)
-  enableRatings: true,                  // Smileys 'Hoe smaakte deze snack?' (anoniem, lokaal geteld)
+  enableRatings: true,                  // Smileys 'Hoe beviel deze snack?' (anoniem, lokaal geteld)
   enableComments: true,                 // Veld voor een anonieme opmerking of vraag (lokaal bewaard, export via beheer)
   commentMaxLength: 280,                // Maximaal aantal tekens per opmerking
   demoMode: false,                      // true = nette placeholders i.p.v. video's (ook voor snacks mét video)

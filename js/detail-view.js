@@ -72,7 +72,7 @@
       onVolumeChange: options.onVolumeChange,
       onActivity: options.onActivity
     });
-    // Direct na het kijken is hét moment om te vragen hoe de snack smaakte.
+    // Direct na het kijken is hét moment om te vragen hoe de snack beviel.
     if (ns.feedback.isRatingEnabled()) player.setEndcardExtra(ns.feedback.createEndcardRating());
 
     refs.play.addEventListener('click', () => {

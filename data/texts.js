@@ -93,12 +93,12 @@ window.AISnackbar.texts = {
     tipLabel: 'Tip',
 
     /* ---- Feedback ------------------------------------------------------ */
-    feedbackTitle: 'Hoe smaakte deze snack?',
+    feedbackTitle: 'Hoe beviel deze snack?',
     ratingHappy: 'Lekker!',
     ratingNeutral: 'Gaat wel',
     ratingSad: 'Niet mijn smaak',
     ratingThanks: 'Dank je! Je beoordeling is opgeslagen.',
-    endcardQuestion: 'Klaar! Hoe smaakte deze snack?',
+    endcardQuestion: 'Klaar! Hoe beviel deze snack?',
     endcardThanks: 'Dank je voor je beoordeling!',
     commentLabel: 'Opmerking of vraag?',
     commentOptional: '(optioneel)',

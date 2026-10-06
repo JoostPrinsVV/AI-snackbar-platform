@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Feedback: 'Hoe smaakte deze snack?' en een anonieme opmerking of vraag
+   Feedback: 'Hoe beviel deze snack?' en een anonieme opmerking of vraag
    --------------------------------------------------------------------------
    - Beoordeling met drie smileys. Per bezoeker (sessie) telt één stem per
      snack; een andere smiley kiezen verplaatst die stem.
