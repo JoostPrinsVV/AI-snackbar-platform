@@ -173,7 +173,7 @@ window.AISnackbar.texts = {
     /* ---- Verras mij ---------------------------------------------------- */
     surpriseOrder: 'Bestelling #{number}',
     surprisePreparing: 'Je bestelling wordt klaargemaakt…',
-    surpriseReady: 'Alsjeblieft, eet smakelijk!',
+    surpriseReady: 'Alsjeblieft, geniet ervan!',
     surpriseNone: 'Er zijn nog geen snacks beschikbaar.',
 
     /* ---- Welkomstscherm ------------------------------------------------ */
