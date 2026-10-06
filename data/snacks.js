@@ -81,40 +81,66 @@ Zet deze actielijst om in een planning voor de rest van deze week. Houd rekening
     license: true                       // leest je eigen mailbox en agenda
   },
   {
-    // Demo (fictieve jaarrekening): Copilot Chat met het bestand als bijlage, twee prompts.
+    // Demo (fictieve jaarrekening): uitgebreide ICBO in Copilot Chat met het bestand als bijlage, twee prompts.
     id: 'snack-02',
-    title: 'Jaarrekening kritisch nalopen',
-    subtitle: 'Copilot checkt het concept op aansluitingen en vragen',
+    title: 'ICBO op een jaarrekening',
+    subtitle: 'Copilot loopt het concept uitgebreid na vóór afgifte',
     category: 'Slimmer werken',
     level: 'Gevorderd',
-    duration: '2,5 min',
+    duration: '3 min',
     icon: 'assets/icons/icon-checklist.svg',
     accent: 'crimson',
     available: true,
     featured: false,
-    intro: 'Copilot leest een fictieve concept jaarrekening als kritische tweede lezer. Sluiten balans, winst-en-verliesrekening en toelichting op elkaar aan? Daarna vergelijkt Copilot met vorig jaar en maakt een lijst met vragen voor het dossier of de klant.',
+    intro: 'Copilot doet een uitgebreide ICBO op een fictieve concept jaarrekening: volledigheid, aansluitingen, grondslagen en toelichting, analyse ten opzichte van vorig jaar, continuïteit en presentatie. Je krijgt een samenvatting, een bevindingentabel en vragen voor klant en team.',
     video: 'assets/videos/snack-02.mp4',
     poster: 'assets/posters/snack-02.jpg',
     captions: '',
-    prompt: `Je bent een kritische tweede lezer van een concept jaarrekening. Analyseer het bijgevoegde bestand [BESTANDSNAAM].
+    prompt: `Je bent een ervaren reviewer en voert een ICBO uit op de bijgevoegde concept jaarrekening [BESTANDSNAAM] van [ONDERNEMING], [RECHTSVORM], boekjaar [JAAR]. De jaarrekening is opgesteld volgens [BW2 TITEL 9 EN RJ / RJK / FISCALE GRONDSLAGEN] voor een [MICRO / KLEINE / MIDDELGROTE] rechtspersoon.
 
-Controleer of deze onderdelen op elkaar aansluiten:
-1. Balans en toelichting op de balans
-2. Winst-en-verliesrekening en toelichting
-3. Eigen vermogen: beginstand, resultaat en overige mutaties
-4. Bedragen in de tekst en in de tabellen
-5. Vergelijkende cijfers van vorig jaar
+Beoordeel de jaarrekening op de volgende onderdelen.
 
-Maak een tabel met: Onderdeel, Bevinding, Pagina, Belang (hoog/middel/laag) en Vraag voor het team of de klant.
+A. Volledigheid en opbouw
+- Zijn balans, winst-en-verliesrekening, grondslagen, toelichting, overige gegevens en de samenstellingsverklaring aanwezig?
+- Kloppen naam, rechtsvorm, vestigingsplaats, KvK-nummer, boekjaar en data overal?
 
-Reken na waar dat kan en laat je berekening zien. Geef geen oordeel over de juistheid van de jaarrekening; benoem alleen signalen voor nader onderzoek.
+B. Cijfermatige aansluitingen
+- Kloppen de balanstotalen, subtotalen en de tabellen in de toelichting?
+- Sluit het resultaat uit de winst-en-verliesrekening aan op het verloop van het eigen vermogen?
+- Sluiten de toelichtingen aan op de posten in de balans en de winst-en-verliesrekening?
+- Komen bedragen in de tekst overeen met de tabellen?
+
+C. Grondslagen en toelichting
+- Zijn er grondslagen voor alle materiële posten, en zijn die gelijk aan vorig jaar?
+- Ontbreken toelichtingen die voor dit regime gebruikelijk of vereist zijn, zoals niet in de balans opgenomen verplichtingen, gebeurtenissen na balansdatum en het gemiddeld aantal werknemers?
+
+D. Analyse ten opzichte van vorig jaar
+- Noem mutaties groter dan [BEDRAG] of [PERCENTAGE]%.
+- Bereken de solvabiliteit, de current ratio en de brutomarge voor beide jaren en laat de berekening zien.
+
+E. Continuïteit
+- Zijn er signalen zoals een negatief eigen vermogen, structurele verliezen of een krappe liquiditeit? Wordt dit in de toelichting besproken?
+
+F. Presentatie
+- Inconsistente termen, tik- of afrondingsverschillen, ontbrekende eenheden en verkeerde verwijzingen.
+
+Lever op:
+1. Een samenvatting van maximaal vijf zinnen met de belangrijkste aandachtspunten.
+2. Een bevindingentabel met: Nr., Onderdeel (A tot en met F), Bevinding, Pagina, Berekening of bron, Belang (hoog/middel/laag) en Voorgestelde actie.
+3. Een lijst met vragen voor de klant en een lijst met vragen voor het opdrachtteam.
+
+Werkwijze:
+- Gebruik uitsluitend de bijgevoegde stukken.
+- Reken na waar dat kan en laat je berekening zien.
+- Noem een wettelijke eis alleen met het artikel of het RJ-hoofdstuk als je daar zeker van bent; markeer het anders als "Nagaan".
+- Geef geen oordeel over de jaarrekening als geheel; benoem alleen bevindingen en vragen.
 
 Daarna:
-Vergelijk de belangrijkste posten met vorig jaar. Noem mutaties groter dan [BEDRAG] of [PERCENTAGE]% en formuleer per mutatie één neutrale vraag.`,
-    promptNote: 'Werkt met de gratis Copilot Chat: voeg de jaarrekening toe met de paperclip. Gebruik voor de demo een fictieve jaarrekening; Copilot vervangt de review niet.',
+Zet de bevindingen met belang "hoog" om in een korte reviewnotitie voor de opdrachtverantwoordelijke, met per punt de voorgestelde actie.`,
+    promptNote: 'Werkt met de gratis Copilot Chat: voeg de concept jaarrekening (en die van vorig jaar) toe met de paperclip. Gebruik voor de demo een fictieve jaarrekening; Copilot ondersteunt de ICBO, maar vervangt jouw oordeel niet.',
     qrCode: 'assets/qr/snack-02.png',
     qrLabel: '',
-    tip: 'Vraag daarna: "Zet de vragen voor de klant in een korte, vriendelijke e-mail." Dan heb je meteen je vragenlijst.',
+    tip: 'Voeg ook de jaarrekening van vorig jaar toe. Dan kan Copilot de vergelijkende cijfers en grondslagen naast elkaar leggen.',
     audience: ['Samenstellen', 'Kwaliteit'],
     license: false                      // bestand toevoegen kan ook in de gratis Copilot Chat
   },
