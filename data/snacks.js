@@ -45,6 +45,10 @@
      download     Optioneel: bijlage om te downloaden, bijv. een template
                   (zie assets/downloads/). Alleen op een eigen apparaat en op de promptpagina.
      downloadLabel  Tekst op de downloadknop, bijv. 'Download de PowerPoint-template'.
+     guide        Optioneel: korte handleiding achter een knop onder de prompt, met een keuze
+                  'Zonder licentie' (standaard) / 'Met licentie':
+                  { label, title, basic: { steps: [...], note }, licensed: { steps: [...], note } }.
+                  Eén van de twee versies mag ontbreken; dan is er geen keuze.
      license      true = Microsoft 365 Copilot-licentie nodig (eigen mail, Teams,
                   agenda, bestanden of Copilot in Word/Excel/PowerPoint): badge
                   'Licentie' op de kaart. false = kan ook met de gratis Copilot Chat.
@@ -187,6 +191,32 @@ Schrijf een korte, vriendelijke e-mail aan [KLANTNAAM] waarin je de besluiten en
     qrLabel: '',
     tip: 'Geen transcriptie? Plak je eigen aantekeningen van het overleg; dezelfde prompt werkt dan ook.',
     audience: ['Iedereen die vergadert'],
+    // Knop 'Zo transcribeer je een Teams-vergadering' onder de prompt. Menunamen kunnen per Teams-versie iets verschillen.
+    guide: {
+      label: 'Zo transcribeer je een Teams-vergadering',
+      title: 'Een Teams-vergadering transcriberen',
+      basic: {
+        steps: [
+          'Vertel aan het begin van het overleg dat je de vergadering transcribeert. Iedereen ziet daar ook een melding van in Teams.',
+          'Kies in de vergadering bovenin Meer (…) → Opnemen en transcriberen → Transcriptie starten.',
+          'Kies als gesproken taal Nederlands. Dan wordt de transcriptie een stuk beter.',
+          'Klaar? Kies in hetzelfde menu Transcriptie stoppen, of beëindig de vergadering.',
+          'Open na afloop de vergadering in je agenda of de vergaderchat, ga naar Samenvatting → Transcriptie en kies Downloaden (.docx).',
+          'Voeg dat bestand in Copilot Chat toe met de paperclip en gebruik de prompt van deze snack.'
+        ],
+        note: 'Downloaden kan de organisator van de vergadering. Zie je de optie om te transcriberen niet? Dan staat die mogelijk uit; vraag het na bij ICT.'
+      },
+      licensed: {
+        steps: [
+          'Vertel aan het begin van het overleg dat Copilot meeluistert en notities maakt.',
+          'Zet in de vergadering Facilitator aan, via Meer (…) of het Copilot-menu. Facilitator gebruikt de transcriptie; zet die aan als Teams erom vraagt.',
+          'Tijdens het overleg houdt Facilitator gedeelde notities bij: onderwerpen, besluiten en actiepunten. Iedereen in de vergadering kijkt mee.',
+          'Stel tussendoor vragen in de vergaderchat, bijvoorbeeld: "Welke acties hebben we tot nu toe afgesproken?"',
+          'Na afloop vind je de notities en de transcriptie bij de vergadering (Samenvatting). Gebruik de prompt van deze snack om er de samenvatting en de bevestigingsmail van te maken.'
+        ],
+        note: 'Facilitator werkt met een Microsoft 365 Copilot-licentie. De namen in het menu kunnen per Teams-versie iets verschillen.'
+      }
+    },
     license: false                      // transcriptie zelf toevoegen kan in de gratis Copilot Chat
   },
   {

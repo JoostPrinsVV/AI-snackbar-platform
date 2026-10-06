@@ -72,7 +72,11 @@ window.AISnackbar.texts = {
     copyPrompt: 'Kopieer prompt',
     copied: 'Prompt gekopieerd',
     copyFailed: 'Kopiëren lukt hier niet. De tekst is geselecteerd: houd hem ingedrukt en kies Kopiëren (of Ctrl+C).',
-    downloadFallback: 'Download de bijlage',   // knop bij een snack met bijlage (tekst uit downloadLabel heeft voorrang)
+    downloadFallback: 'Download de bijlage',
+    guideDefaultLabel: 'Bekijk de handleiding',
+    guideVariantLabel: 'Versie van de handleiding',
+    guideVariantBasic: 'Zonder licentie',
+    guideVariantLicensed: 'Met licentie',   // knop bij een snack met bijlage (tekst uit downloadLabel heeft voorrang)
     promptMailButton: 'Mail mij deze prompt',
     promptMailLabel: 'Je e-mailadres',
     promptMailPlaceholder: 'naam@organisatie.nl',

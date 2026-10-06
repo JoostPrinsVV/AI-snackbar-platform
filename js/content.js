@@ -253,6 +253,7 @@
       audience: normalizeAudience(item.audience),
       download: path(item.download, 'download', id, issues),
       downloadLabel: text(item.downloadLabel),
+      guide: normalizeGuide(item.guide, id, issues),
       license: normalizeLicense(item.license, `Snack '${id}'`, id, issues)
     };
 
@@ -379,6 +380,24 @@
     if (ACCENT_ALIASES[key]) return ACCENT_ALIASES[key];
     issues.push(issue('warning', `Snack '${id}': onbekende accentkleur '${value}'; 'teal' gebruikt.`, id));
     return ACCENTS[0];
+  }
+
+  /**
+   * Handleiding bij een snack: { label, title, basic: { steps, note }, licensed: { steps, note } }.
+   * Minstens één versie met stappen; anders geen handleiding (en een melding).
+   */
+  function normalizeGuide(value, id, issues) {
+    if (value === undefined || value === null) return null;
+    const part = (raw) => {
+      const steps = raw && Array.isArray(raw.steps) ? raw.steps.map((step) => text(step)).filter(Boolean) : [];
+      return steps.length ? { steps, note: text(raw.note) } : null;
+    };
+    const guide = { label: text(value.label), title: text(value.title), basic: part(value.basic), licensed: part(value.licensed) };
+    if (!guide.title || (!guide.basic && !guide.licensed)) {
+      issues.push(issue('warning', `Snack '${id}': guide mist een titel of stappen; niet getoond.`, id));
+      return null;
+    }
+    return guide;
   }
 
   /**

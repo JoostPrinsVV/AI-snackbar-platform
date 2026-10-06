@@ -82,6 +82,8 @@
       meta: byId('pp-meta'),
       download: byId('pp-download'),
       downloadLabel: byId('pp-download-label'),
+      guide: byId('pp-guide'),
+      guideLabel: byId('pp-guide-label'),
       variant: byId('pp-variant'),
       variantHint: byId('pp-variant-hint'),
       prompt: byId('pp-prompt'),
@@ -100,6 +102,10 @@
     ns.ui.applyStaticTexts(document);
 
     ns.promptMail.init({ config: deviceConfig });
+    ns.guide.init();
+    refs.guide.addEventListener('click', () => {
+      if (current && current.guide) ns.guide.open(current.guide);
+    });
     refs.copy.addEventListener('click', copyPrompt);
     refs.share.addEventListener('click', sharePrompt);
     refs.kinds.addEventListener('click', onKindClick);
@@ -146,6 +152,7 @@
         // Bijlage: pad is relatief aan de snackbar, deze pagina staat één map dieper.
         download: snack.download ? '../' + snack.download : '',
         downloadLabel: snack.downloadLabel,
+        guide: snack.guide,
         tip: snack.tip,
         // Naar de snackbar, direct bij deze snack (alleen als er een demo is)
         demoHref: snack.video || snack.demo ? appHref() + '#/snack/' + encodeURIComponent(snack.id) : ''
@@ -483,6 +490,8 @@
     renderPrompt(entry);
     refs.tip.textContent = entry.tip;
     refs.tipBlock.hidden = !entry.tip;
+    refs.guide.hidden = !entry.guide;
+    if (entry.guide) refs.guideLabel.textContent = ns.guide.buttonLabel(entry.guide);
     refs.download.hidden = !entry.download;
     if (entry.download) {
       refs.download.href = entry.download;

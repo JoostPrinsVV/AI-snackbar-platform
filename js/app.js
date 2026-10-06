@@ -66,6 +66,7 @@
 
     ns.feedback.init({ config });
     ns.promptMail.init({ config });
+    ns.guide.init();
     ns.detailView.init({
       config,
       volume: ns.storage.get('volume', config.defaultVolume),

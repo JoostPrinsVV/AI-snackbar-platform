@@ -26,6 +26,7 @@
   <script defer src="../js/content.js"></script>
   <script defer src="../js/central.js"></script>
   <script defer src="../js/prompt-mail.js"></script>
+  <script defer src="../js/guide.js"></script>
   <script defer src="../js/prompts.js"></script>
 </head>
 <body class="prompts-page">
@@ -120,6 +121,11 @@
             <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-download"></use></svg>
             <span id="pp-download-label">Download de bijlage</span>
           </a>
+          <!-- Handleiding (veld guide in data/snacks.js), opent #guide-dialog -->
+          <button class="btn btn--secondary btn--block" type="button" id="pp-guide" aria-haspopup="dialog" hidden>
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-info"></use></svg>
+            <span id="pp-guide-label">Bekijk de handleiding</span>
+          </button>
 
           <!-- 'Mail mij deze prompt': zelfde onderdeel als in de snackbar (js/prompt-mail.js), alleen met centrale opslag -->
           <div class="prompt-mail" id="prompt-mail" hidden>
@@ -167,11 +173,37 @@
     </article>
   </main>
 
+  <!-- Handleiding bij een snack (js/guide.js); zelfde opbouw als in de snackbar -->
+  <dialog class="modal" id="guide-dialog" aria-labelledby="guide-title">
+    <div class="modal__panel">
+      <button class="btn btn--icon btn--quiet modal__close" type="button" data-close data-label="close" aria-label="Sluiten">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-close"></use></svg>
+      </button>
+      <h2 class="modal__title" id="guide-title" tabindex="-1"></h2>
+      <div class="guide__switch" id="guide-switch" role="group" data-label="guideVariantLabel">
+        <button class="guide__option" type="button" data-variant="basic" aria-pressed="true">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"></use></svg>
+          <span data-text="guideVariantBasic">Zonder licentie</span>
+        </button>
+        <button class="guide__option" type="button" data-variant="licensed" aria-pressed="false">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-key"></use></svg>
+          <span data-text="guideVariantLicensed">Met licentie</span>
+        </button>
+      </div>
+      <ol class="guide__steps" id="guide-steps" aria-live="polite"></ol>
+      <p class="guide__note" id="guide-note"></p>
+      <div class="modal__actions">
+        <button class="btn btn--primary btn--lg" type="button" data-close data-text="close">Sluiten</button>
+      </div>
+    </div>
+  </dialog>
+
   <div class="toast-region" id="toast-region" role="status" aria-live="polite"></div>
 
   <svg class="sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" hidden>
     <!-- Zelfde iconen als de snackbar (index.html), plus 'share' -->
-    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7 10.5 5 5 5-5"/><path d="M5 19.5h14"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-download"viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7 10.5 5 5 5-5"/><path d="M5 19.5h14"/></symbol>
     <symbol id="i-key"viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="12" r="3.75"/><path d="M10.25 12H21.5M17.5 12v3.5M20.5 12v2.75"/></symbol>
     <symbol id="i-cloche"viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 17a7.5 7.5 0 0 1 15 0z"/><path d="M2.8 17h18.4M12 9.5V8M10.7 8h2.6M7.6 14.3a4.8 4.8 0 0 1 2-2.5"/></symbol>
     <symbol id="i-play"viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.6v12.8a1.1 1.1 0 0 0 1.7.9l10-6.4a1.1 1.1 0 0 0 0-1.8l-10-6.4A1.1 1.1 0 0 0 8 5.6z"/></symbol>

@@ -46,6 +46,8 @@
       promptLicense: byId('prompt-license'),
       download: byId('prompt-download'),
       downloadLabel: byId('prompt-download-label'),
+      guide: byId('prompt-guide'),
+      guideLabel: byId('prompt-guide-label'),
       copy: byId('copy-prompt'),
       copyLabel: byId('copy-prompt-label'),
       qrBlock: byId('qr-block'),
@@ -86,6 +88,9 @@
     refs.other.addEventListener('click', () => handlers.onBack());
     refs.surprise.addEventListener('click', () => handlers.onSurprise(current && current.id));
     refs.copy.addEventListener('click', copyPrompt);
+    refs.guide.addEventListener('click', () => {
+      if (current && current.guide) ns.guide.open(current.guide);
+    });
 
     refs.copy.hidden = !canCopy();
     refs.qrBlock.hidden = !showQr();
@@ -170,6 +175,9 @@
       refs.download.href = snack.download;
       refs.downloadLabel.textContent = snack.downloadLabel || t('downloadFallback');
     }
+    // Handleiding: ook op de tablet (opent in de app; een kioskreset sluit de dialoog).
+    refs.guide.hidden = !snack.guide;
+    if (snack.guide) refs.guideLabel.textContent = ns.guide.buttonLabel(snack.guide);
 
     if (showQr()) {
       refs.qrCode.replaceChildren(imageWithFallback(snack.qrCode, t('qrAlt', { title: snack.title }), qrPlaceholder));

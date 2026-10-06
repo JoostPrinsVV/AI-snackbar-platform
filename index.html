@@ -36,6 +36,7 @@
   <script defer src="js/video-player.js"></script>
   <script defer src="js/feedback.js"></script>
   <script defer src="js/prompt-mail.js"></script>
+  <script defer src="js/guide.js"></script>
   <script defer src="js/menu-view.js"></script>
   <script defer src="js/detail-view.js"></script>
   <script defer src="js/surprise.js"></script>
@@ -190,6 +191,11 @@
                     <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-download"></use></svg>
                     <span id="prompt-download-label">Download de bijlage</span>
                   </a>
+                  <!-- Handleiding (veld guide in data/snacks.js), opent #guide-dialog -->
+                  <button class="btn btn--secondary btn--block" type="button" id="prompt-guide" aria-haspopup="dialog" hidden>
+                    <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-info"></use></svg>
+                    <span id="prompt-guide-label">Bekijk de handleiding</span>
+                  </button>
 
                   <!-- 'Mail mij deze prompt': alleen met centrale opslag (zie js/prompt-mail.js) -->
                   <div class="prompt-mail" id="prompt-mail" hidden>
@@ -316,6 +322,31 @@
       <p class="modal__text modal__license" data-text="aboutLicense"></p>
       <p class="modal__text" data-text="aboutHost"></p>
       <p class="modal__small" id="about-organizer"></p>
+      <div class="modal__actions">
+        <button class="btn btn--primary btn--lg" type="button" data-close data-text="close">Sluiten</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ================= Handleiding bij een snack (js/guide.js) ================= -->
+  <dialog class="modal" id="guide-dialog" aria-labelledby="guide-title">
+    <div class="modal__panel">
+      <button class="btn btn--icon btn--quiet modal__close" type="button" data-close data-label="close" aria-label="Sluiten">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-close"></use></svg>
+      </button>
+      <h2 class="modal__title" id="guide-title" tabindex="-1"></h2>
+      <div class="guide__switch" id="guide-switch" role="group" data-label="guideVariantLabel">
+        <button class="guide__option" type="button" data-variant="basic" aria-pressed="true">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"></use></svg>
+          <span data-text="guideVariantBasic">Zonder licentie</span>
+        </button>
+        <button class="guide__option" type="button" data-variant="licensed" aria-pressed="false">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-key"></use></svg>
+          <span data-text="guideVariantLicensed">Met licentie</span>
+        </button>
+      </div>
+      <ol class="guide__steps" id="guide-steps" aria-live="polite"></ol>
+      <p class="guide__note" id="guide-note"></p>
       <div class="modal__actions">
         <button class="btn btn--primary btn--lg" type="button" data-close data-text="close">Sluiten</button>
       </div>
