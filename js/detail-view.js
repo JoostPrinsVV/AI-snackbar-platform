@@ -44,6 +44,8 @@
       promptText: byId('prompt-text'),
       promptNote: byId('prompt-note'),
       promptLicense: byId('prompt-license'),
+      download: byId('prompt-download'),
+      downloadLabel: byId('prompt-download-label'),
       copy: byId('copy-prompt'),
       copyLabel: byId('copy-prompt-label'),
       qrBlock: byId('qr-block'),
@@ -162,6 +164,12 @@
     refs.promptLicense.hidden = snack.license === null;
     refs.copy.hidden = !canCopy() || !hasPrompt;
     refs.promptText.scrollTop = 0;
+    // Bijlage (bijv. een template): alleen op een eigen apparaat; op de tablet zou het bestand op de tablet belanden.
+    refs.download.hidden = !snack.download || config.kioskMode;
+    if (snack.download) {
+      refs.download.href = snack.download;
+      refs.downloadLabel.textContent = snack.downloadLabel || t('downloadFallback');
+    }
 
     if (showQr()) {
       refs.qrCode.replaceChildren(imageWithFallback(snack.qrCode, t('qrAlt', { title: snack.title }), qrPlaceholder));

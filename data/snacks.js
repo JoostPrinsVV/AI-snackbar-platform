@@ -42,6 +42,9 @@
      qrLabel      Tekst naast de QR-code, mag leeg blijven.
      tip          Praktische tip.
      audience     Voor wie handig, bijv. ['Administratie', 'Advies'].
+     download     Optioneel: bijlage om te downloaden, bijv. een template
+                  (zie assets/downloads/). Alleen op een eigen apparaat en op de promptpagina.
+     downloadLabel  Tekst op de downloadknop, bijv. 'Download de PowerPoint-template'.
      license      true = Microsoft 365 Copilot-licentie nodig (eigen mail, Teams,
                   agenda, bestanden of Copilot in Word/Excel/PowerPoint): badge
                   'Licentie' op de kaart. false = kan ook met de gratis Copilot Chat.
@@ -198,29 +201,55 @@ Schrijf een korte, vriendelijke e-mail aan [KLANTNAAM] waarin je de besluiten en
     accent: 'rose',
     available: true,
     featured: false,
-    intro: 'Copilot in PowerPoint zet een fictieve adviesnotitie om in een presentatie voor het klantgesprek. Met een tweede prompt maak je de dia’s korter en krijg je sprekersnotities, zodat je het verhaal zo kunt vertellen.',
+    intro: 'Copilot zet een fictieve adviesnotitie om in een klantpresentatie in de huisstijl van Visser & Visser. Elke dia krijgt één boodschap, korte bullets en sprekersnotities met de onderbouwing, zodat je het verhaal zo kunt vertellen.',
     video: 'assets/videos/snack-04.mp4',
     poster: 'assets/posters/snack-04.jpg',
     captions: '',
-    prompt: `Maak een presentatie van /[BESTANDSNAAM] voor een gesprek met [KLANTNAAM].
+    prompt: `Je bent een ervaren accountant bij Visser & Visser. Je bereidt een presentatie voor op een gesprek met [KLANTNAAM]. Het doel van het gesprek is [DOEL, bijv. "de uitkomsten van de jaarrekeningcontrole bespreken"].
 
-Gebruik maximaal 8 dia's:
-1. Titel en doel van het gesprek
+BRONNEN
+- Inhoud: [BESTANDSNAAM]. Gebruik alleen feiten, bedragen en conclusies die in dit document staan.
+- Opmaak: de bijgevoegde template Template_PowerPoint_VV_leeg.pptx. Gebruik deze als basis voor het eindbestand.
+
+OPBOUW (maximaal 8 dia's)
+1. Titel en doel van het gesprek (titeldia van de template)
 2. Samenvatting in drie punten
-3. tot en met 6. De belangrijkste bevindingen, met één boodschap per dia
+3-6. De belangrijkste bevindingen, één boodschap per dia
 7. Advies en keuzes voor de klant
 8. Vervolgstappen en planning
 
-Schrijf korte bullets in begrijpelijke taal, zonder vakjargon. Neem alleen bedragen en feiten op die in het document staan.
+Heeft het document minder dan vier belangrijke bevindingen? Maak dan minder bevindingendia's. Vul niet aan met minder relevante punten.
 
-Daarna:
-Maak de tekst op iedere dia korter: maximaal vier bullets van tien woorden. Zet de uitleg in de sprekersnotities.`,
-    promptNote: 'Gebruik in PowerPoint via Copilot (presentatie maken van een bestand). Controleer cijfers en opmaak voordat je presenteert.',
+SCHRIJFREGELS
+- De diatitel is de boodschap zelf, in één zin. Dus "Voorraadwaardering vraagt aanpassing" en niet "Voorraad".
+- Maximaal vier bullets per dia, elk maximaal tien woorden.
+- Begrijpelijke taal voor een ondernemer, zonder vakjargon. Is een vakterm onvermijdelijk? Leg die dan uit in de sprekersnotities.
+- Zet de uitleg, onderbouwing en bronverwijzing (paginanummer of paragraaf in het document) in de sprekersnotities.
+- Verzin geen bedragen, data of namen. Staat iets niet in het document, schrijf dan [ONTBREEKT: wat er mist] op de dia.
+
+GEBRUIK VAN DE TEMPLATE
+- Kies per dia de layout uit de template die het best past bij de inhoud. Bijvoorbeeld een kaartlayout voor bevindingen, een tabel voor bedragen en een tijdlijn of roadmap voor de planning.
+- Vervang alle placeholdertekst ("Titel van de dia", "Kop van het blok", "LABEL", "00" en dergelijke). Verander geen kleuren, lettertypes, vormen of posities.
+- Blijven er in een layout vakken leeg? Verwijder dan die vakken. Laat geen placeholders staan.
+- Vul de hoofdstukken in de zijbalk met de onderwerpen van deze presentatie en verwijder de overige hoofdstukken.
+- Verwijder alle dia's uit de template die je niet gebruikt.
+
+CONTROLE VOOR OPLEVERING
+Controleer voordat je het bestand oplevert:
+1. Er staat nergens nog placeholdertekst.
+2. Geen enkele dia heeft meer dan vier bullets van tien woorden.
+3. Ieder bedrag en feit is terug te vinden in het document.
+4. Elke dia heeft sprekersnotities.
+
+Lever het resultaat op als .pptx-bestand.`,
+    promptNote: 'Gebruik in Microsoft 365 Copilot Chat: voeg je document en de PowerPoint-template (hieronder te downloaden) toe. Controleer cijfers en opmaak voordat je presenteert.',
     qrCode: 'assets/qr/snack-04.png',
     qrLabel: '',
-    tip: 'Start vanuit een lege presentatie in de kantoorhuisstijl; Copilot bouwt de dia’s dan in die opmaak.',
+    tip: 'Lees de sprekersnotities na: daar staan de bronverwijzingen, zodat je ieder bedrag snel kunt controleren.',
     audience: ['Advies', 'Samenstellen'],
-    license: true                       // Copilot in PowerPoint
+    download: 'assets/downloads/Template_PowerPoint_VV_leeg.pptx',
+    downloadLabel: 'Download de PowerPoint-template',
+    license: true                       // Microsoft 365 Copilot (bestand als PowerPoint opleveren)
   },
   {
     // Demo (fictieve grootboekexport): Excelbestand als bijlage in Copilot Chat, twee prompts.

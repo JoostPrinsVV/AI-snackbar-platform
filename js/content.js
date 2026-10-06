@@ -251,6 +251,8 @@
       qrLabel: text(item.qrLabel),
       tip: text(item.tip),
       audience: normalizeAudience(item.audience),
+      download: path(item.download, 'download', id, issues),
+      downloadLabel: text(item.downloadLabel),
       license: normalizeLicense(item.license, `Snack '${id}'`, id, issues)
     };
 

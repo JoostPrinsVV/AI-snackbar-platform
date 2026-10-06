@@ -80,6 +80,8 @@
       title: byId('pp-title'),
       subtitle: byId('pp-subtitle'),
       meta: byId('pp-meta'),
+      download: byId('pp-download'),
+      downloadLabel: byId('pp-download-label'),
       variant: byId('pp-variant'),
       variantHint: byId('pp-variant-hint'),
       prompt: byId('pp-prompt'),
@@ -141,6 +143,9 @@
         promptNote: snack.promptNote,
         promptBasic: '',
         promptNoteBasic: '',
+        // Bijlage: pad is relatief aan de snackbar, deze pagina staat één map dieper.
+        download: snack.download ? '../' + snack.download : '',
+        downloadLabel: snack.downloadLabel,
         tip: snack.tip,
         // Naar de snackbar, direct bij deze snack (alleen als er een demo is)
         demoHref: snack.video || snack.demo ? appHref() + '#/snack/' + encodeURIComponent(snack.id) : ''
@@ -478,6 +483,11 @@
     renderPrompt(entry);
     refs.tip.textContent = entry.tip;
     refs.tipBlock.hidden = !entry.tip;
+    refs.download.hidden = !entry.download;
+    if (entry.download) {
+      refs.download.href = entry.download;
+      refs.downloadLabel.textContent = entry.downloadLabel || t('downloadFallback');
+    }
     refs.demo.href = entry.demoHref || '../';
     refs.demo.hidden = !entry.demoHref;
 
