@@ -92,16 +92,16 @@ Zet deze actielijst om in een planning voor de rest van deze week. Houd rekening
     accent: 'crimson',
     available: true,
     featured: false,
-    intro: 'Copilot doet een uitgebreide ICBO op een fictieve concept jaarrekening: volledigheid, aansluitingen, grondslagen en toelichting, analyse ten opzichte van vorig jaar, continuïteit en presentatie. Je krijgt een samenvatting, een bevindingentabel en vragen voor klant en team.',
+    intro: 'Copilot doet als ervaren auditor een uitgebreide ICBO op een fictieve concept jaarrekening: volledigheid, aansluitingen, grondslagen en toelichting, analyse met de materialiteit, continuïteit en presentatie. Je krijgt een samenvatting, een bevindingentabel en vragen voor klant en team.',
     video: 'assets/videos/snack-02.mp4',
     poster: 'assets/posters/snack-02.jpg',
     captions: '',
-    prompt: `Je bent een ervaren reviewer en voert een ICBO uit op de bijgevoegde concept jaarrekening [BESTANDSNAAM] van [ONDERNEMING], [RECHTSVORM], boekjaar [JAAR]. De jaarrekening is opgesteld volgens [BW2 TITEL 9 EN RJ / RJK / FISCALE GRONDSLAGEN] voor een [MICRO / KLEINE / MIDDELGROTE] rechtspersoon.
+    prompt: `Je bent een ervaren auditor met veel MKB-kennis en voert een ICBO uit op de bijgevoegde concept jaarrekening [BESTANDSNAAM] van [ONDERNEMING], [RECHTSVORM], boekjaar [JAAR]. De jaarrekening is opgesteld volgens [BW2 TITEL 9 EN RJ / RJK / FISCALE GRONDSLAGEN] voor een [MICRO / KLEINE / MIDDELGROTE] rechtspersoon.
 
 Beoordeel de jaarrekening op de volgende onderdelen.
 
 A. Volledigheid en opbouw
-- Zijn balans, winst-en-verliesrekening, grondslagen, toelichting, overige gegevens en de samenstellingsverklaring aanwezig?
+- Zijn balans, winst-en-verliesrekening, grondslagen, toelichting, overige gegevens, etc. aanwezig?
 - Kloppen naam, rechtsvorm, vestigingsplaats, KvK-nummer, boekjaar en data overal?
 
 B. Cijfermatige aansluitingen
@@ -114,8 +114,9 @@ C. Grondslagen en toelichting
 - Zijn er grondslagen voor alle materiële posten, en zijn die gelijk aan vorig jaar?
 - Ontbreken toelichtingen die voor dit regime gebruikelijk of vereist zijn, zoals niet in de balans opgenomen verplichtingen, gebeurtenissen na balansdatum en het gemiddeld aantal werknemers?
 
-D. Analyse ten opzichte van vorig jaar
-- Noem mutaties groter dan [BEDRAG] of [PERCENTAGE]%.
+D. Analyse ten opzichte van vorig jaar & materialiteit
+- De materialiteit bedraagt [MATERIALITEIT] voor [JAAR] en de uitvoeringsmaterialiteit [UITVOERINGSMATERIALITEIT].
+- Analyseer posten en mutaties groter dan de uitvoeringsmaterialiteit.
 - Bereken de solvabiliteit, de current ratio en de brutomarge voor beide jaren en laat de berekening zien.
 
 E. Continuïteit
@@ -137,7 +138,7 @@ Werkwijze:
 
 Daarna:
 Zet de bevindingen met belang "hoog" om in een korte reviewnotitie voor de opdrachtverantwoordelijke, met per punt de voorgestelde actie.`,
-    promptNote: 'Werkt met de gratis Copilot Chat: voeg de concept jaarrekening (en die van vorig jaar) toe met de paperclip. Gebruik voor de demo een fictieve jaarrekening; Copilot ondersteunt de ICBO, maar vervangt jouw oordeel niet.',
+    promptNote: 'Werkt met de gratis Copilot Chat: voeg de concept jaarrekening (en die van vorig jaar) toe met de paperclip en vul de materialiteit uit het dossier in. Gebruik voor de demo een fictieve jaarrekening; Copilot ondersteunt de ICBO, maar vervangt jouw oordeel niet.',
     qrCode: 'assets/qr/snack-02.png',
     qrLabel: '',
     tip: 'Voeg ook de jaarrekening van vorig jaar toe. Dan kan Copilot de vergelijkende cijfers en grondslagen naast elkaar leggen.',
