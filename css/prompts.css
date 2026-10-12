@@ -32,6 +32,30 @@
   font-size: var(--fs-md);
 }
 
+/* Uitleg Snacks / Bijgerechtjes onder de inleiding */
+.prompts__kinds-intro {
+  display: grid;
+  gap: var(--space-1);
+  margin: var(--space-2) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--fs-md);
+}
+
+.prompts__kinds-intro dt {
+  display: inline;
+  color: var(--color-text);
+  font-weight: var(--fw-bold);
+}
+
+.prompts__kinds-intro dt::after {
+  content: ':';
+}
+
+.prompts__kinds-intro dd {
+  display: inline;
+  margin: 0 0 0 0.3em;
+}
+
 /* ---- Alle prompts ------------------------------------------------------- */
 .prompts__list {
   display: grid;

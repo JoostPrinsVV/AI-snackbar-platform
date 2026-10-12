@@ -51,16 +51,27 @@
     <!-- Alle prompts -->
     <section class="prompts__view" id="pp-list" aria-labelledby="pp-list-title">
       <h1 class="prompts__title" id="pp-list-title" tabindex="-1" data-text="promptsTitle">Alle prompts</h1>
-      <p class="prompts__lead" data-text="promptsLead">Kies een AI-snack of laat je inspireren. Kopieer de prompt en probeer het zelf.</p>
+      <p class="prompts__lead" data-text="promptsLead">Kopieer een prompt en probeer het zelf. Er zijn twee soorten:</p>
+      <dl class="prompts__kinds-intro">
+        <div>
+          <dt data-text="promptsSnacksTerm">Snacks</dt>
+          <dd data-text="promptsSnacksText">uitgebreidere prompts met een demo, zoals in de AI Snackbar.</dd>
+        </div>
+        <div>
+          <dt data-text="promptsSidesTerm">Bijgerechtjes</dt>
+          <dd data-text="promptsSidesText">korte inspiratieprompts voor dagelijks gebruik.</dd>
+        </div>
+      </dl>
 
-      <!-- Snacks | Inspiratie (alleen als er allebei zijn); adres: prompts/#snacks of prompts/#inspiratie -->
+      <!-- Snacks | Bijgerechtjes (alleen als er allebei zijn); adres: prompts/#snacks of prompts/#inspiratie -->
+      <!-- (het adres blijft #inspiratie, zodat al gedrukte QR-codes blijven werken) -->
       <div class="prompts__kinds" id="pp-kinds" role="group" data-label="promptsKindLabel" hidden>
         <button class="prompts__kind" type="button" data-kind="snacks" aria-pressed="true">
           <span data-text="promptsKindSnacks">Snacks</span>
           <span class="prompts__count" id="pp-count-snacks"></span>
         </button>
         <button class="prompts__kind" type="button" data-kind="inspiratie" aria-pressed="false">
-          <span data-text="promptsKindInspiration">Inspiratie</span>
+          <span data-text="promptsKindInspiration">Bijgerechtjes</span>
           <span class="prompts__count" id="pp-count-inspiration"></span>
         </button>
       </div>

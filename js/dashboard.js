@@ -344,12 +344,12 @@
     const labels = new Map(rows.map((row) => [row.id, row.label]));
     const prompts = new Map(ctx.getSnacks().concat(inspiration).map((item) => [item.id, item]));
     inspiration.forEach((item) => {
-      labels.set(item.id, 'Inspiratie: ' + item.title);
+      labels.set(item.id, 'Bijgerecht: ' + item.title);
       if (!item.promptBasic) return;
       // Aangevraagd bij de versie zonder licentie: die tekst mailen.
       const basicId = item.id + ns.content.BASIC_SUFFIX;
       const title = item.title + ' (zonder licentie)';
-      labels.set(basicId, 'Inspiratie: ' + title);
+      labels.set(basicId, 'Bijgerecht: ' + title);
       prompts.set(basicId, { title, prompt: item.promptBasic });
     });
     const people = new Map();
