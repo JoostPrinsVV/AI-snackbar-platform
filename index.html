@@ -61,6 +61,10 @@
         </div>
         <p class="topbar__event" id="event-label"></p>
         <div class="topbar__actions">
+          <!-- Licentie aanvragen (js/license-request.js): alleen op een eigen apparaat, op de snackkaart -->
+          <button class="btn btn--ghost-dark btn--icon" type="button" id="license-button" data-license-request aria-haspopup="dialog" data-label="licenseRequestButton" aria-label="Licentie aanvragen" hidden>
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-key"></use></svg>
+          </button>
           <button class="btn btn--ghost-dark btn--icon" type="button" id="about-button" data-label="aboutButton" aria-label="Over de AI Snackbar">
             <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-info"></use></svg>
           </button>

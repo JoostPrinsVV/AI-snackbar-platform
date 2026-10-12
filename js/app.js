@@ -123,6 +123,7 @@
       detailTitle: byId('detail-title'),
       homeButton: byId('home-button'),
       aboutButton: byId('about-button'),
+      licenseButton: byId('license-button'),
       adminButton: byId('admin-button'),
       surpriseButton: byId('surprise-button'),
       surpriseHint: byId('surprise-hint'),
@@ -349,6 +350,7 @@
     dom.detailView.hidden = name !== 'detail';
     dom.homeButton.hidden = name === 'menu';
     dom.aboutButton.hidden = name !== 'menu';
+    dom.licenseButton.hidden = name !== 'menu' || !ns.licenseRequest.isEnabled();
     dom.adminButton.hidden = name !== 'menu' || !state.config.enableAdmin;
     if (name === 'menu') ns.menuView.updateColumns();
 
