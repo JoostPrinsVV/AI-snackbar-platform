@@ -159,15 +159,17 @@
         // Naar de snackbar, direct bij deze snack (alleen als er een demo is)
         demoHref: snack.video || snack.demo ? appHref() + '#/snack/' + encodeURIComponent(snack.id) : ''
       }));
-    lists.inspiratie = inspiration.prompts.map((item) => ({
+    // Nummer = plek in data/inspiration.js (01, 02, …); staat ook op de gedrukte kaartjes.
+    lists.inspiratie = inspiration.prompts.map((item, index) => ({
       id: item.id,
       kind: 'inspiratie',
+      number: String(index + 1).padStart(2, '0'),
       title: item.title,
       // Lijst: de korte omschrijving; bij de prompt zelf: de 'Wist je dat'-zin (zoals op het kaartje)
       subtitle: item.didYouKnow,
       listSubtitle: item.description,
       usefulFor: item.usefulFor,
-      eyebrow: t('promptsInspirationEyebrow'),
+      eyebrow: t('promptsInspirationNumber', { number: String(index + 1).padStart(2, '0') }),
       label: item.category.label,
       category: item.category,
       accent: item.category.accent,
@@ -251,7 +253,9 @@
                   'li',
                   { dataset: { id: entry.id } },
                   el('a', { className: 'prompts-item prompts-item--inspiration', attrs: { href: '#' + entry.id } }, [
-                    el('span', { className: 'prompts-item__mark' }, icon('bulb')),
+                    // Nummer zoals op het kaartje; schermlezers horen "Bijgerecht 07".
+                    el('span', { className: 'prompts-item__mark', attrs: { 'aria-hidden': 'true' }, text: entry.number }),
+                    el('span', { className: 'sr-only', text: t('promptsInspirationNumber', { number: entry.number }) + ': ' }),
                     itemBody(entry),
                     icon('arrow-right')
                   ])

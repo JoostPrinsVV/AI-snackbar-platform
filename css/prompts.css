@@ -122,19 +122,18 @@
   font-size: var(--fs-base);
 }
 
+/* Bijgerecht: nummer zoals op het gedrukte kaartje, in een rondje in de themakleur */
 .prompts-item__mark {
   display: grid;
   place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
   background: var(--accent-tint);
   color: var(--accent-ink);
-}
-
-.prompts-item__mark .icon {
-  width: 1.25rem;
-  height: 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 /* Impact: het woord plus drie stippen (gevuld = niveau), nooit alleen kleur */

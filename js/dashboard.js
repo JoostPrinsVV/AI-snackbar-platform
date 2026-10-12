@@ -344,13 +344,15 @@
     const inspiration = ctx.getInspiration ? ctx.getInspiration() : [];
     const labels = new Map(rows.map((row) => [row.id, row.label]));
     const prompts = new Map(ctx.getSnacks().concat(inspiration).map((item) => [item.id, item]));
-    inspiration.forEach((item) => {
-      labels.set(item.id, 'Bijgerecht: ' + item.title);
+    inspiration.forEach((item, index) => {
+      // Zelfde nummer als op de promptpagina en het gedrukte kaartje
+      const prefix = 'Bijgerecht ' + String(index + 1).padStart(2, '0') + ': ';
+      labels.set(item.id, prefix + item.title);
       if (!item.promptBasic) return;
       // Aangevraagd bij de versie zonder licentie: die tekst mailen.
       const basicId = item.id + ns.content.BASIC_SUFFIX;
       const title = item.title + ' (zonder licentie)';
-      labels.set(basicId, 'Bijgerecht: ' + title);
+      labels.set(basicId, prefix + title);
       prompts.set(basicId, { title, prompt: item.promptBasic });
     });
     const people = new Map();

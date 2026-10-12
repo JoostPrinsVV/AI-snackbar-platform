@@ -10,7 +10,9 @@
 
    Zo werkt het:
    - Iedere prompt staat tussen { en }, gescheiden door een komma.
-   - De volgorde hier is de volgorde op de promptpagina.
+   - De volgorde hier is de volgorde op de promptpagina, en bepaalt het nummer
+     (Bijgerecht 01, 02, …) dat ook op de gedrukte kaartjes staat. Na het drukken:
+     nieuwe prompts alleen achteraan toevoegen en niets meer verschuiven.
    - De thema's (category) verschijnen in de volgorde waarin ze hier
      voor het eerst voorkomen, ieder met een eigen kleur. Schrijf een
      thema overal precies hetzelfde.

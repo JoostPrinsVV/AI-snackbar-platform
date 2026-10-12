@@ -165,7 +165,7 @@ window.AISnackbar.texts = {
     promptsVariantHintBasic: 'Je plakt de tekst zelf of voegt het bestand toe. Werkt ook met de gratis Copilot Chat.',
     promptsNoMatch: 'Geen prompts voor deze keuze. Kies een ander thema of "Alle".',
     promptsThemeAll: 'Alle thema’s',
-    promptsInspirationEyebrow: 'Bijgerecht',
+    promptsInspirationNumber: 'Bijgerecht {number}',   // nummer zoals op het gedrukte kaartje
     promptsUsefulFor: 'Handig bij',
     promptsImpactLabel: 'Impact',
     promptsImpactValue: '{level} van 3',   // alleen voor schermlezers, naast de stippen
