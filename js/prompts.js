@@ -86,6 +86,7 @@
       guideLabel: byId('pp-guide-label'),
       variant: byId('pp-variant'),
       variantHint: byId('pp-variant-hint'),
+      licenseLink: byId('pp-license-link'),
       prompt: byId('pp-prompt'),
       note: byId('pp-note'),
       copy: byId('pp-copy'),
@@ -103,6 +104,7 @@
 
     ns.promptMail.init({ config: deviceConfig });
     ns.guide.init();
+    ns.licenseRequest.init({ config: deviceConfig });
     refs.guide.addEventListener('click', () => {
       if (current && current.guide) ns.guide.open(current.guide);
     });
@@ -487,6 +489,7 @@
 
     refs.variant.hidden = !hasVariants;
     refs.variantHint.hidden = !hasVariants;
+    refs.licenseLink.hidden = entry.license !== true || !ns.licenseRequest.isEnabled();
     renderPrompt(entry);
     refs.tip.textContent = entry.tip;
     refs.tipBlock.hidden = !entry.tip;

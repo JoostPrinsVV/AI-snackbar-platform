@@ -26,6 +26,9 @@
     showSurpriseButton: true,
     enablePromptCopy: true,
     enablePromptMail: true,
+    enableLicenseRequests: false,
+    licenseRequestDomains: [],
+    licenseMinWords: 50,
     enableQrCodes: true,
     enableRatings: true,
     enableComments: true,
@@ -58,8 +61,10 @@
     inactivityWarningDuration: [3, 120],
     defaultVolume: [0, 1],
     adminLongPressSeconds: [1, 10],
-    commentMaxLength: [50, 1000]
+    commentMaxLength: [50, 1000],
+    licenseMinWords: [10, 300]
   };
+  const DOMAIN_PATTERN = /^[a-z0-9-]+(\.[a-z0-9-]+)+$/;
 
   const THEMES = ['licht', 'donker'];
 
@@ -102,6 +107,10 @@
         const valid = value === true || value === false || value === 'auto';
         if (!valid) issues.push(issue('warning', "Instelling 'kioskMode' moet true, false of 'auto' zijn; 'auto' gebruikt."));
         config[key] = valid ? value : fallback;
+        return;
+      }
+      if (key === 'licenseRequestDomains') {
+        config[key] = normalizeDomains(value, issues);
         return;
       }
       if (typeof value !== typeof fallback) {
@@ -151,6 +160,19 @@
     }
     normalizeCentral(config, issues);
     return { config: Object.freeze(config), issues };
+  }
+
+  /** Toegestane e-maildomeinen voor licentieaanvragen: kleine letters, zonder '@'. Leeg = ieder domein. */
+  function normalizeDomains(value, issues) {
+    const list = Array.isArray(value) ? value : [];
+    const domains = list
+      .filter((item) => typeof item === 'string')
+      .map((item) => item.trim().toLowerCase().replace(/^@/, ''))
+      .filter((item) => DOMAIN_PATTERN.test(item));
+    if (!Array.isArray(value) || domains.length !== list.length) {
+      issues.push(issue('warning', "Instelling 'licenseRequestDomains' moet een lijst met domeinen zijn, zoals ['organisatie.nl']; ongeldige waarden genegeerd."));
+    }
+    return Object.freeze(domains);
   }
 
   /** Centrale opslag: alleen een Supabase-adres (dat staat de CSP toe) en nooit een geheime sleutel. */

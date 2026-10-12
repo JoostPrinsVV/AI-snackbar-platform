@@ -37,6 +37,7 @@
   <script defer src="js/feedback.js"></script>
   <script defer src="js/prompt-mail.js"></script>
   <script defer src="js/guide.js"></script>
+  <script defer src="js/license-request.js"></script>
   <script defer src="js/menu-view.js"></script>
   <script defer src="js/detail-view.js"></script>
   <script defer src="js/surprise.js"></script>
@@ -184,6 +185,13 @@
                   </div>
                   <!-- Copilot-licentie nodig of niet (veld license in data/snacks.js) -->
                   <p class="meta prompt-box__license" id="prompt-license" hidden></p>
+                  <!-- Licentie aanvragen (js/license-request.js): alleen bij license: true, op een eigen apparaat -->
+                  <p class="license-link" id="prompt-license-link" hidden>
+                    <button class="license-link__button" type="button" data-license-request aria-haspopup="dialog" hidden>
+                      <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-key"></use></svg>
+                      <span data-text="licenseRequestLink">Nog geen licentie? Vraag hem aan</span>
+                    </button>
+                  </p>
                   <pre class="prompt-box__text is-selectable" id="prompt-text" aria-labelledby="prompt-label" tabindex="0"></pre>
                   <p class="prompt-box__note" id="prompt-note"></p>
                   <!-- Bijlage bij de prompt (veld download in data/snacks.js), alleen op een eigen apparaat -->
@@ -320,6 +328,11 @@
         <li class="steps__item"><span class="steps__number">3</span><span data-text="stepThree">Probeer het morgen zelf</span></li>
       </ol>
       <p class="modal__text modal__license" data-text="aboutLicense"></p>
+      <!-- Licentie aanvragen (js/license-request.js): alleen op een eigen apparaat -->
+      <button class="license-link__button" type="button" data-license-request aria-haspopup="dialog" hidden>
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-key"></use></svg>
+        <span data-text="licenseRequestLink">Nog geen licentie? Vraag hem aan</span>
+      </button>
       <p class="modal__text" data-text="aboutHost"></p>
       <p class="modal__small" id="about-organizer"></p>
       <div class="modal__actions">
@@ -353,6 +366,83 @@
     </div>
   </dialog>
 
+  <!-- ================= Copilot-licentie aanvragen (js/license-request.js) ================= -->
+  <!-- Zelfde opbouw in index.html en prompts/index.html. Alleen eigen apparaat + centrale opslag. -->
+  <dialog class="modal license" id="license-dialog" aria-labelledby="license-title">
+    <div class="modal__panel">
+      <button class="btn btn--icon btn--quiet modal__close" type="button" data-close data-label="close" aria-label="Sluiten">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-close"></use></svg>
+      </button>
+      <span class="modal__mark" aria-hidden="true">
+        <svg class="icon" focusable="false"><use href="#i-key"></use></svg>
+      </span>
+      <h2 class="modal__title" id="license-title" tabindex="-1" data-text="licenseRequestTitle">Copilot-licentie aanvragen</h2>
+      <p class="modal__lead" data-text="licenseRequestLead"></p>
+
+      <div class="license__compare">
+        <section class="license__column" aria-labelledby="license-basic-title">
+          <h3 class="license__heading" id="license-basic-title">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"></use></svg>
+            <span data-text="licenseCompareBasicTitle">Iedereen (Copilot Chat)</span>
+          </h3>
+          <ul class="license__list" role="list">
+            <li data-text="licenseCompareBasic1"></li>
+            <li data-text="licenseCompareBasic2"></li>
+            <li data-text="licenseCompareBasic3"></li>
+          </ul>
+        </section>
+        <section class="license__column license__column--extra" aria-labelledby="license-extra-title">
+          <h3 class="license__heading" id="license-extra-title">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-key"></use></svg>
+            <span data-text="licenseCompareLicensedTitle">Extra met een licentie</span>
+          </h3>
+          <ul class="license__list" role="list">
+            <li data-text="licenseCompareLicensed1"></li>
+            <li data-text="licenseCompareLicensed2"></li>
+            <li data-text="licenseCompareLicensed3"></li>
+            <li data-text="licenseCompareLicensed4"></li>
+          </ul>
+        </section>
+      </div>
+
+      <form class="license__form" id="license-form" novalidate>
+        <div class="license__field">
+          <label class="license__label" for="license-name" data-text="licenseNameLabel">Naam</label>
+          <input class="license__input" id="license-name" name="name" type="text" autocomplete="name" maxlength="100" required data-placeholder="licenseNamePlaceholder">
+        </div>
+        <div class="license__field">
+          <label class="license__label" for="license-email" data-text="licenseEmailLabel">Zakelijk e-mailadres</label>
+          <input class="license__input" id="license-email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" maxlength="254" required>
+        </div>
+        <div class="license__field">
+          <label class="license__label" for="license-motivation" data-text="licenseMotivationLabel">Waarom wil je een licentie?</label>
+          <p class="license__hint" id="license-motivation-hint" data-text="licenseMotivationHint"></p>
+          <textarea class="license__input license__textarea is-selectable" id="license-motivation" name="motivation" rows="6" required aria-describedby="license-motivation-hint license-counter" data-placeholder="licenseMotivationPlaceholder"></textarea>
+          <p class="license__counter" id="license-counter" aria-live="polite"></p>
+        </div>
+        <p class="prompt-mail__privacy license__privacy">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-shield"></use></svg>
+          <span data-text="licensePrivacy"></span>
+        </p>
+        <p class="prompt-mail__error" id="license-error" role="alert" hidden></p>
+        <div class="modal__actions">
+          <button class="btn btn--primary btn--lg" type="submit" id="license-submit">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-send"></use></svg>
+            <span data-text="licenseSubmit">Aanvraag versturen</span>
+          </button>
+        </div>
+      </form>
+
+      <div class="license__done" id="license-done" tabindex="-1" role="status" hidden>
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check-circle"></use></svg>
+        <h3 class="modal__subtitle" data-text="licenseDoneTitle">Aanvraag verstuurd</h3>
+        <p class="modal__text" id="license-done-text"></p>
+        <div class="modal__actions">
+          <button class="btn btn--primary btn--lg" type="button" data-close data-text="close">Sluiten</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
   <!-- ================= Inactiviteit ================= -->
   <dialog class="modal modal--compact" id="idle-dialog" aria-labelledby="idle-title" aria-describedby="idle-text">
     <div class="modal__panel idle">

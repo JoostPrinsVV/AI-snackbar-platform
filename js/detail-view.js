@@ -44,6 +44,7 @@
       promptText: byId('prompt-text'),
       promptNote: byId('prompt-note'),
       promptLicense: byId('prompt-license'),
+      licenseLink: byId('prompt-license-link'),
       download: byId('prompt-download'),
       downloadLabel: byId('prompt-download-label'),
       guide: byId('prompt-guide'),
@@ -167,6 +168,7 @@
     );
     refs.promptLicense.classList.toggle('meta--license', snack.license === true);
     refs.promptLicense.hidden = snack.license === null;
+    refs.licenseLink.hidden = snack.license !== true || !ns.licenseRequest.isEnabled();
     refs.copy.hidden = !canCopy() || !hasPrompt;
     refs.promptText.scrollTop = 0;
     // Bijlage (bijv. een template): alleen op een eigen apparaat; op de tablet zou het bestand op de tablet belanden.

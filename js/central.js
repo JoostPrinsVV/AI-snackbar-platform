@@ -9,8 +9,9 @@
    - Anonieme gegevens (tellers, smileys, opmerkingen) gaan via een wachtrij
      ('outbox' in js/storage.js): even geen internet kost niets, ze worden
      later alsnog verstuurd.
-   - Een e-mailadres gaat nooit in de wachtrij en wordt nooit op het apparaat
-     bewaard: direct versturen, of het lukt niet (dan een nette melding).
+   - Een e-mailadres ('Mail mij') of licentieaanvraag gaat nooit in de wachtrij
+     en wordt nooit op het apparaat bewaard: direct versturen, of het lukt niet
+     (dan een nette melding).
    - Iedereen mag alleen tóévoegen (Row Level Security, zie
      tools/supabase-setup.sql). Lezen kan alleen een beheerder die inlogt;
      dat inloggen loopt via Supabase Auth en de sessie staat alleen in het
@@ -24,7 +25,8 @@
     event: 'snack_events',
     rating: 'snack_ratings',
     comment: 'snack_comments',
-    request: 'prompt_requests'
+    request: 'prompt_requests',
+    license: 'license_requests'
   };
   const QUEUED_TABLES = [TABLES.event, TABLES.rating, TABLES.comment];
   const OUTBOX_LIMIT = 500;
@@ -218,6 +220,24 @@
     }
   }
 
+  /**
+   * Licentieaanvraag (naam, e-mailadres, toelichting): direct versturen, nooit via de wachtrij.
+   * @returns {Promise<'ok'|'missing'|'failed'>} missing = tabel ontbreekt nog in Supabase
+   */
+  async function requestLicense(name, email, motivation) {
+    if (!enabled) return 'failed';
+    const rows = [{ namespace: config.storageNamespace, name, email, motivation }];
+    try {
+      const response = await insert(TABLES.license, rows);
+      if (response.ok) return 'ok';
+      console.warn('[AI Snackbar] Licentieaanvraag geweigerd:', response.status, await response.text());
+      return response.status === 404 ? 'missing' : 'failed';
+    } catch (error) {
+      console.warn('[AI Snackbar] Licentieaanvraag niet verstuurd (geen verbinding).');
+      return 'failed';
+    }
+  }
+
   /* ---- Beheer: inloggen en lezen ------------------------------------------------- */
   async function signIn(email, password) {
     const response = await request('/auth/v1/token?grant_type=password', {
@@ -259,17 +279,43 @@
   /** Alle centrale gegevens van deze snackbar (namespace). Alleen voor een ingelogde beheerder. */
   async function fetchAll() {
     if (!signedIn()) throw new Error('niet ingelogd');
-    const [events, ratings, comments, requests] = await Promise.all([readAll(TABLES.event), readAll(TABLES.rating), readAll(TABLES.comment), readAll(TABLES.request)]);
-    return { events, ratings, comments, requests, fetchedAt: new Date() };
+    const [events, ratings, comments, requests, licenses] = await Promise.all([
+      readAll(TABLES.event),
+      readAll(TABLES.rating),
+      readAll(TABLES.comment),
+      readAll(TABLES.request),
+      readLicenses()
+    ]);
+    return { events, ratings, comments, requests, licenses, fetchedAt: new Date() };
+  }
+
+  /** Licentieaanvragen; null als de tabel nog ontbreekt (tools/supabase-update-license.sql niet uitgevoerd). */
+  async function readLicenses() {
+    try {
+      return await readAll(TABLES.license);
+    } catch (error) {
+      if (/\(404\)/.test(error.message)) return null;
+      throw error;
+    }
+  }
+
+  function deleteAll(table) {
+    if (!signedIn()) throw new Error('niet ingelogd');
+    const query = `?namespace=eq.${encodeURIComponent(config.storageNamespace)}`;
+    return request('/rest/v1/' + table + query, { method: 'DELETE', headers: headers(admin.token, { Prefer: 'return=minimal' }) }).then((response) => {
+      if (!response.ok) throw new Error(`wissen mislukt (${response.status})`);
+      return true;
+    });
   }
 
   /** Na het mailen: alle e-mailadressen van deze snackbar wissen. */
   async function deletePromptRequests() {
-    if (!signedIn()) throw new Error('niet ingelogd');
-    const query = `?namespace=eq.${encodeURIComponent(config.storageNamespace)}`;
-    const response = await request('/rest/v1/' + TABLES.request + query, { method: 'DELETE', headers: headers(admin.token, { Prefer: 'return=minimal' }) });
-    if (!response.ok) throw new Error(`wissen mislukt (${response.status})`);
-    return true;
+    return deleteAll(TABLES.request);
+  }
+
+  /** Na afhandelen: alle licentieaanvragen van deze snackbar wissen. */
+  async function deleteLicenseRequests() {
+    return deleteAll(TABLES.license);
   }
 
   /**
@@ -310,12 +356,14 @@
     rate,
     comment,
     requestPrompt,
+    requestLicense,
     flush,
     signIn,
     signOut,
     signedIn,
     fetchAll,
     deletePromptRequests,
+    deleteLicenseRequests,
     resetAll,
     status
   };

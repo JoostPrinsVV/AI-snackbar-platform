@@ -279,8 +279,40 @@
 }
 
 /* Licentie én thema's in beeld: de tweede rij iets dichter tegen de eerste */
-.prompts__license:not([hidden]) ~ #pp-inspiration .prompts__themes {
+.prompts__license-row:has(.prompts__license:not([hidden])) ~ #pp-inspiration .prompts__themes {
   margin-top: var(--space-3);
+}
+
+/* Licentiefilter + knop 'Licentie aanvragen': naast elkaar op een breed scherm, eronder op een telefoon */
+.prompts__license-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--space-4);
+}
+
+.prompts__license-row > .prompts__license {
+  flex: 1 1 100%;
+}
+
+.prompts__license-request {
+  margin-top: var(--space-3);
+}
+
+.prompts__license[hidden] + .prompts__license-request {
+  margin-top: var(--space-5);
+}
+
+@media (min-width: 48rem) {
+  .prompts__license-row > .prompts__license {
+    flex: 1 1 0%;
+    min-width: 0;
+    margin-right: 0;
+  }
+
+  .prompts__license-request {
+    margin-top: var(--space-5);
+  }
 }
 
 .prompts__chip {

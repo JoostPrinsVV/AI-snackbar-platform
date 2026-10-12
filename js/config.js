@@ -38,6 +38,9 @@ window.AISnackbar.config = {
   showSurpriseButton: true,             // Knop 'Verras mij'
   enablePromptCopy: true,               // Knop 'Kopieer prompt' (alleen op eigen telefoon/laptop, niet op een gedeelde tablet)
   enablePromptMail: true,               // 'Mail mij deze prompt': e-mailadres achterlaten (werkt alleen met centrale opslag, zie onder)
+  enableLicenseRequests: true,          // Knop 'Licentie aanvragen' (alleen op eigen telefoon/laptop en met centrale opslag)
+  licenseRequestDomains: ['visser-visser.nl'], // Alleen e-mailadressen van deze domeinen; [] = ieder domein. Gelijk houden met tools/supabase-update-license.sql
+  licenseMinWords: 50,                  // Minimaal aantal woorden in de toelichting
   enableQrCodes: true,                  // QR-codeblok bij iedere snack (alleen op een gedeelde tablet; op een telefoon heeft het geen zin)
   enableRatings: true,                  // Smileys 'Hoe beviel deze snack?' (anoniem, lokaal geteld)
   enableComments: true,                 // Veld voor een anonieme opmerking of vraag (lokaal bewaard, export via beheer)

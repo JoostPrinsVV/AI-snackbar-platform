@@ -233,6 +233,7 @@
       ctx.config.enableLocalAnalytics ? null : el('p', { className: 'admin__intro' }, 'Let op: anonieme statistiek staat uit (enableLocalAnalytics), dus geopend/gestart/bezoekers worden niet geteld.'),
       renderTiles(data, rows),
       central ? renderRequests(centralData.requests, rows) : null,
+      central && ctx.config.enableLicenseRequests ? renderLicenses(centralData.licenses) : null,
       renderPerDemo(rows),
       renderHourly(data.hourly),
       renderComments(data.comments, rows),
@@ -416,6 +417,63 @@
         actionButton('Mailinglijst per persoon (CSV)', 'download', () => downloadFile(`mailinglijst-${fileStamp()}.csv`, mailingCsv(), 'text/csv')),
         actionButton('Per aanvraag (CSV)', 'download', () => downloadFile(`mail-aanvragen-${fileStamp()}.csv`, requestsCsv(), 'text/csv')),
         requests.length ? wipe : null
+      ].filter(Boolean))
+    ]);
+  }
+
+  /* Licentieaanvragen: naam, e-mailadres en toelichting; export en wissen na afhandelen */
+  function renderLicenses(licenses) {
+    if (licenses === null) {
+      return section('Licentieaanvragen', 'key', [
+        el('p', { className: 'admin__intro', text: 'De tabel voor licentieaanvragen ontbreekt nog in Supabase. Voer tools/supabase-update-license.sql uit (SQL Editor → Run).' })
+      ]);
+    }
+    const newest = licenses.slice().reverse();
+    const at = (row) => localParts(row.created_at).minute.replace('T', ' ');
+    const list = newest.length
+      ? el(
+          'ul',
+          { className: 'admin__comments', attrs: { role: 'list' } },
+          newest.map((row) =>
+            el('li', {}, [
+              el('span', { className: 'admin__comment-meta', text: `${at(row)} · ${row.name} · ${row.email}` }),
+              el('span', { className: 'admin__comment-text', text: row.motivation })
+            ])
+          )
+        )
+      : el('p', { className: 'admin__intro', text: 'Nog geen licentieaanvragen.' });
+
+    const licensesCsv = () => {
+      const lines = [['Aangevraagd op', 'Naam', 'E-mailadres', 'Toelichting']];
+      licenses.forEach((row) => lines.push([at(row), row.name, row.email, row.motivation]));
+      return toCsv(lines);
+    };
+
+    let armed = false;
+    const wipe = actionButton('Wis alle aanvragen', 'trash', async () => {
+      if (!armed) {
+        armed = true;
+        wipe.querySelector('span').textContent = 'Zeker weten? Tik nogmaals om te wissen';
+        wipe.classList.add('btn--danger');
+        return;
+      }
+      wipe.disabled = true;
+      try {
+        await ns.central.deleteLicenseRequests();
+        toast('Alle licentieaanvragen zijn gewist.', { tone: 'success', icon: 'trash' });
+        await loadCentral();
+      } catch (error) {
+        wipe.disabled = false;
+        toast('Wissen mislukt: ' + error.message, { tone: 'warning', duration: 6000 });
+      }
+    });
+
+    return section(`Licentieaanvragen (${number(licenses.length)})`, 'key', [
+      el('p', { className: 'admin__intro', text: 'Exporteer de aanvragen voor de beoordeling en wis ze daarna; dat beloven we bij het invullen. "Alles resetten" wist deze aanvragen niet.' }),
+      list,
+      el('div', { className: 'admin__buttons' }, [
+        actionButton('Licentieaanvragen (CSV)', 'download', () => downloadFile(`licentieaanvragen-${fileStamp()}.csv`, licensesCsv(), 'text/csv')),
+        licenses.length ? wipe : null
       ].filter(Boolean))
     ]);
   }
