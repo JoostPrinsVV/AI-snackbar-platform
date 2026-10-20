@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ai-snackbar",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "C:\\Users\\jprins\\AppData\\Local\\Temp\\claude\\C--Users-jprins-GitHub-ai-snackbar\\2cd1ae4b-b085-4786-bda6-ac15d7fa3918\\scratchpad\\serve.ps1", "-Root", "C:\\Users\\jprins\\GitHub\\ai-snackbar"],
+      "port": 8779
+    }
+  ]
+}
