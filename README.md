@@ -7,3 +7,6 @@ Instellingen staan in `js/config.js`, de snacks in `data/snacks.js`, de HTML-dem
 De handleidingen (o.a. Supabase en tablets) staan in het volledige projectpakket, niet in deze repository.
 
 De promptpagina voor de QR-codes op de kaartjes staat in `prompts/`: `prompts/#snack-01` opent alleen de prompt van snack 1.
+
+In `audit/` staat de **AI Snackbar Audit**: het blijvende Copilot-platform voor de auditpraktijk (usecases met demo,
+promptdatabase, tips & tricks en een ideeënhub). Uitleg: `audit/README.md`.
