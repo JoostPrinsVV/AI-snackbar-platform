@@ -208,6 +208,12 @@ window.AISnackbar.texts = {
     playerEndReplay: 'Nog een keer',
     playerEndTakeaway: 'Naar de prompt',
     playerEndOther: 'Andere snack',
+
+    /* ---- Pro-versie van een snack (veld proOf in data/snacks.js) ------- */
+    proTeaserFallback: 'Bekijk ook de pro-versie',   // als de pro-versie geen eigen teaser heeft
+    proBadge: 'Pro',
+    proBackBadge: 'Basis',
+    proBackTitle: 'Bekijk de basisversie',
     playerStatusPlaying: 'De demo speelt af.',
     playerStatusPaused: 'De demo is gepauzeerd.',
     playerStatusEnded: 'De demo is afgelopen.',

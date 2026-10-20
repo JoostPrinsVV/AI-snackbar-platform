@@ -62,7 +62,7 @@
     renderHero(config);
 
     ns.menuView.init({ grid: dom.grid, stateBox: dom.menuState, onSelect: selectSnack });
-    ns.menuView.render(state.snacks, { loadFailed: snackResult.loadFailed, detail: snacksErrorDetail() });
+    ns.menuView.render(menuSnacks(), { loadFailed: snackResult.loadFailed, detail: snacksErrorDetail() });
 
     ns.feedback.init({ config });
     ns.promptMail.init({ config });
@@ -73,6 +73,8 @@
       volume: ns.storage.get('volume', config.defaultVolume),
       muted: ns.storage.get('muted', config.startMuted),
       onBack: () => ns.navigation.toMenu(),
+      onOpenSnack: (id) => openSnack(id),
+      getSnack: (id) => state.byId.get(id),
       onSurprise: (currentId) => ns.surprise.start({ excludeId: currentId }),
       onPlayerState: handlePlayerState,
       // Tikken en scrollen ín een HTML-demo ziet de pagina zelf niet: de demo meldt het.
@@ -83,7 +85,7 @@
       }
     });
 
-    ns.surprise.init({ getSnacks: () => state.snacks, onChosen: (snack) => openSnack(snack.id) });
+    ns.surprise.init({ getSnacks: menuSnacks, onChosen: (snack) => openSnack(snack.id) });
     ns.intro.init({ config });
     ns.kiosk.init({ config, onReset: resetToStart, needsWarning });
     ns.admin.init({
@@ -110,6 +112,11 @@
       if (state.config.debugMode) ns.ui.toast('Technische fout: ' + entry.message, { tone: 'warning', duration: 6000 });
     };
     document.documentElement.classList.add('is-ready');
+  }
+
+  /** Snacks op de kaart (en in Verras mij): zonder de pro-versies, die open je via hun basissnack. */
+  function menuSnacks() {
+    return state.snacks.filter((snack) => !snack.proOf);
   }
 
   function cacheDom() {
@@ -187,7 +194,7 @@
     eventLabel.textContent = config.eventName ? t('eventLabel').replace(/\s*·\s*$/, '') : '';
     eventLabel.hidden = !config.eventName;
     // 'Verras mij' alleen als er iets te kiezen valt.
-    const availableCount = state.snacks.filter((snack) => snack.available).length;
+    const availableCount = menuSnacks().filter((snack) => snack.available).length;
     const surprise = config.showSurpriseButton && availableCount > 0;
     // 'Alle prompts' alleen op een eigen apparaat: de promptpagina heeft geen kioskreset en
     // gaat uit van een eigen telefoon (onthoudt bijv. het e-mailadres voor een tweede prompt).
@@ -320,7 +327,9 @@
         ns.menuView.refreshBadges();
         ns.menuView.restoreScroll();
         ns.menuView.clearTransitionNames();
-        card = ns.menuView.cardFor(lastId);
+        // Vanuit een pro-versie: terug naar de kaart van de basissnack.
+        const last = state.byId.get(lastId);
+        card = ns.menuView.cardFor(last && last.proOf ? last.proOf : lastId);
         if (card) {
           card.style.setProperty('view-transition-name', 'snack-media');
           card.focus({ preventScroll: true });

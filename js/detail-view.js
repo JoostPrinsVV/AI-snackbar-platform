@@ -36,6 +36,10 @@
       play: byId('detail-play'),
       playLabel: byId('detail-play-label'),
       restart: byId('detail-restart'),
+      proLink: byId('detail-pro'),
+      proBadge: byId('detail-pro-badge'),
+      proTitle: byId('detail-pro-title'),
+      proText: byId('detail-pro-text'),
       back: byId('detail-back'),
       other: byId('detail-other'),
       surprise: byId('detail-surprise'),
@@ -69,6 +73,7 @@
       onEndAction: (action) => {
         if (action === 'takeaway') focusTakeaway();
         if (action === 'other') handlers.onBack();
+        if (action === 'pro' && current && current.pro) handlers.onOpenSnack(current.pro);
       },
       onVolumeChange: options.onVolumeChange,
       onActivity: options.onActivity
@@ -85,6 +90,11 @@
       player.play();
     });
     refs.restart.addEventListener('click', () => player.restart());
+    refs.proLink.addEventListener('click', (event) => {
+      event.preventDefault();
+      const target = current && (current.pro || current.proOf);
+      if (target) handlers.onOpenSnack(target);
+    });
     refs.back.addEventListener('click', () => handlers.onBack());
     refs.other.addEventListener('click', () => handlers.onBack());
     refs.surprise.addEventListener('click', () => handlers.onSurprise(current && current.id));
@@ -118,6 +128,7 @@
     refs.intro.hidden = !snack.intro;
 
     renderMeta(snack);
+    renderProLink(snack);
     renderTakeaway(snack);
     resetCopyButton();
     ns.feedback.mount(snack);
@@ -152,6 +163,23 @@
 
     refs.audience.replaceChildren(icon('users'), el('strong', { text: t('audienceLabel') }), ' ', snack.audience.join(' · '));
     refs.audience.hidden = !snack.audience.length;
+  }
+
+  /**
+   * Basissnack met pro-versie: verwijzing naar de pro-versie. Pro-versie: terug naar de basisversie.
+   * (Veld proOf in data/snacks.js; de koppeling maakt content.js.)
+   */
+  function renderProLink(snack) {
+    const target = snack.pro || snack.proOf;
+    refs.proLink.hidden = !target;
+    if (!target) return;
+    const other = handlers.getSnack(target);
+    const toPro = Boolean(snack.pro);
+    refs.proLink.classList.toggle('pro-link--back', !toPro);
+    refs.proLink.href = '#/snack/' + encodeURIComponent(target);
+    refs.proBadge.textContent = t(toPro ? 'proBadge' : 'proBackBadge');
+    refs.proTitle.textContent = toPro ? snack.proTeaser || t('proTeaserFallback') : t('proBackTitle');
+    refs.proText.textContent = other ? other.subtitle : '';
   }
 
   function renderTakeaway(snack) {

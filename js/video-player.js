@@ -92,6 +92,9 @@
       this.endReplay = this.actionButton('replay', t('playerEndReplay'), 'btn btn--ghost-dark');
       this.endTakeaway = this.actionButton('bag', t('playerEndTakeaway'), 'btn btn--primary');
       this.endOther = this.actionButton('grid', t('playerEndOther'), 'btn btn--ghost-dark');
+      // Alleen bij een snack met een pro-versie (veld proOf in data/snacks.js): opvallend, boven de vervolgknoppen.
+      this.endPro = this.actionButton('sparkle', '', 'btn btn--surprise player__endcard-pro');
+      this.endPro.hidden = true;
       this.endTitle = el('p', { className: 'player__endcard-title', text: t('playerEndTitle') });
       this.endText = el('p', { className: 'player__endcard-text', text: t('playerEndText') });
       this.endExtra = el('div', { className: 'player__endcard-extra', attrs: { hidden: true } });
@@ -100,6 +103,7 @@
         this.endTitle,
         this.endText,
         this.endExtra,
+        this.endPro,
         el('div', { className: 'player__endcard-actions' }, [this.endReplay, this.endTakeaway, this.endOther])
       ]);
 
@@ -166,6 +170,7 @@
       this.endReplay.addEventListener('click', () => this.restart());
       this.endTakeaway.addEventListener('click', () => this.emitEndAction('takeaway'));
       this.endOther.addEventListener('click', () => this.emitEndAction('other'));
+      this.endPro.addEventListener('click', () => this.emitEndAction('pro'));
 
       // Voortgangsbalk: tijdens het slepen niet laten terugspringen.
       this.progress.addEventListener('input', () => {
@@ -233,6 +238,8 @@
       this.root.className = 'player on-dark accent-' + snack.accent;
       this.renderArt(snack);
       this.bigPlayLabel.textContent = t('playerBigPlay') + (snack.duration ? ' · ' + snack.duration : '');
+      this.endPro.hidden = !snack.pro;
+      this.endPro.querySelector('span').textContent = snack.proTeaser || t('proTeaserFallback');
       this.setMode('video');
 
       if (options && options.demoMode) {

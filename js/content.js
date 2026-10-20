@@ -216,7 +216,7 @@
     }
 
     const seen = new Set();
-    const snacks = [];
+    const valid = [];
     raw.forEach((item, index) => {
       const position = index + 1;
       if (!item || typeof item !== 'object') {
@@ -238,20 +238,63 @@
         return;
       }
       seen.add(id);
-      snacks.push(normalizeSnack(item, id, title, snacks.length + 1, issues));
+      valid.push({ item, id, title });
     });
 
-    if (snacks.length > 12) issues.push(issue('warning', `Er staan ${snacks.length} snacks op de kaart; de indeling is getest tot 12.`));
+    const links = linkProVersions(valid, issues);
+    // Nummers alleen voor de snacks op de kaart; een pro-versie krijgt het nummer van haar basissnack.
+    const numbers = new Map();
+    valid.filter((entry) => !links.proOf.has(entry.id)).forEach((entry, index) => numbers.set(entry.id, String(index + 1).padStart(2, '0')));
+    const byId = new Map(valid.map((entry) => [entry.id, entry]));
+    const snacks = valid.map((entry) => {
+      const proId = links.pro.get(entry.id) || '';
+      return normalizeSnack(entry.item, entry.id, entry.title, numbers.get(links.proOf.get(entry.id) || entry.id), issues, {
+        proOf: links.proOf.get(entry.id) || '',
+        pro: proId,
+        // De basissnack toont de knop naar de pro-versie met de tekst uit teaser van die pro-versie.
+        proTeaser: proId ? text(byId.get(proId).item.teaser) : ''
+      });
+    });
+
+    const onMenu = snacks.filter((snack) => !snack.proOf).length;
+    if (onMenu > 12) issues.push(issue('warning', `Er staan ${onMenu} snacks op de kaart; de indeling is getest tot 12.`));
     if (snacks.length > 0 && snacks.every((snack) => !snack.available)) {
       issues.push(issue('warning', 'Geen enkele snack staat op beschikbaar (available: true).'));
     }
     return { snacks, loadFailed: false, issues };
   }
 
-  function normalizeSnack(item, id, title, number, issues) {
+  /**
+   * Pro-versies: een snack met proOf: '<id>' hoort bij die basissnack. Ze staat niet op de kaart,
+   * maar is te openen via de basissnack (eindscherm en detailpagina). Eén pro-versie per basissnack.
+   * @returns {{ proOf: Map<string, string>, pro: Map<string, string> }} proOf: pro → basis, pro: basis → pro
+   */
+  function linkProVersions(valid, issues) {
+    const proOf = new Map();
+    const pro = new Map();
+    const ids = new Set(valid.map((entry) => entry.id));
+    const declared = new Set(valid.filter((entry) => text(entry.item.proOf)).map((entry) => entry.id));
+    valid.forEach(({ item, id }) => {
+      const parent = text(item.proOf);
+      if (!parent) return;
+      let problem = '';
+      if (!ids.has(parent) || parent === id) problem = `proOf verwijst naar '${parent}', maar die snack bestaat niet`;
+      else if (declared.has(parent)) problem = `proOf verwijst naar '${parent}', en die is zelf een pro-versie`;
+      else if (pro.has(parent)) problem = `'${parent}' heeft al een pro-versie (${pro.get(parent)})`;
+      if (problem) {
+        issues.push(issue('warning', `Snack '${id}': ${problem}; staat nu als gewone snack op de kaart.`, id));
+        return;
+      }
+      proOf.set(id, parent);
+      pro.set(parent, id);
+    });
+    return { proOf, pro };
+  }
+
+  function normalizeSnack(item, id, title, number, issues, links) {
     const snack = {
       id,
-      number: String(number).padStart(2, '0'),
+      number,
       title,
       subtitle: text(item.subtitle),
       category: text(item.category),
@@ -276,7 +319,12 @@
       download: path(item.download, 'download', id, issues),
       downloadLabel: text(item.downloadLabel),
       guide: normalizeGuide(item.guide, id, issues),
-      license: normalizeLicense(item.license, `Snack '${id}'`, id, issues)
+      license: normalizeLicense(item.license, `Snack '${id}'`, id, issues),
+      // Pro-versie (zie linkProVersions): proOf = id van de basissnack, pro = id van de pro-versie.
+      proOf: links.proOf,
+      pro: links.pro,
+      proTeaser: links.proTeaser,
+      teaser: text(item.teaser)
     };
 
     Object.keys(RECOMMENDED).forEach((field) => {

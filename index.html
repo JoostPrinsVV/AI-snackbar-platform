@@ -166,6 +166,16 @@
             </div>
 
             <aside class="detail__aside" aria-labelledby="takeaway-title">
+              <!-- Pro-versie (veld proOf in data/snacks.js): bij de basissnack naar de pro-versie, bij de pro-versie terug -->
+              <a class="pro-link" id="detail-pro" href="#/" hidden>
+                <span class="pro-link__badge" id="detail-pro-badge">Pro</span>
+                <span class="pro-link__body">
+                  <strong class="pro-link__title" id="detail-pro-title"></strong>
+                  <span class="pro-link__text" id="detail-pro-text"></span>
+                </span>
+                <svg class="icon pro-link__go" aria-hidden="true" focusable="false"><use href="#i-arrow-right"></use></svg>
+              </a>
+
               <div class="takeaway" id="takeaway">
                 <div class="takeaway__head">
                   <span class="takeaway__icon" aria-hidden="true">

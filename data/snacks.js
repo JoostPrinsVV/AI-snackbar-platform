@@ -8,6 +8,9 @@
    app 'Deze demo wordt binnenkort toegevoegd' tot de video er staat
    (assets/videos/snack-0X.mp4). Nog niet klaar voor het evenement? Zet die
    snack dan op available: false ('Binnenkort').
+   Snack 4 heeft een pro-versie (snack-04-pro, veld proOf): anoniem maken in Copilot,
+   bouwen in Claude, terugzetten in Copilot. Die staat niet op de kaart; video:
+   assets/videos/snack-04-pro.mp4.
 
    Zo werkt het:
    - Iedere snack staat tussen { en }, gescheiden door een komma.
@@ -52,6 +55,12 @@
      license      true = Microsoft 365 Copilot-licentie nodig (eigen mail, Teams,
                   agenda, bestanden of Copilot in Word/Excel/PowerPoint): badge
                   'Licentie' op de kaart. false = kan ook met de gratis Copilot Chat.
+     proOf        Optioneel: maakt van deze snack de pro-versie van een andere snack,
+                  bijv. proOf: 'snack-04'. Staat dan niet op de kaart en niet in Verras mij,
+                  maar is te openen via het eindscherm en de detailpagina van die snack
+                  (en staat wel op de promptpagina). Eén pro-versie per snack.
+     teaser       Alleen bij een pro-versie: tekst op de knop bij de basissnack,
+                  bijv. 'Bekijk ook de pro-versie met Claude!'.
 
    Uitgebreide schrijf- en bestandsrichtlijnen: docs/CONTENT-GUIDE.md
    ========================================================================== */
@@ -280,6 +289,81 @@ Lever het resultaat op als .pptx-bestand.`,
     download: 'assets/downloads/Template_PowerPoint_VV_leeg.pptx',
     downloadLabel: 'Download de PowerPoint-template',
     license: true                       // Microsoft 365 Copilot (bestand als PowerPoint opleveren)
+  },
+  {
+    // Pro-versie van snack 4 (staat niet op de kaart): anonimiseren in Copilot, bouwen in Claude,
+    // echte gegevens terugzetten in Copilot. Claude krijgt alleen nepdata en de lege template.
+    id: 'snack-04-pro',
+    proOf: 'snack-04',
+    teaser: 'Bekijk ook de pro-versie met Claude!',
+    title: 'Pro: presentatie met Claude',
+    subtitle: 'Anoniem maken in Copilot, bouwen in Claude, terugzetten in Copilot',
+    category: 'Pro-versie',
+    level: 'Koploper',
+    duration: '3 min',
+    icon: 'assets/icons/icon-document.svg',
+    accent: 'navy',
+    available: true,
+    featured: false,
+    intro: 'Copilot maakt de adviesnotitie eerst anoniem: namen worden codes, bedragen nepbedragen. Claude bouwt daarmee in de V&V-template een sterke presentatie met grafieken. Daarna zet Copilot de echte gegevens terug. Zo komt er geen klantgegeven bij Claude.',
+    video: 'assets/videos/snack-04-pro.mp4',
+    poster: 'assets/posters/snack-04-pro.jpg',
+    captions: '',
+    prompt: `STAP 1 – IN COPILOT CHAT (met je V&V-account)
+Ik voeg een adviesnotitie toe. Maak hiervan een geanonimiseerde versie die ik buiten Microsoft 365 kan gebruiken.
+
+- Vervang namen van organisaties door codes: [KLANT], [BANK], [LEVERANCIER-1], [LEVERANCIER-2] enzovoort.
+- Vervang namen van personen door [PERSOON-1], [PERSOON-2] enzovoort.
+- Vervang adressen, plaatsnamen, KvK-, btw-, rekening- en dossiernummers door [ADRES-1], [PLAATS-1], [NUMMER-1] enzovoort.
+- Vermenigvuldig alle bedragen met één willekeurige factor tussen 0,6 en 1,4 en rond af op duizenden. Zo blijven de verhoudingen in grafieken kloppen, maar zijn de echte bedragen niet te herkennen.
+- Laat percentages, jaartallen en de vakinhoud staan.
+- Gebruik iedere code steeds voor dezelfde naam.
+
+Geef me twee dingen:
+1. De geanonimiseerde tekst.
+2. Een sleuteltabel met: Code of nepbedrag | Origineel. Noem ook de factor die je hebt gebruikt.
+
+Controleer zelf of er niets meer in staat waarmee de klant te herkennen is.
+
+STAP 2 – IN CLAUDE
+Voeg de geanonimiseerde tekst uit stap 1 toe (zonder de sleuteltabel!) en de template Template_PowerPoint_VV_leeg.pptx.
+
+Je bent een ervaren accountant en presentatieontwerper. Maak van deze adviesnotitie een overtuigende klantpresentatie van maximaal 8 dia's in de bijgevoegde template.
+- Opbouw: titel en doel, samenvatting in drie punten, de belangrijkste bevindingen (één boodschap per dia), advies en keuzes, vervolgstappen.
+- De diatitel is de boodschap zelf, in één zin. Maximaal vier korte bullets per dia.
+- Laat bedragen zien in grafieken of tabellen waar dat helpt, en kies per dia de layout uit de template die het best past.
+- Gebruik alleen de kleuren, lettertypes en layouts uit de template. Laat geen placeholdertekst staan en verwijder ongebruikte dia's.
+- Zet uitleg en onderbouwing in de sprekersnotities.
+- Laat alle codes zoals [KLANT] en [PERSOON-1] en alle bedragen precies zo staan als in de tekst. Ze worden later teruggezet.
+
+Lever het resultaat op als .pptx-bestand.
+
+STAP 3 – TERUG IN COPILOT (in dezelfde chat als stap 1)
+Ik voeg de presentatie toe die ik met de geanonimiseerde tekst heb gemaakt. Zet alle codes en nepbedragen terug naar de originele waarden uit de sleuteltabel. Pas bedragen in grafieken en tabellen ook aan. Verander verder niets aan tekst of opmaak.
+
+Lever het resultaat op als .pptx-bestand. Geef daarnaast een lijst van alles wat je hebt vervangen en van codes die je niet kon vinden.`,
+    promptNote: 'Nodig: Copilot Chat met je V&V-account en toegang tot Claude. Stap 3 als .pptx opleveren kan met een Copilot-licentie; zonder licentie vraag je om de vervanglijst en gebruik je Zoeken en vervangen (Ctrl+H) in PowerPoint.',
+    qrCode: 'assets/qr/snack-04-pro.png',
+    qrLabel: '',
+    tip: 'Controleer na stap 3 de grafieken: kies Grafiek → Gegevens bewerken en kijk of de echte bedragen erin staan.',
+    audience: ['Advies', 'Samenstellen'],
+    download: 'assets/downloads/Template_PowerPoint_VV_leeg.pptx',
+    downloadLabel: 'Download de PowerPoint-template',
+    guide: {
+      label: 'Zo werkt de pro-versie',
+      title: 'Pro-versie: van notitie naar presentatie met Claude',
+      basic: {
+        steps: [
+          'Open Copilot Chat met je V&V-account en voeg je adviesnotitie toe. Gebruik stap 1 van de prompt: Copilot maakt de tekst anoniem en geeft een sleuteltabel.',
+          'Lees de anonieme tekst na. Staat er nog een naam, adres of nummer in? Vervang die zelf. De sleuteltabel blijft in Copilot.',
+          'Open Claude en voeg de anonieme tekst en de lege V&V-template toe. Gebruik stap 2 van de prompt en download de presentatie.',
+          'Ga terug naar dezelfde Copilot-chat, voeg de presentatie toe en gebruik stap 3: Copilot zet de echte namen en bedragen terug.',
+          'Controleer de presentatie, vooral de bedragen in de grafieken, voordat je hem aan de klant laat zien.'
+        ],
+        note: 'Claude krijgt alleen de anonieme tekst en de lege template, nooit de sleuteltabel of het originele document.'
+      }
+    },
+    license: false                      // stap 1 kan in de gratis Copilot Chat; Claude is een aparte tool
   },
   {
     // Demo (fictieve klant): Microsoft 365 Copilot Chat zoekt in agenda, mail, Teams en bestanden, twee prompts.
