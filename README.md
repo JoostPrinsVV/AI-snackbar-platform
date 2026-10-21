@@ -8,5 +8,6 @@ De handleidingen (o.a. Supabase en tablets) staan in het volledige projectpakket
 
 De promptpagina voor de QR-codes op de kaartjes staat in `prompts/`: `prompts/#snack-01` opent alleen de prompt van snack 1.
 
-In `audit/` staat de **AI Cockpit Audit**: het blijvende Copilot-platform voor de auditpraktijk (usecases met demo,
-promptdatabase, tips & tricks, trainingen, agents en een ideeënhub). Uitleg: `audit/README.md`.
+De **AI Cockpit Audit** (het blijvende Copilot-platform voor de auditpraktijk) stond eerst in `audit/` en heeft nu een
+eigen repository en adres: https://joostprinsvv.github.io/ai-cockpit-audit/ (repository `ai-cockpit-audit`).
+In `audit/` staat alleen nog een `index.html` die oude links daarheen doorstuurt, inclusief het deel na de `#`.
