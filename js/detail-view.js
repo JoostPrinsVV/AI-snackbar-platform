@@ -45,7 +45,9 @@
       surprise: byId('detail-surprise'),
       takeawayTitle: byId('takeaway-title'),
       promptBox: byId('prompt-box'),
+      promptLabel: byId('prompt-label'),
       promptText: byId('prompt-text'),
+      promptSteps: byId('prompt-steps'),
       promptNote: byId('prompt-note'),
       promptLicense: byId('prompt-license'),
       licenseLink: byId('prompt-license-link'),
@@ -186,6 +188,11 @@
     const hasPrompt = Boolean(snack.prompt);
     refs.promptText.textContent = hasPrompt ? snack.prompt : t('promptMissing');
     refs.promptText.classList.toggle('is-placeholder', !hasPrompt);
+    // Meerdere prompts (stappen): ieder een eigen blok met kopieerknop, in plaats van één tekstvak.
+    const steps = snack.promptSteps;
+    refs.promptLabel.textContent = steps.length ? t('promptStepsLabel', { count: steps.length }) : t('promptLabel');
+    refs.promptText.hidden = steps.length > 0;
+    ns.promptSteps.render(refs.promptSteps, steps, { canCopy: canCopy() });
     refs.promptNote.textContent = snack.promptNote;
     refs.promptNote.hidden = !snack.promptNote;
     // Bij de prompt, niet bij de titel: daar zou een extra regel de video en knoppen uit beeld duwen.
@@ -197,7 +204,7 @@
     refs.promptLicense.classList.toggle('meta--license', snack.license === true);
     refs.promptLicense.hidden = snack.license === null;
     refs.licenseLink.hidden = snack.license !== true || !ns.licenseRequest.isEnabled();
-    refs.copy.hidden = !canCopy() || !hasPrompt;
+    refs.copy.hidden = !canCopy() || !hasPrompt || steps.length > 0;
     refs.promptText.scrollTop = 0;
     // Bijlage (bijv. een template): alleen op een eigen apparaat; op de tablet zou het bestand op de tablet belanden.
     refs.download.hidden = !snack.download || config.kioskMode;

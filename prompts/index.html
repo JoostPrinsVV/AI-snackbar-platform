@@ -27,6 +27,7 @@
   <script defer src="../js/central.js"></script>
   <script defer src="../js/prompt-mail.js"></script>
   <script defer src="../js/guide.js"></script>
+  <script defer src="../js/prompt-steps.js"></script>
   <script defer src="../js/license-request.js"></script>
   <script defer src="../js/prompts.js"></script>
 </head>
@@ -141,6 +142,8 @@
             </button>
           </div>
           <pre class="prompt-box__text is-selectable" id="pp-prompt" aria-labelledby="pp-prompt-label" tabindex="0"></pre>
+          <!-- Prompt in stappen (veld prompts in data/snacks.js) -->
+          <ol class="prompt-steps" id="pp-steps" aria-labelledby="pp-prompt-label" hidden></ol>
           <p class="prompt-box__note" id="pp-note"></p>
           <!-- Bijlage bij de prompt (veld download in data/snacks.js) -->
           <a class="btn btn--secondary btn--block" id="pp-download" href="#" download hidden>

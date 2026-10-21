@@ -87,7 +87,9 @@
       variant: byId('pp-variant'),
       variantHint: byId('pp-variant-hint'),
       licenseLink: byId('pp-license-link'),
+      promptLabel: byId('pp-prompt-label'),
       prompt: byId('pp-prompt'),
+      steps: byId('pp-steps'),
       note: byId('pp-note'),
       copy: byId('pp-copy'),
       copyLabel: byId('pp-copy-label'),
@@ -148,6 +150,7 @@
         impact: 0,
         license: snack.license,
         prompt: snack.prompt,
+        promptSteps: snack.promptSteps,
         promptNote: snack.promptNote,
         promptBasic: '',
         promptNoteBasic: '',
@@ -176,6 +179,7 @@
       impact: item.impact,
       license: item.license,
       prompt: item.prompt,
+      promptSteps: [],
       promptNote: item.promptNote,
       promptBasic: item.promptBasic,
       promptNoteBasic: item.promptNoteBasic,
@@ -526,11 +530,16 @@
     });
     refs.variantHint.textContent = t(basic ? 'promptsVariantHintBasic' : 'promptsVariantHintLicensed');
 
+    // Meerdere prompts (stappen, alleen bij snacks): ieder een eigen blok met kopieerknop.
+    const steps = basic ? [] : entry.promptSteps;
+    refs.promptLabel.textContent = steps.length ? t('promptStepsLabel', { count: steps.length }) : t('promptLabel');
+    refs.prompt.hidden = steps.length > 0;
+    ns.promptSteps.render(refs.steps, steps, { canCopy: true });
     refs.prompt.textContent = currentText || t('promptsPromptMissing');
     refs.prompt.classList.toggle('is-placeholder', !currentText);
     refs.note.textContent = note;
     refs.note.hidden = !note;
-    refs.copy.hidden = !currentText;
+    refs.copy.hidden = !currentText || steps.length > 0;
     refs.share.hidden = !currentText || typeof navigator.share !== 'function';
     // 'Mail mij' bij de versie zonder licentie: eigen id, zodat het dashboard die tekst mailt.
     ns.promptMail.mount({ id: basic ? entry.id + ns.content.BASIC_SUFFIX : entry.id, prompt: currentText });

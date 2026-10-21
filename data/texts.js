@@ -70,6 +70,8 @@ window.AISnackbar.texts = {
     promptLabel: 'Voorbeeldprompt',
     promptMissing: 'De prompt voor deze snack volgt.',
     copyPrompt: 'Kopieer prompt',
+    promptStepsLabel: 'Prompts in {count} stappen',   // kop bij een snack met prompts (veld prompts)
+    copyStepLabel: 'Kopieer prompt: {title}',          // voor schermlezers, op de kopieerknop per stap
     copied: 'Prompt gekopieerd',
     copyFailed: 'Kopiëren lukt hier niet. De tekst is geselecteerd: houd hem ingedrukt en kies Kopiëren (of Ctrl+C).',
     downloadFallback: 'Download de bijlage',

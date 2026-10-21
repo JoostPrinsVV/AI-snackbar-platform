@@ -40,6 +40,9 @@
      poster       Pad naar de afbeelding vóór het afspelen (zie assets/posters/).
      captions     Pad naar een ondertitelbestand (.vtt), mag leeg blijven.
      prompt       De voorbeeldprompt om te kopiëren (meerdere stappen: 'Daarna:').
+     prompts      Optioneel, in plaats van prompt: meerdere prompts, ieder in een eigen
+                  blok dat je openklapt en apart kopieert (max. 8):
+                  [{ title: 'Stap 1 · ...', hint: 'Waar en met welke bestanden', text: `...` }, ...]
      promptNote   Korte toelichting onder de prompt.
      qrCode       Pad naar de QR-code-afbeelding (zie assets/qr/).
      qrLabel      Tekst naast de QR-code, mag leeg blijven.
@@ -296,8 +299,12 @@ OPMAAK
     video: 'assets/videos/snack-04-pro.mp4',
     poster: 'assets/posters/snack-04-pro.jpg',
     captions: '',
-    prompt: `STAP 1 – IN COPILOT (met je V&V-account; voeg het document toe)
-Anonimiseer het bijgevoegde document, zodat het buiten onze organisatie gedeeld kan worden.
+    // Vier prompts, ieder in een eigen blok met kopieerknop (veld prompts).
+    prompts: [
+      {
+        title: 'Stap 1 · Anonimiseren in Copilot',
+        hint: 'Met je V&V-account. Voeg het document toe.',
+        text: `Anonimiseer het bijgevoegde document, zodat het buiten onze organisatie gedeeld kan worden.
 
 Vervang:
 - de naam van de klant door [KLANT]
@@ -316,27 +323,35 @@ Lever twee bestanden op:
 1. Het geanonimiseerde document als .docx.
 2. Een sleuteltabel als .docx, met twee kolommen: placeholder en originele waarde.
 
-Controleer tot slot het geanonimiseerde document op gegevens die nog herleidbaar zijn. Noem die in je antwoord.
-
-STAP 2 – IN CLAUDE (voeg alleen het geanonimiseerde document en de template toe, nooit de sleuteltabel)
-Je bent een ervaren samenstellend accountant. Bouw in de bijgevoegde template een presentatie van maximaal 8 dia's op basis van het geanonimiseerde document, voor het jaarrekeninggesprek met de directie.
+Controleer tot slot het geanonimiseerde document op gegevens die nog herleidbaar zijn. Noem die in je antwoord.`
+      },
+      {
+        title: 'Stap 2 · Presentatie bouwen in Claude',
+        hint: 'Voeg alleen het geanonimiseerde document en de template toe, nooit de sleuteltabel.',
+        text: `Je bent een ervaren samenstellend accountant. Bouw in de bijgevoegde template een presentatie van maximaal 8 dia's op basis van het geanonimiseerde document, voor het jaarrekeninggesprek met de directie.
 - Dit is een samenstellingsopdracht, geen controle. Gebruik geen woorden als "controle" of "goedgekeurd".
 - Kies per dia een passende indeling uit de template.
 - Laat alle placeholders tussen [ ] exact staan.
 - De diatitel is de boodschap; maximaal vier korte punten per blok.
 - Leg vaktermen uit in de sprekersnotities, met bron (§).
-- Ontbreekt iets, zet dan [ONTBREEKT: wat er mist].
-
-STAP 3 – TERUG IN COPILOT (voeg de presentatie uit Claude en de sleuteltabel toe)
-Vervang in deze presentatie iedere placeholder tussen vierkante haken, zoals [KLANT], [KLANT KORT] en [BEDRAG 1], door de originele waarde uit de bijgevoegde sleuteltabel. Doe dit op de dia's, in de tabellen, in de sprekersnotities en in de sectienaam.
+- Ontbreekt iets, zet dan [ONTBREEKT: wat er mist].`
+      },
+      {
+        title: 'Stap 3 · Terugzetten in Copilot',
+        hint: 'Voeg de presentatie uit Claude en de sleuteltabel toe.',
+        text: `Vervang in deze presentatie iedere placeholder tussen vierkante haken, zoals [KLANT], [KLANT KORT] en [BEDRAG 1], door de originele waarde uit de bijgevoegde sleuteltabel. Doe dit op de dia's, in de tabellen, in de sprekersnotities en in de sectienaam.
 
 Regels:
 - Wijzig alleen de placeholders. Laat alle andere tekst, de opmaak, de vormen en de volgorde ongewijzigd.
 - Laat [ONTBREEKT: …] staan; dat is geen placeholder uit de sleuteltabel.
-- Noem in je antwoord placeholders die je niet in de sleuteltabel kon vinden.
-
-STAP 3B – OPTIONEEL, IN DEZELFDE CHAT
-Welke dingen ontbreken nog?`,
+- Noem in je antwoord placeholders die je niet in de sleuteltabel kon vinden.`
+      },
+      {
+        title: 'Stap 3b · Optioneel: wat ontbreekt er nog?',
+        hint: 'In dezelfde Copilot-chat als stap 3.',
+        text: `Welke dingen ontbreken nog?`
+      }
+    ],
     promptNote: 'Nodig: Copilot met je V&V-account en toegang tot Claude. Bestanden laten opleveren (stap 1 en 3) kan met een Copilot-licentie; zonder licentie vraag je om de tekst en de vervanglijst, en gebruik je Zoeken en vervangen (Ctrl+H) in PowerPoint.',
     qrCode: 'assets/qr/snack-04-pro.png',
     qrLabel: '',

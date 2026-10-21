@@ -37,6 +37,7 @@
   <script defer src="js/feedback.js"></script>
   <script defer src="js/prompt-mail.js"></script>
   <script defer src="js/guide.js"></script>
+  <script defer src="js/prompt-steps.js"></script>
   <script defer src="js/license-request.js"></script>
   <script defer src="js/menu-view.js"></script>
   <script defer src="js/detail-view.js"></script>
@@ -207,6 +208,8 @@
                     </button>
                   </p>
                   <pre class="prompt-box__text is-selectable" id="prompt-text" aria-labelledby="prompt-label" tabindex="0"></pre>
+                  <!-- Prompt in stappen (veld prompts in data/snacks.js): ieder blok open te klappen en apart te kopiëren -->
+                  <ol class="prompt-steps" id="prompt-steps" aria-labelledby="prompt-label" hidden></ol>
                   <p class="prompt-box__note" id="prompt-note"></p>
                   <!-- Bijlage bij de prompt (veld download in data/snacks.js), alleen op een eigen apparaat -->
                   <a class="btn btn--secondary btn--block" id="prompt-download" href="#" download hidden>

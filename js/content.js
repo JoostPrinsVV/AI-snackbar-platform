@@ -292,6 +292,7 @@
   }
 
   function normalizeSnack(item, id, title, number, issues, links) {
+    const steps = normalizePromptSteps(item.prompts, id, issues);
     const snack = {
       id,
       number,
@@ -310,7 +311,9 @@
       video: path(item.video, 'video', id, issues),
       poster: path(item.poster, 'poster', id, issues),
       captions: path(item.captions, 'captions', id, issues),
-      prompt: text(item.prompt, true),
+      // Met prompts (stappen) is prompt de hele reeks achter elkaar: voor 'Mail mij', de export en delen.
+      prompt: steps.length ? joinPromptSteps(steps) : text(item.prompt, true),
+      promptSteps: steps,
       promptNote: text(item.promptNote),
       qrCode: path(item.qrCode, 'qrCode', id, issues),
       qrLabel: text(item.qrLabel),
@@ -336,6 +339,33 @@
       issues.push(issue('warning', `Snack '${id}': onbekend niveau '${snack.level}' (gebruik Starter, Gevorderd of Koploper).`, id));
     }
     return Object.freeze(snack);
+  }
+
+  /**
+   * Prompt in stappen: prompts: [{ title, hint, text }, ...] (max. 8). Iedere stap krijgt
+   * een eigen blok met kopieerknop. Ongeldige stappen worden overgeslagen met een melding.
+   */
+  function normalizePromptSteps(value, id, issues) {
+    if (value === undefined || value === null || value === '') return [];
+    if (!Array.isArray(value)) {
+      issues.push(issue('warning', `Snack '${id}': prompts moet een lijst zijn ([{ title, hint, text }, ...]); niet getoond.`, id));
+      return [];
+    }
+    const steps = [];
+    value.forEach((step, index) => {
+      const body = step && typeof step === 'object' ? text(step.text, true) : '';
+      if (!body) {
+        issues.push(issue('warning', `Snack '${id}': prompt ${index + 1} in prompts heeft geen text; overgeslagen.`, id));
+        return;
+      }
+      steps.push(Object.freeze({ title: text(step.title) || 'Stap ' + (index + 1), hint: text(step.hint), text: body }));
+    });
+    if (steps.length > 8) issues.push(issue('warning', `Snack '${id}': meer dan 8 prompts; alleen de eerste 8 worden getoond.`, id));
+    return Object.freeze(steps.slice(0, 8));
+  }
+
+  function joinPromptSteps(steps) {
+    return steps.map((step) => step.title.toUpperCase() + (step.hint ? ' (' + step.hint + ')' : '') + '\n' + step.text).join('\n\n');
   }
 
   /* ---- Inspiratieprompts (data/inspiration.js, alleen de promptpagina) ------- */
