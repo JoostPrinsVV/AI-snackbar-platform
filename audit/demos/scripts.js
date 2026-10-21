@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AI SNACKBAR AUDIT — GESPREKKEN VOOR DE NAGESPEELDE DEMO'S
+   AI COCKPIT AUDIT — GESPREKKEN VOOR DE NAGESPEELDE DEMO'S
    --------------------------------------------------------------------------
    Iedere demo is een gesprek met Copilot dat demos/player.html afspeelt.
    Adres: demos/player.html#<naam>; in data/usecases.js bij 'demo'.

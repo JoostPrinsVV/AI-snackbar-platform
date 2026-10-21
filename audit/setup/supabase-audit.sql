@@ -1,5 +1,5 @@
 -- ============================================================================
--- AI SNACKBAR AUDIT — CENTRALE OPSLAG (Supabase)
+-- AI COCKPIT AUDIT — CENTRALE OPSLAG (Supabase)
 -- ----------------------------------------------------------------------------
 -- Tabellen voor de inhoud van het platform (usecases, prompts, tips,
 -- trainingen, agents & tools, fasen en teksten), de ideeënhub, de 'Ik ook'-stemmen en de

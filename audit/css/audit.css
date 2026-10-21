@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AI SNACKBAR AUDIT — OPMAAK
+   AI COCKPIT AUDIT — OPMAAK
    Bouwt voort op de huisstijl van de AI Snackbar (../css/variables.css en
    ../css/base.css). Kleuren, maten en lettertypes komen uit die tokens.
    Volgorde: accenten · knoppen · kopbalk · hero · secties en kaarten ·
@@ -276,12 +276,29 @@ body[data-view='home'] main::before { display: none; }
 
 .hero__discipline { color: var(--color-highlight-on-dark); }
 
+/* Slogan: de belofte, direct onder de naam */
+.hero__tagline {
+  max-width: 46rem;
+  margin-top: var(--space-3);
+  color: var(--color-on-dark);
+  font-size: clamp(1.2rem, 0.95rem + 1vw, 1.65rem);
+  font-weight: var(--fw-semibold);
+  letter-spacing: -0.01em;
+  line-height: var(--lh-snug);
+}
+
 .hero__subtitle {
   max-width: 46rem;
   margin-top: var(--space-4);
   color: var(--color-on-dark-muted);
   font-size: clamp(1.05rem, 0.9rem + 0.6vw, 1.35rem);
   font-weight: var(--fw-medium);
+}
+
+.hero__tagline + .hero__subtitle {
+  margin-top: var(--space-2);
+  font-size: clamp(0.98rem, 0.9rem + 0.3vw, 1.12rem);
+  font-weight: var(--fw-regular);
 }
 
 /* ==========================================================================

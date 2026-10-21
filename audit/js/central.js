@@ -128,10 +128,10 @@
       const response = await insert(TABLES.ideas, [row]);
       if (response.ok) return 'ok';
       if (await isMissingTable(response)) return 'missing';
-      console.warn('[AI Snackbar Audit] Inzending geweigerd:', response.status, await response.text());
+      console.warn('[AI Cockpit Audit] Inzending geweigerd:', response.status, await response.text());
       return 'failed';
     } catch (error) {
-      console.warn('[AI Snackbar Audit] Inzending niet verstuurd (geen verbinding).');
+      console.warn('[AI Cockpit Audit] Inzending niet verstuurd (geen verbinding).');
       return 'failed';
     }
   }
@@ -147,7 +147,7 @@
       const response = await request('/rest/v1/' + TABLES.ideas + query, { headers: headers(null) });
       if (response.ok) return { status: 'ok', items: await response.json() };
       if (await isMissingTable(response)) return { status: 'missing', items: [] };
-      console.warn('[AI Snackbar Audit] Inzendingen lezen mislukt:', response.status, await response.text());
+      console.warn('[AI Cockpit Audit] Inzendingen lezen mislukt:', response.status, await response.text());
       return { status: 'failed', items: [] };
     } catch (error) {
       return { status: 'failed', items: [] };

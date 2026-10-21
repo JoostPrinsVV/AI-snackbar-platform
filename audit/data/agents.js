@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AI SNACKBAR AUDIT — AGENTS & TOOLS
+   AI COCKPIT AUDIT — AGENTS & TOOLS
    --------------------------------------------------------------------------
    Catalogus van AI-agents en -producten, vanuit de gebruiker bekeken: wat
    is het, waarvoor gebruik je het (en waarvoor niet) en hoe krijg je

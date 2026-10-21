@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AI SNACKBAR AUDIT — PROMPTDATABASE
+   AI COCKPIT AUDIT — PROMPTDATABASE
    --------------------------------------------------------------------------
    Losse prompts voor de controlepraktijk, direct te kopiëren. De prompts
    uit de usecases (data/usecases.js) komen er automatisch bij, met een

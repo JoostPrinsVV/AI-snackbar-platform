@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AI SNACKBAR AUDIT — TRAININGEN
+   AI COCKPIT AUDIT — TRAININGEN
    --------------------------------------------------------------------------
    Opnames van trainingen, webinars en lunchsessies over Copilot, om terug
    te kijken. De volgorde maakt niet uit: de pagina toont de nieuwste

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AI SNACKBAR AUDIT — TIPS & TRICKS
+   AI COCKPIT AUDIT — TIPS & TRICKS
    --------------------------------------------------------------------------
    Korte handleidingen voor slimmer werken met Copilot. De volgorde hier is
    de volgorde binnen elk thema; de thema's verschijnen in de volgorde

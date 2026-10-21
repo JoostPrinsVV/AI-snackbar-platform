@@ -20,7 +20,7 @@
   'use strict';
 
   const { el, icon, storage } = ns.ui;
-  const SITE_TITLE = 'AI Snackbar Audit';
+  const SITE_TITLE = 'AI Cockpit Audit';
   const FETCH_TIMEOUT = 3500;
   let baseConfig = {};
   let config = {};
@@ -134,7 +134,7 @@
     try {
       result = handler ? handler(parsed.params) : null;
     } catch (error) {
-      console.error('[AI Snackbar Audit]', error);
+      console.error('[AI Cockpit Audit]', error);
       showFatal(error);
       return;
     }
@@ -149,7 +149,9 @@
     const scrollY = window.scrollY;
     viewNode.replaceChildren(...[editBar(parsed), result.node].filter(Boolean));
     document.body.dataset.view = parsed.name || 'home';
-    document.title = result.title ? `${result.title} · ${SITE_TITLE}` : SITE_TITLE;
+    // Tabbladtitel volgt de naam uit Beheer → Teksten (of js/config.js)
+    const siteTitle = [config.applicationTitle, config.discipline].filter(Boolean).join(' ') || SITE_TITLE;
+    document.title = result.title ? `${result.title} · ${siteTitle}` : siteTitle;
 
     // Menu: huidige pagina markeren
     const navKey = NAV_FOR[parsed.name] || '';
@@ -299,7 +301,7 @@
   function boot() {
     try {
       baseConfig = Object.assign({
-        applicationTitle: 'AI Snackbar',
+        applicationTitle: 'AI Cockpit',
         discipline: 'Audit',
         organizationName: 'Visser & Visser',
         theme: 'licht',
@@ -320,14 +322,14 @@
       });
       document.documentElement.classList.remove('no-js');
       loadContent().catch((error) => {
-        console.error('[AI Snackbar Audit] Inhoud laden mislukt', error);
+        console.error('[AI Cockpit Audit] Inhoud laden mislukt', error);
         if (!rendered) {
           useSource(null);
           route();
         }
       });
     } catch (error) {
-      console.error('[AI Snackbar Audit] Opstarten mislukt', error);
+      console.error('[AI Cockpit Audit] Opstarten mislukt', error);
       showFatal(error);
     }
   }

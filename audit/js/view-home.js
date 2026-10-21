@@ -30,6 +30,7 @@
           el('span', { text: config.applicationTitle + ' ' }),
           el('span', { className: 'hero__discipline', text: config.discipline })
         ]),
+        config.tagline ? el('p', { className: 'hero__tagline', text: config.tagline }) : null,
         config.applicationSubtitle ? el('p', { className: 'hero__subtitle', text: config.applicationSubtitle }) : null,
         form
       ]),

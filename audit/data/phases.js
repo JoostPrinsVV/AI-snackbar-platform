@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AI SNACKBAR AUDIT — FASEN VAN DE CONTROLE
+   AI COCKPIT AUDIT — FASEN VAN DE CONTROLE
    --------------------------------------------------------------------------
    Usecases, prompts en ideeën worden ingedeeld naar de fase waarin je ze
    gebruikt. De volgorde hier is de volgorde van de filters.

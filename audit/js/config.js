@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AI SNACKBAR AUDIT — INSTELLINGEN
+   AI COCKPIT AUDIT — INSTELLINGEN
    --------------------------------------------------------------------------
    Het centrale instellingenbestand van het auditplatform. Pas alleen de
    waarden aan (de tekst achter de dubbele punt), niet de namen ervoor.
@@ -17,9 +17,10 @@ window.AIAudit = window.AIAudit || {};
 window.AIAudit.config = {
 
   /* ---- Titel en organisatie ------------------------------------------- */
-  applicationTitle: 'AI Snackbar',
+  applicationTitle: 'AI Cockpit',
   discipline: 'Audit',                  // Verschijnt in turquoise achter de titel
-  applicationSubtitle: 'Alles over Copilot in de controlepraktijk op één plek: usecases met demo, direct bruikbare prompts, tips en jouw ideeën.',
+  tagline: 'Jij bepaalt de koers, Copilot navigeert mee.', // Slogan onder de titel op de startpagina
+  applicationSubtitle: 'Usecases met demo, direct bruikbare prompts, tips, trainingen en agents: alles over Copilot in de audit op één plek.',
   organizationName: 'Visser & Visser',
   lastUpdated: '19 oktober 2026',       // 'Laatst bijgewerkt' onderaan de pagina
   newDays: 45,                          // Zo lang (in dagen) krijgt nieuwe inhoud het label 'Nieuw'

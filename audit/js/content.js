@@ -44,7 +44,7 @@
 
   function warn(message) {
     state.issues.push(message);
-    console.warn('[AI Snackbar Audit] ' + message);
+    console.warn('[AI Cockpit Audit] ' + message);
   }
 
   const text = (value) => (typeof value === 'string' ? value.trim() : '');
@@ -527,7 +527,7 @@
   /* ---- Bronnen: bestanden of database ------------------------------------------------ */
   const TYPES = ['phase', 'usecase', 'prompt', 'tip', 'training', 'agent'];
   // Teksten die je in Beheer kunt aanpassen (de rest van de instellingen blijft in js/config.js)
-  const SETTING_KEYS = ['applicationTitle', 'discipline', 'applicationSubtitle', 'rules'];
+  const SETTING_KEYS = ['applicationTitle', 'discipline', 'tagline', 'applicationSubtitle', 'rules'];
 
   function reset() {
     Object.assign(state, {

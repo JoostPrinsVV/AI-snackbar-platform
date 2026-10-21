@@ -189,7 +189,8 @@
       fields: [
         { key: 'applicationTitle', label: 'Naam van het platform', type: 'text', half: true },
         { key: 'discipline', label: 'Achter de naam (turquoise)', type: 'text', half: true },
-        { key: 'applicationSubtitle', label: 'Zin onder de titel op de startpagina', type: 'textarea' },
+        { key: 'tagline', label: 'Slogan onder de titel', type: 'text', placeholder: 'Jij bepaalt de koers, Copilot navigeert mee.' },
+        { key: 'applicationSubtitle', label: 'Uitleg onder de slogan op de startpagina', type: 'textarea' },
         { key: 'rules', label: 'Gouden regels (onderaan iedere pagina)', type: 'list', hint: 'Eén regel per regel' }
       ]
     }
@@ -811,7 +812,7 @@
     const exportButton = el('button', { className: 'btn btn--secondary btn--sm', attrs: { type: 'button' } }, [icon('download'), el('span', { text: 'Exporteer alles (JSON)' })]);
     exportButton.addEventListener('click', () => {
       const rows = allRows().map(({ type, id, data, position, status, updated_at: updatedAt }) => ({ type, id, data, position, status, updated_at: updatedAt }));
-      download(`ai-snackbar-audit-inhoud-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify({ exported_at: new Date().toISOString(), rows }, null, 2));
+      download(`ai-cockpit-audit-inhoud-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify({ exported_at: new Date().toISOString(), rows }, null, 2));
     });
     const fileInput = el('input', { className: 'sr-only', attrs: { type: 'file', accept: 'application/json,.json', tabindex: '-1' } });
     const importButton = el('button', { className: 'btn btn--secondary btn--sm', attrs: { type: 'button' } }, [icon('refresh'), el('span', { text: 'Importeer back-up' })]);

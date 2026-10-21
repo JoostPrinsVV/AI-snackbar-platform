@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AI SNACKBAR AUDIT — USECASES
+   AI COCKPIT AUDIT — USECASES
    --------------------------------------------------------------------------
    Praktische toepassingen van Copilot in de controlepraktijk, elk met een
    demo. De volgorde hier is de volgorde op de pagina 'Usecases'.

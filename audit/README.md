@@ -1,6 +1,8 @@
-# AI Snackbar Audit
+# AI Cockpit Audit
 
-Levend kennisplatform over Copilot voor alle auditcollega's van Visser & Visser: de auditversie van de AI Snackbar.
+*Jij bepaalt de koers, Copilot navigeert mee.*
+
+Levend kennisplatform over Copilot voor alle auditcollega's van Visser & Visser. Gebouwd op dezelfde basis als de AI Snackbar, maar een los platform.
 Statische website (HTML, CSS, JavaScript), live via GitHub Pages op `<adres van de snackbar>/audit/`. Alle demo-inhoud is fictief.
 
 ## Onderdelen
