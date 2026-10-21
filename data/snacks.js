@@ -97,6 +97,19 @@ Zet deze actielijst om in een planning voor de rest van deze week. Houd rekening
     qrLabel: '',
     tip: 'Zet het grootste blok direct vast: "Plan een focusblok in op [dag] van [tijd] tot [tijd] met de titel: [taak]".',
     audience: ['Iedereen met een volle inbox'],
+    // Knop 'Geen licentie?' onder de prompt: instructiekaart voor de gratis Copilot Chat (geen aparte demo).
+    guide: {
+      label: 'Geen licentie?',
+      title: 'Zonder licentie: zo werkt het met de gratis Copilot Chat',
+      basic: {
+        steps: [
+          'Open de gratis Copilot Chat (m365.cloud.microsoft/chat, of het Copilot-paneel in Outlook).',
+          'Geef Copilot je mails. Zonder licentie kan Copilot niet zelf in je mailbox zoeken. Kopieer daarom de tekst van je mails van deze week en plak die in het chatvenster. Een paar mails tegelijk mag, met per mail een regel --- MAIL --- ertussen.',
+          'Gebruik dezelfde prompt, met als begin: "Hieronder staan mijn e-mails van deze week. Maak hiervan…".',
+          'Agendablokken zet je zelf in je agenda. Zonder licentie maakt Copilot geen afspraken aan, maar het geeft je wel de weekplanning als lijst.'
+        ]
+      }
+    },
     license: true                       // leest je eigen mailbox en agenda
   },
   {
