@@ -229,7 +229,7 @@ Schrijf een korte, vriendelijke e-mail aan [KLANTNAAM] waarin je de besluiten en
     license: false                      // transcriptie zelf toevoegen kan in de gratis Copilot Chat
   },
   {
-    // Demo (fictieve adviesnotitie): Copilot in PowerPoint, twee prompts.
+    // Demo (fictieve jaarrekening 2025 van Nordhaven B.V.): Copilot in PowerPoint met de V&V-template.
     id: 'snack-04',
     title: 'Van notitie naar presentatie',
     subtitle: 'Copilot maakt van je Word-notitie een klantpresentatie',
@@ -240,7 +240,7 @@ Schrijf een korte, vriendelijke e-mail aan [KLANTNAAM] waarin je de besluiten en
     accent: 'rose',
     available: true,
     featured: false,
-    intro: 'Copilot zet een fictieve adviesnotitie om in een klantpresentatie in de huisstijl van Visser & Visser. Elke dia krijgt één boodschap, korte bullets en sprekersnotities met de onderbouwing, zodat je het verhaal zo kunt vertellen.',
+    intro: 'Copilot maakt in de huisstijl van Visser & Visser een presentatie voor het jaarrekeninggesprek met de directie van het fictieve Nordhaven B.V. Elke dia krijgt één boodschap in begrijpelijke taal. De uitleg en bronverwijzing staan in de sprekersnotities, zodat je het gesprek zo kunt voeren.',
     video: 'assets/videos/snack-04.mp4',
     poster: 'assets/posters/snack-04.jpg',
     captions: '',
