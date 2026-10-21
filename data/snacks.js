@@ -88,10 +88,19 @@ window.AISnackbar.snacks = [
     video: 'assets/videos/snack-01.mp4',
     poster: 'assets/posters/snack-01.jpg',
     captions: '',
-    prompt: `Bekijk alle e-mails in mijn Postvak IN van de afgelopen 7 dagen. Haal daaruit alle acties, verzoeken en deadlines die op mij betrekking hebben. Maak een to-do lijst in een tabel met de kolommen: Taak, Afzender, Datum e-mail, Deadline (indien genoemd), Prioriteit (Hoog/Middel/Laag). Sorteer op prioriteit en deadline. Sla nieuwsbrieven en automatische meldingen over. Zet onderaan een korte lijst van e-mails die nog op mijn antwoord wachten.
-
-Daarna:
-Zet deze actielijst om in een planning voor de rest van deze week. Houd rekening met mijn bestaande afspraken in mijn agenda en geef per taak een tijdsinschatting.`,
+    // Twee prompts na elkaar in dezelfde chat, ieder in een eigen blok met kopieerknop (veld prompts).
+    prompts: [
+      {
+        title: 'Stap 1 · To-do-lijst uit je mail',
+        hint: 'In Microsoft 365 Copilot Chat (tabblad Werk).',
+        text: `Bekijk alle e-mails in mijn Postvak IN van de afgelopen 7 dagen. Haal daaruit alle acties, verzoeken en deadlines die op mij betrekking hebben. Maak een to-do lijst in een tabel met de kolommen: Taak, Afzender, Datum e-mail, Deadline (indien genoemd), Prioriteit (Hoog/Middel/Laag). Sorteer op prioriteit en deadline. Sla nieuwsbrieven en automatische meldingen over. Zet onderaan een korte lijst van e-mails die nog op mijn antwoord wachten.`
+      },
+      {
+        title: 'Stap 2 · Planning voor de rest van de week',
+        hint: 'In dezelfde chat, na de to-do-lijst.',
+        text: `Zet deze actielijst om in een planning voor de rest van deze week. Houd rekening met mijn bestaande afspraken in mijn agenda en geef per taak een tijdsinschatting.`
+      }
+    ],
     promptNote: 'Gebruik deze prompts in Microsoft 365 Copilot Chat en controleer deadlines altijd even in de mail zelf.',
     qrCode: 'assets/qr/snack-01.png',
     qrLabel: '',
