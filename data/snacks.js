@@ -464,7 +464,12 @@ Regels:
     video: 'assets/videos/snack-05.mp4',
     poster: 'assets/posters/snack-05.jpg',
     captions: '',
-    prompt: `Bereid mij voor op mijn eerstvolgende vergadering met [KLANTNAAM].
+    // Twee prompts na elkaar in dezelfde chat, ieder in een eigen blok met kopieerknop (veld prompts).
+    prompts: [
+      {
+        title: 'Stap 1 · Gesprek voorbereiden',
+        hint: 'In Copilot Chat (tabblad Werk), bijvoorbeeld een dag voor de afspraak.',
+        text: `Bereid mij voor op mijn eerstvolgende vergadering met [KLANTNAAM].
 
 Gebruik relevante informatie uit:
 - de agenda-uitnodiging;
@@ -483,10 +488,14 @@ Geef:
 8. Vijf concrete vragen die ik tijdens de afspraak kan stellen
 9. Een voorgestelde agenda voor het gesprek
 
-Vermeld bij ieder feit de gebruikte bron. Maak onderscheid tussen bevestigde informatie en jouw suggesties voor gesprekspunten.
-
-Daarna:
-Schrijf een korte, vriendelijke e-mail aan [KLANTNAAM] met de voorgestelde agenda, zodat de klant zich ook kan voorbereiden. Maximaal 120 woorden. Onderteken met [NAAM].`,
+Vermeld bij ieder feit de gebruikte bron. Maak onderscheid tussen bevestigde informatie en jouw suggesties voor gesprekspunten.`
+      },
+      {
+        title: 'Stap 2 · Agendamail aan de klant',
+        hint: 'In dezelfde chat, na de voorbereiding.',
+        text: `Schrijf een korte, vriendelijke e-mail aan [KLANTNAAM] met de voorgestelde agenda, zodat de klant zich ook kan voorbereiden. Maximaal 120 woorden. Onderteken met [NAAM].`
+      }
+    ],
     promptNote: 'Gebruik in Microsoft 365 Copilot Chat (tabblad Werk), bijvoorbeeld een dag voor de afspraak. Copilot gebruikt alleen berichten en bestanden waar jij toegang toe hebt.',
     qrCode: 'assets/qr/snack-05.png',
     qrLabel: '',
@@ -511,7 +520,12 @@ Schrijf een korte, vriendelijke e-mail aan [KLANTNAAM] met de voorgestelde agend
     video: 'assets/videos/snack-06.mp4',
     poster: 'assets/posters/snack-06.jpg',
     captions: '',
-    prompt: `Je bent een ervaren accountant met kennis van contracten. Het bijgevoegde contract [BESTANDSNAAM] is opgesteld in het [TAAL, bijv. Frans]. Ik spreek die taal niet goed genoeg om het zelf te beoordelen.
+    // Twee prompts na elkaar in dezelfde chat, ieder in een eigen blok met kopieerknop (veld prompts).
+    prompts: [
+      {
+        title: 'Stap 1 · Contract samenvatten',
+        hint: 'In Copilot Chat. Voeg het contract toe.',
+        text: `Je bent een ervaren accountant met kennis van contracten. Het bijgevoegde contract [BESTANDSNAAM] is opgesteld in het [TAAL, bijv. Frans]. Ik spreek die taal niet goed genoeg om het zelf te beoordelen.
 
 Vat het contract in het Nederlands samen met:
 1. Contractpartijen en hun rol
@@ -528,10 +542,14 @@ Regels:
 - Neem bij belangrijke bepalingen de oorspronkelijke tekst op, met je Nederlandse vertaling eronder.
 - Is een term lastig te vertalen? Noem dan de originele term en leg uit wat die betekent.
 - Staat iets niet in het contract, schrijf dan "Niet geregeld".
-- Geef geen juridisch oordeel; markeer onduidelijkheden als vraag.
-
-Daarna:
-Maak een lijst met maximaal vijf vragen die ik aan de klant of een jurist moet stellen voordat we dit contract verwerken.`,
+- Geef geen juridisch oordeel; markeer onduidelijkheden als vraag.`
+      },
+      {
+        title: 'Stap 2 · Vragen voor klant of jurist',
+        hint: 'In dezelfde chat, na de samenvatting.',
+        text: `Maak een lijst met maximaal vijf vragen die ik aan de klant of een jurist moet stellen voordat we dit contract verwerken.`
+      }
+    ],
     promptNote: 'Werkt met de gratis Copilot Chat: voeg het contract toe met de paperclip. Gebruik voor de demo een fictief contract en laat belangrijke conclusies altijd controleren.',
     qrCode: 'assets/qr/snack-06.png',
     qrLabel: '',
