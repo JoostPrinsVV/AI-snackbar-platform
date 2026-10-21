@@ -292,62 +292,70 @@ OPMAAK
     accent: 'navy',
     available: true,
     featured: false,
-    intro: 'Copilot maakt de adviesnotitie eerst anoniem: namen worden codes, bedragen nepbedragen. Claude bouwt daarmee in de V&V-template een sterke presentatie met grafieken. Daarna zet Copilot de echte gegevens terug. Zo komt er geen klantgegeven bij Claude.',
+    intro: 'Copilot maakt het document eerst anoniem: namen, bedragen en datums worden placeholders zoals [KLANT] en [BEDRAG 1], met een aparte sleuteltabel. Claude bouwt daarmee in de V&V-template de presentatie. Daarna zet Copilot de echte gegevens terug. Zo komt er geen klantgegeven bij Claude.',
     video: 'assets/videos/snack-04-pro.mp4',
     poster: 'assets/posters/snack-04-pro.jpg',
     captions: '',
-    prompt: `STAP 1 – IN COPILOT CHAT (met je V&V-account)
-Ik voeg een adviesnotitie toe. Maak hiervan een geanonimiseerde versie die ik buiten Microsoft 365 kan gebruiken.
+    prompt: `STAP 1 – IN COPILOT (met je V&V-account; voeg het document toe)
+Anonimiseer het bijgevoegde document, zodat het buiten onze organisatie gedeeld kan worden.
 
-- Vervang namen van organisaties door codes: [KLANT], [BANK], [LEVERANCIER-1], [LEVERANCIER-2] enzovoort.
-- Vervang namen van personen door [PERSOON-1], [PERSOON-2] enzovoort.
-- Vervang adressen, plaatsnamen, KvK-, btw-, rekening- en dossiernummers door [ADRES-1], [PLAATS-1], [NUMMER-1] enzovoort.
-- Vermenigvuldig alle bedragen met één willekeurige factor tussen 0,6 en 1,4 en rond af op duizenden. Zo blijven de verhoudingen in grafieken kloppen, maar zijn de echte bedragen niet te herkennen.
-- Laat percentages, jaartallen en de vakinhoud staan.
-- Gebruik iedere code steeds voor dezelfde naam.
+Vervang:
+- de naam van de klant door [KLANT]
+- namen van personen door [PERSOON 1], [PERSOON 2], enzovoort
+- plaatsnamen en adressen door [PLAATS 1], [PLAATS 2], enzovoort
+- ieder bedrag door [BEDRAG 1], [BEDRAG 2], enzovoort, en ieder percentage door [PERCENTAGE 1], [PERCENTAGE 2], enzovoort
+- concrete datums en weeknummers door [DATUM 1], [DATUM 2], enzovoort (losse jaartallen mogen blijven staan)
+- omschrijvingen waarmee de klant herkenbaar is, zoals de precieze branche, door een algemene omschrijving
 
-Geef me twee dingen:
-1. De geanonimiseerde tekst.
-2. Een sleuteltabel met: Code of nepbedrag | Origineel. Noem ook de factor die je hebt gebruikt.
+Regels:
+- Gebruik voor hetzelfde gegeven steeds dezelfde placeholder.
+- Verander verder niets aan de tekst, de opbouw en de koppen.
+- Geef iedere placeholder in de sleuteltabel precies één waarde. Gebruikt het document twee vormen van een naam (zoals de volledige naam met B.V. en een korte naam), maak dan twee placeholders.
 
-Controleer zelf of er niets meer in staat waarmee de klant te herkennen is.
+Lever twee bestanden op:
+1. Het geanonimiseerde document als .docx.
+2. Een sleuteltabel als .docx, met twee kolommen: placeholder en originele waarde.
 
-STAP 2 – IN CLAUDE
-Voeg de geanonimiseerde tekst uit stap 1 toe (zonder de sleuteltabel!) en de template Template_PowerPoint_VV_leeg.pptx.
+Controleer tot slot het geanonimiseerde document op gegevens die nog herleidbaar zijn. Noem die in je antwoord.
 
-Je bent een ervaren accountant en presentatieontwerper. Maak van deze adviesnotitie een overtuigende klantpresentatie van maximaal 8 dia's in de bijgevoegde template.
-- Opbouw: titel en doel, samenvatting in drie punten, de belangrijkste bevindingen (één boodschap per dia), advies en keuzes, vervolgstappen.
-- De diatitel is de boodschap zelf, in één zin. Maximaal vier korte bullets per dia.
-- Laat bedragen zien in grafieken of tabellen waar dat helpt, en kies per dia de layout uit de template die het best past.
-- Gebruik alleen de kleuren, lettertypes en layouts uit de template. Laat geen placeholdertekst staan en verwijder ongebruikte dia's.
-- Zet uitleg en onderbouwing in de sprekersnotities.
-- Laat alle codes zoals [KLANT] en [PERSOON-1] en alle bedragen precies zo staan als in de tekst. Ze worden later teruggezet.
+STAP 2 – IN CLAUDE (voeg alleen het geanonimiseerde document en de template toe, nooit de sleuteltabel)
+Je bent een ervaren samenstellend accountant. Bouw in de bijgevoegde template een presentatie van maximaal 8 dia's op basis van het geanonimiseerde document, voor het jaarrekeninggesprek met de directie.
+- Dit is een samenstellingsopdracht, geen controle. Gebruik geen woorden als "controle" of "goedgekeurd".
+- Kies per dia een passende indeling uit de template.
+- Laat alle placeholders tussen [ ] exact staan.
+- De diatitel is de boodschap; maximaal vier korte punten per blok.
+- Leg vaktermen uit in de sprekersnotities, met bron (§).
+- Ontbreekt iets, zet dan [ONTBREEKT: wat er mist].
 
-Lever het resultaat op als .pptx-bestand.
+STAP 3 – TERUG IN COPILOT (voeg de presentatie uit Claude en de sleuteltabel toe)
+Vervang in deze presentatie iedere placeholder tussen vierkante haken, zoals [KLANT], [KLANT KORT] en [BEDRAG 1], door de originele waarde uit de bijgevoegde sleuteltabel. Doe dit op de dia's, in de tabellen, in de sprekersnotities en in de sectienaam.
 
-STAP 3 – TERUG IN COPILOT (in dezelfde chat als stap 1)
-Ik voeg de presentatie toe die ik met de geanonimiseerde tekst heb gemaakt. Zet alle codes en nepbedragen terug naar de originele waarden uit de sleuteltabel. Pas bedragen in grafieken en tabellen ook aan. Verander verder niets aan tekst of opmaak.
+Regels:
+- Wijzig alleen de placeholders. Laat alle andere tekst, de opmaak, de vormen en de volgorde ongewijzigd.
+- Laat [ONTBREEKT: …] staan; dat is geen placeholder uit de sleuteltabel.
+- Noem in je antwoord placeholders die je niet in de sleuteltabel kon vinden.
 
-Lever het resultaat op als .pptx-bestand. Geef daarnaast een lijst van alles wat je hebt vervangen en van codes die je niet kon vinden.`,
-    promptNote: 'Nodig: Copilot Chat met je V&V-account en toegang tot Claude. Stap 3 als .pptx opleveren kan met een Copilot-licentie; zonder licentie vraag je om de vervanglijst en gebruik je Zoeken en vervangen (Ctrl+H) in PowerPoint.',
+STAP 3B – OPTIONEEL, IN DEZELFDE CHAT
+Welke dingen ontbreken nog?`,
+    promptNote: 'Nodig: Copilot met je V&V-account en toegang tot Claude. Bestanden laten opleveren (stap 1 en 3) kan met een Copilot-licentie; zonder licentie vraag je om de tekst en de vervanglijst, en gebruik je Zoeken en vervangen (Ctrl+H) in PowerPoint.',
     qrCode: 'assets/qr/snack-04-pro.png',
     qrLabel: '',
-    tip: 'Controleer na stap 3 de grafieken: kies Grafiek → Gegevens bewerken en kijk of de echte bedragen erin staan.',
+    tip: 'Bewaar de sleuteltabel alleen in je V&V-omgeving en verwijder hem als de presentatie klaar is: daarmee is alles weer herleidbaar.',
     audience: ['Advies', 'Samenstellen'],
     download: 'assets/downloads/Template_PowerPoint_VV_leeg.pptx',
     downloadLabel: 'Download de PowerPoint-template',
     guide: {
       label: 'Zo werkt de pro-versie',
-      title: 'Pro-versie: van notitie naar presentatie met Claude',
+      title: 'Pro-versie: van document naar presentatie met Claude',
       basic: {
         steps: [
-          'Open Copilot Chat met je V&V-account en voeg je adviesnotitie toe. Gebruik stap 1 van de prompt: Copilot maakt de tekst anoniem en geeft een sleuteltabel.',
-          'Lees de anonieme tekst na. Staat er nog een naam, adres of nummer in? Vervang die zelf. De sleuteltabel blijft in Copilot.',
-          'Open Claude en voeg de anonieme tekst en de lege V&V-template toe. Gebruik stap 2 van de prompt en download de presentatie.',
-          'Ga terug naar dezelfde Copilot-chat, voeg de presentatie toe en gebruik stap 3: Copilot zet de echte namen en bedragen terug.',
-          'Controleer de presentatie, vooral de bedragen in de grafieken, voordat je hem aan de klant laat zien.'
+          'Open Copilot met je V&V-account, voeg het document toe en gebruik stap 1. Je krijgt twee bestanden: het geanonimiseerde document en de sleuteltabel.',
+          'Lees het geanonimiseerde document na, en de gegevens die Copilot nog herleidbaar noemt. Pas die zelf aan. Bewaar de sleuteltabel alleen in je V&V-omgeving.',
+          'Open Claude en voeg alleen het geanonimiseerde document en de lege V&V-template toe. Gebruik stap 2 en download de presentatie.',
+          'Ga terug naar Copilot, voeg de presentatie uit Claude en de sleuteltabel toe en gebruik stap 3. Vraag daarna eventueel welke dingen nog ontbreken (stap 3b).',
+          'Controleer de presentatie, vooral de bedragen en de punten met [ONTBREEKT], voordat je hem aan de klant laat zien.'
         ],
-        note: 'Claude krijgt alleen de anonieme tekst en de lege template, nooit de sleuteltabel of het originele document.'
+        note: 'Claude krijgt alleen het geanonimiseerde document en de lege template, nooit de sleuteltabel of het originele document.'
       }
     },
     license: false                      // stap 1 kan in de gratis Copilot Chat; Claude is een aparte tool
