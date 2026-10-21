@@ -245,7 +245,12 @@ Vind je bij een stap geen fout, zeg dat dan expliciet. Verzin geen correcties.`
     video: 'assets/videos/snack-03.mp4',
     poster: 'assets/posters/snack-03.jpg',
     captions: '',
-    prompt: `Ik voeg de transcriptie toe van ons overleg met [KLANTNAAM] op [DATUM]. Vanuit ons kantoor waren aanwezig: [NAMEN]. Vanuit de klant: [NAMEN].
+    // Twee prompts na elkaar in dezelfde chat, ieder in een eigen blok met kopieerknop (veld prompts).
+    prompts: [
+      {
+        title: 'Stap 1 · Overleg samenvatten',
+        hint: 'In Copilot Chat. Voeg de transcriptie uit Teams toe.',
+        text: `Ik voeg de transcriptie toe van ons overleg met Nordhaven B.V. op 5 oktober 2026. Vanuit ons kantoor waren aanwezig: Sanne de Wit en Thomas Bakker. Vanuit de klant: Marieke Vos en Henk Brouwer.
 
 Vat het overleg samen met:
 1. De belangrijkste besproken onderwerpen, per onderwerp in 1 à 2 zinnen
@@ -258,11 +263,14 @@ Regels:
 - Gebruik alleen wat in de transcriptie staat en vul niets aan.
 - Iets is pas een besluit als het expliciet is afgesproken. Twijfel je, zet het dan onder voorstellen.
 - Vermeld "Niet benoemd" als een eigenaar of deadline ontbreekt. Neem relatieve deadlines zoals "volgende week" letterlijk over.
-- Is niet duidelijk wie iets zei, markeer dat dan met "Spreker onduidelijk".
-- Zet alles wat besproken is zonder de klant erbij onder een apart kopje "Intern".
-
-Daarna:
-Schrijf een korte, vriendelijke e-mail aan [KLANTNAAM] waarin je de besluiten en de acties van beide kanten bevestigt. Maximaal 150 woorden. Noem alleen besluiten en acties uit de samenvatting, doe geen nieuwe toezeggingen en laat alles onder "Intern" weg. Vraag de klant te laten weten als iets niet klopt. Onderteken met [NAAM].`,
+- Is niet duidelijk wie iets zei, markeer dat dan met "Spreker onduidelijk".`
+      },
+      {
+        title: 'Stap 2 · Bevestigingsmail aan de klant',
+        hint: 'In dezelfde chat, na de samenvatting.',
+        text: `Schrijf een korte, vriendelijke e-mail aan Nordhaven B.V. waarin je de besluiten en de acties van beide kanten bevestigt. Maximaal 150 woorden. Noem alleen besluiten en acties uit de samenvatting, doe geen nieuwe toezeggingen en laat interne opmerkingen weg. Vraag de klant te laten weten als iets niet klopt. Onderteken met Sanne de Wit.`
+      }
+    ],
     promptNote: 'Werkt met de gratis Copilot Chat: download de transcriptie uit Teams en voeg die toe met de paperclip.',
     qrCode: 'assets/qr/snack-03.png',
     qrLabel: '',
