@@ -244,44 +244,31 @@ Schrijf een korte, vriendelijke e-mail aan [KLANTNAAM] waarin je de besluiten en
     video: 'assets/videos/snack-04.mp4',
     poster: 'assets/posters/snack-04.jpg',
     captions: '',
-    prompt: `Je bent een ervaren accountant bij Visser & Visser. Je bereidt een presentatie voor op een gesprek met [KLANTNAAM]. Het doel van het gesprek is [DOEL, bijv. "de uitkomsten van de jaarrekeningcontrole bespreken"].
+    prompt: `Je bent een ervaren samenstellend accountant bij Visser & Visser. Maak in deze template een presentatie van maximaal 8 dia's voor het jaarrekeninggesprek met de directie van Nordhaven B.V.
 
-BRONNEN
-- Inhoud: [BESTANDSNAAM]. Gebruik alleen feiten, bedragen en conclusies die in dit document staan.
-- Opmaak: de bijgevoegde template Template_PowerPoint_VV_leeg.pptx. Gebruik deze als basis voor het eindbestand.
+DOEL: de jaarrekening 2025 toelichten, de belangrijkste bespreekpunten en adviezen bespreken en afspraken maken over de vervolgstappen.
+PUBLIEK: de directeur-grootaandeelhouder en de financieel directeur. Zij zijn ondernemers, geen accountants.
+BRON: gebruik alleen het bijgevoegde document.
 
-OPBOUW (maximaal 8 dia's)
-1. Titel en doel van het gesprek (titeldia van de template)
-2. Samenvatting in drie punten
-3-6. De belangrijkste bevindingen, één boodschap per dia
-7. Advies en keuzes voor de klant
+OPBOUW
+1. Titel en doel van het gesprek
+2. Samenvatting: de jaarrekening in drie punten, met de kerncijfers
+3-6. De vier belangrijkste bespreekpunten, één per dia
+7. Advies en keuzes voor de directie
 8. Vervolgstappen en planning
 
-Heeft het document minder dan vier belangrijke bevindingen? Maak dan minder bevindingendia's. Vul niet aan met minder relevante punten.
-
 SCHRIJFREGELS
-- De diatitel is de boodschap zelf, in één zin. Dus "Voorraadwaardering vraagt aanpassing" en niet "Voorraad".
-- Maximaal vier bullets per dia, elk maximaal tien woorden.
-- Begrijpelijke taal voor een ondernemer, zonder vakjargon. Is een vakterm onvermijdelijk? Leg die dan uit in de sprekersnotities.
-- Zet de uitleg, onderbouwing en bronverwijzing (paginanummer of paragraaf in het document) in de sprekersnotities.
-- Verzin geen bedragen, data of namen. Staat iets niet in het document, schrijf dan [ONTBREEKT: wat er mist] op de dia.
+- De diatitel is de boodschap in één zin.
+- Maximaal vier bullets per blok, van maximaal tien woorden.
+- Schrijf in begrijpelijke taal zonder vakjargon. Leg onvermijdelijke termen uit in de sprekersnotities.
+- Dit is een samenstellingsopdracht, geen controle. Gebruik geen woorden als "controle", "controleverklaring" of "goedgekeurd".
+- Zet uitleg en bronverwijzing (paragraaf) in de sprekersnotities.
+- Gebruik alleen feiten en bedragen uit het document. Ontbreekt iets, zet dan [ONTBREEKT: wat er mist] op de dia.
 
-GEBRUIK VAN DE TEMPLATE
-- Kies per dia de layout uit de template die het best past bij de inhoud. Bijvoorbeeld een kaartlayout voor bevindingen, een tabel voor bedragen en een tijdlijn of roadmap voor de planning.
-- Vervang alle placeholdertekst ("Titel van de dia", "Kop van het blok", "LABEL", "00" en dergelijke). Verander geen kleuren, lettertypes, vormen of posities.
-- Blijven er in een layout vakken leeg? Verwijder dan die vakken. Laat geen placeholders staan.
-- Vul de hoofdstukken in de zijbalk met de onderwerpen van deze presentatie en verwijder de overige hoofdstukken.
-- Verwijder alle dia's uit de template die je niet gebruikt.
-
-CONTROLE VOOR OPLEVERING
-Controleer voordat je het bestand oplevert:
-1. Er staat nergens nog placeholdertekst.
-2. Geen enkele dia heeft meer dan vier bullets van tien woorden.
-3. Ieder bedrag en feit is terug te vinden in het document.
-4. Elke dia heeft sprekersnotities.
-
-Lever het resultaat op als .pptx-bestand.`,
-    promptNote: 'Gebruik in Microsoft 365 Copilot Chat: voeg je document en de PowerPoint-template (hieronder te downloaden) toe. Controleer cijfers en opmaak voordat je presenteert.',
+OPMAAK
+- Gebruik de huidige template en behoud logo, kleuren, lettertypen en zijbalk.
+- Vul de zijbalk met de onderwerpen van deze presentatie.`,
+    promptNote: 'Open de PowerPoint-template (hieronder te downloaden) in PowerPoint, start Copilot en voeg je document toe als bron. Controleer cijfers en opmaak voordat je presenteert.',
     qrCode: 'assets/qr/snack-04.png',
     qrLabel: '',
     tip: 'Lees de sprekersnotities na: daar staan de bronverwijzingen, zodat je ieder bedrag snel kunt controleren.',
