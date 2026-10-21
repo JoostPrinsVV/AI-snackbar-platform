@@ -12,6 +12,12 @@
       "runtimeExecutable": "powershell",
       "runtimeArgs": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "C:\\Users\\jprins\\AppData\\Local\\Temp\\claude\\C--Users-jprins-GitHub-ai-snackbar\\749b4e96-cc79-4cfa-b46d-379f53ecd7d9\\scratchpad\\serve.ps1", "-Root", "C:\\Users\\jprins\\GitHub\\ai-snackbar", "-Port", "8783"],
       "port": 8783
+    },
+    {
+      "name": "cockpit-prototype",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "C:\\Users\\jprins\\AppData\\Local\\Temp\\claude\\C--Users-jprins-GitHub-ai-snackbar\\2cd1ae4b-b085-4786-bda6-ac15d7fa3918\\scratchpad\\serve.ps1", "-Root", "C:\\Users\\jprins\\GitHub\\ai-cockpit-audit", "-Port", "8795"],
+      "port": 8795
     }
   ]
 }
