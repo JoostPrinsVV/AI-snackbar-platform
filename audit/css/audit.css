@@ -228,14 +228,22 @@ body[data-view='home'] main::before { display: none; }
 .topbar .btn--icon { width: 2.75rem; min-height: 2.75rem; }
 
 /* Zolang het menu op één regel past, blijft de kopbalk staan tijdens het scrollen */
-@media (min-width: 940px) {
+@media (min-width: 980px) {
   .topbar { position: sticky; top: 0; }
 }
 
-/* Iets smaller scherm: menu zonder iconen, zodat het op één regel blijft */
-@media (max-width: 1140px) {
+/* Zes menu-items op één regel. Gemeten (incl. 17px schuifbalk) is nodig: met iconen
+   ~1270px, zonder iconen ~1090px, en ook met korte labels en krappere knoppen ~935px.
+   Daaronder (≤979px) staat het menu onder de naam. */
+@media (max-width: 1309px) {
   .nav__link .icon { display: none; }
   .nav__link { padding-inline: 0.85rem; }
+}
+
+@media (max-width: 1129px) {
+  .nav__list { gap: 0.35rem; }
+  .nav__link { padding-inline: 0.7rem; }
+  .nav__more { display: none; }
 }
 
 /* ==========================================================================
@@ -375,11 +383,11 @@ main:focus { outline: none; }
 
 .home .hero + .section { padding-top: calc(var(--awning-stripe) / 2 + var(--space-5)); }
 
-/* ---- Tegels naar de vier onderdelen ---- */
-/* Vijf tegels: op een breed scherm naast elkaar, daaronder 3 + 2 (6 kolommen, nooit één losse) */
+/* ---- Tegels naar de onderdelen ---- */
+/* Zes tegels: 3 + 3, op een smaller scherm 2 + 2 + 2, op een telefoon onder elkaar (nooit één losse) */
 .tiles {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--grid-gap);
   margin: 0;
   padding: 0;
@@ -774,7 +782,8 @@ main:focus { outline: none; }
 }
 
 .toggle .icon { width: 1em; height: 1em; }
-.toggle:hover { border-color: var(--color-text-muted); }
+.toggle:hover:not(:disabled) { border-color: var(--color-text-muted); }
+.toggle:disabled { border-style: dashed; color: var(--color-text-muted); cursor: default; opacity: 0.7; }
 .toggle[aria-pressed='true'] { background: var(--color-selected); border-color: var(--color-selected); color: var(--color-on-selected); }
 .toggle--accent[aria-pressed='true'] { background: var(--accent-ink); border-color: var(--accent-ink); color: var(--vv-white); }
 
@@ -1254,6 +1263,22 @@ h2.prompt-box__label { font-size: var(--fs-lg); }
 .chapters__time { flex: none; min-width: 3.5rem; color: var(--accent-ink); font-family: var(--font-mono); font-size: var(--fs-sm); font-weight: 500; }
 .chapters__title { color: var(--color-text); }
 
+/* ==========================================================================
+   Agents & tools
+   ========================================================================== */
+.ag-card.is-stopped { border-style: dashed; box-shadow: none; }
+.ag-card.is-stopped .uc-card__icon { background: var(--color-surface-muted); color: var(--color-text-muted); }
+.ag-card.is-stopped .uc-card__title { color: var(--color-text-muted); }
+
+.detail__text { display: grid; gap: var(--space-3); }
+.why p + p { margin-top: var(--space-2); }
+
+/* 'In het kort' naast de agent */
+.facts { display: grid; gap: var(--space-3); margin: 0; }
+.facts__row { display: grid; gap: 0.1rem; }
+.facts dt { color: var(--color-text-muted); font-size: var(--fs-xs); font-weight: var(--fw-bold); letter-spacing: 0.06em; text-transform: uppercase; }
+.facts dd { margin: 0; color: var(--color-text-body); font-size: var(--fs-sm); overflow-wrap: anywhere; }
+
 /* Oproep in een melding (bijv. 'Doe een verzoek') */
 .notice--cta { align-items: center; flex-wrap: wrap; }
 .notice--cta > .icon { color: var(--accent-crimson-ink); width: 1.6rem; height: 1.6rem; margin-top: 0; }
@@ -1723,20 +1748,15 @@ h2.prompt-box__label { font-size: var(--fs-lg); }
 /* ==========================================================================
    Smalle schermen
    ========================================================================== */
-@media (max-width: 1240px) {
-  .tiles { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-  .tiles__item { grid-column: span 2; }
-  .tiles__item:nth-child(n + 4) { grid-column: span 3; }
-}
-
 @media (max-width: 1080px) {
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .detail__layout { grid-template-columns: minmax(0, 1fr); }
   .ideas-layout { grid-template-columns: minmax(0, 1fr); }
   .kind-picker__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 /* Menu onder de naam, horizontaal te scrollen */
-@media (max-width: 939px) {
+@media (max-width: 979px) {
   .topbar__inner { flex-wrap: wrap; row-gap: 0; }
   .nav { order: 3; flex: 1 0 100%; margin: 0 calc(var(--gutter) * -1); padding: 0 var(--gutter) var(--space-2); overflow-x: auto; scrollbar-width: none; }
   .nav::-webkit-scrollbar { display: none; }
@@ -1748,18 +1768,28 @@ h2.prompt-box__label { font-size: var(--fs-lg); }
   .brand__mark { display: none; }
 }
 
-/* Telefoon: vijf tabbladen naast elkaar, icoon boven een klein label */
+/* Telefoon: zes tabbladen naast elkaar, icoon boven een kort label
+   ('Tips', 'Training', 'Agents', 'Ideeën'; het langste is dan 'Usecases') */
 @media (max-width: 600px) {
-  .nav__list { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.3rem; }
+  .nav__list { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.3rem; }
   .nav__link { flex-direction: column; justify-content: center; gap: 0.15rem; width: 100%; min-height: 3.1rem; padding: 0.3rem 0.1rem; border-radius: 0.9rem; font-size: 0.72rem; }
   .nav__link .icon { display: block; width: 1.15rem; height: 1.15rem; }
-  .nav__more { display: none; }
+  .nav__more, .nav__tail { display: none; }
+}
+
+/* Smalle telefoon: tabbladen tegen elkaar en iets kleiner, zodat 'Usecases' tot 320px past */
+@media (max-width: 389px) {
+  .nav__list { gap: 0.1rem; }
+  .nav__link { padding-inline: 0; font-size: 0.66rem; }
+}
+
+@media (max-width: 359px) {
+  .nav__link { font-size: 0.62rem; }
 }
 
 @media (max-width: 720px) {
   :root { scroll-padding-top: 1rem; }
   .tiles { grid-template-columns: minmax(0, 1fr); }
-  .tiles__item, .tiles__item:nth-child(n + 4) { grid-column: auto; }
   .weekly { grid-template-columns: minmax(0, 1fr); }
   .lock-page { padding: var(--space-7) var(--space-4); }
   .tile { grid-template-columns: auto 1fr; grid-template-rows: auto; align-items: center; }

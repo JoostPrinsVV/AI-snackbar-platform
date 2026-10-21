@@ -33,11 +33,11 @@
       const hash = '#/zoeken' + (query ? '/' + encodeURIComponent(query) : '');
       if (window.location.hash !== hash) window.history.replaceState(null, '', hash);
       if (!query) {
-        results.replaceChildren(el('p', { className: 'section__lead', text: 'Typ een of meer woorden. Je zoekt tegelijk in usecases, prompts, tips en trainingen.' }));
+        results.replaceChildren(el('p', { className: 'section__lead', text: 'Typ een of meer woorden. Je zoekt tegelijk in usecases, prompts, tips, trainingen en agents & tools.' }));
         return;
       }
       const found = ns.content.search(query);
-      const total = found.usecases.length + found.prompts.length + found.tips.length + found.trainings.length;
+      const total = found.usecases.length + found.prompts.length + found.tips.length + found.trainings.length + found.agents.length;
       if (!total) {
         results.replaceChildren(el('div', { className: 'empty' }, [
           el('span', { className: 'empty__icon', attrs: { 'aria-hidden': 'true' } }, [icon('search')]),
@@ -52,7 +52,8 @@
         group('Usecases', found.usecases, (u) => ns.views.usecases.card(u, 'h3')),
         group('Prompts', found.prompts, (p) => ns.views.prompts.card(p, 'h3'), '#/prompts'),
         group('Tips & tricks', found.tips, (t) => ns.views.tips.card(t, 'h3')),
-        group('Trainingen', found.trainings, (t) => ns.views.trainings.card(t, 'h3'))
+        group('Trainingen', found.trainings, (t) => ns.views.trainings.card(t, 'h3')),
+        group('Agents & tools', found.agents, (a) => ns.views.agents.card(a, 'h3'))
       ].filter(Boolean));
     }
 

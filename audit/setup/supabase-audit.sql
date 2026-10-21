@@ -2,7 +2,7 @@
 -- AI SNACKBAR AUDIT — CENTRALE OPSLAG (Supabase)
 -- ----------------------------------------------------------------------------
 -- Tabellen voor de inhoud van het platform (usecases, prompts, tips,
--- trainingen, fasen en teksten), de ideeënhub, de 'Ik ook'-stemmen en de
+-- trainingen, agents & tools, fasen en teksten), de ideeënhub, de 'Ik ook'-stemmen en de
 -- anonieme tellers. Gebruikt hetzelfde Supabase-project als de AI Snackbar;
 -- raakt de tabellen van de snackbar niet aan.
 --
@@ -14,7 +14,9 @@
 --   3. Controleer in Authentication → Sign In / Providers dat
 --      'Allow new users to sign up' UIT staat.
 --
--- Opnieuw uitvoeren kan geen kwaad: bestaande gegevens blijven staan.
+-- Opnieuw uitvoeren kan geen kwaad: bestaande gegevens blijven staan. Doe dat
+-- ook na een nieuwe soort inhoud of tellers (bijv. agents & tools), zodat de
+-- database die accepteert.
 --
 -- Rechten in het kort (Row Level Security):
 --   - Iedereen mag gepubliceerde inhoud lezen (usecases, prompts, tips, ...).
@@ -175,10 +177,10 @@ create table if not exists public.audit_events (
   item_id     text not null check (char_length(item_id) between 1 and 80),
   occurred_at timestamptz not null default now()
 );
--- Toegestane soorten tellers (ook bij opnieuw uitvoeren bijgewerkt, bijv. na het toevoegen van trainingen)
+-- Toegestane soorten tellers (ook bij opnieuw uitvoeren bijgewerkt, bijv. na het toevoegen van trainingen en agents)
 alter table public.audit_events drop constraint if exists audit_events_kind_check;
 alter table public.audit_events add constraint audit_events_kind_check
-  check (kind in ('view_usecase', 'play_demo', 'copy_prompt', 'view_tip', 'copy_tip', 'view_training', 'play_training'));
+  check (kind in ('view_usecase', 'play_demo', 'copy_prompt', 'view_tip', 'copy_tip', 'view_training', 'play_training', 'view_agent', 'open_agent'));
 create index if not exists audit_events_namespace_idx on public.audit_events (namespace, occurred_at);
 alter table public.audit_events enable row level security;
 revoke all on public.audit_events from anon, authenticated;
@@ -202,13 +204,13 @@ create policy "audit_events beheer wissen" on public.audit_events
   using (public.audit_is_admin());
 
 -- ---- 5. Inhoud van het platform ----------------------------------------------------
--- Eén rij per usecase, prompt, tip, training, fase of tekstblok. 'data' heeft
--- dezelfde velden als in de databestanden (audit/data/*.js).
+-- Eén rij per usecase, prompt, tip, training, agent, fase of tekstblok. 'data'
+-- heeft dezelfde velden als in de databestanden (audit/data/*.js).
 -- Zolang hier geen rij 'meta/bron' staat, toont het platform de inhoud uit de
 -- bestanden. Beheer → Inhoud → 'Overzetten' zet de bestanden hier neer.
 create table if not exists public.audit_content (
   namespace  text not null check (char_length(namespace) between 1 and 60),
-  type       text not null check (type in ('meta', 'setting', 'phase', 'usecase', 'prompt', 'tip', 'training')),
+  type       text not null,
   id         text not null check (id ~ '^[a-z0-9-]{1,80}$'),
   data       jsonb not null default '{}'::jsonb,
   position   integer not null default 0,
@@ -217,6 +219,10 @@ create table if not exists public.audit_content (
   updated_by text,
   primary key (namespace, type, id)
 );
+-- Toegestane soorten inhoud (ook bij opnieuw uitvoeren bijgewerkt, bijv. na het toevoegen van agents)
+alter table public.audit_content drop constraint if exists audit_content_type_check;
+alter table public.audit_content add constraint audit_content_type_check
+  check (type in ('meta', 'setting', 'phase', 'usecase', 'prompt', 'tip', 'training', 'agent'));
 alter table public.audit_content enable row level security;
 
 revoke all on public.audit_content from anon, authenticated;

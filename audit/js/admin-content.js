@@ -2,11 +2,13 @@
    Beheer → Inhoud (#/beheer/inhoud, #/beheer/inhoud/<soort>, #/beheer/inhoud/<soort>/<id|nieuw>)
    --------------------------------------------------------------------------
    Alle inhoud aanpassen, toevoegen en verwijderen: usecases, prompts, tips,
-   trainingen, fasen en de teksten van de site. Alles staat in de tabel
-   audit_content in Supabase (zie audit/setup/supabase-audit.sql).
+   trainingen, agents & tools, fasen en de teksten van de site. Alles staat in
+   de tabel audit_content in Supabase (zie audit/setup/supabase-audit.sql).
 
    - Eerste keer: 'Overzetten' zet de bestanden uit audit/data/ in de database.
      Daarna is de database leidend en zijn de bestanden alleen nog terugval.
+   - Een nieuwe soort in de bestanden (bijv. agents) waarvan de database nog
+     geen enkele rij heeft: een melding biedt aan die items toe te voegen.
    - Status: Gepubliceerd (iedereen), Concept (alleen beheerders) of
      Prullenbak (nergens; terug te zetten of definitief te verwijderen).
    - Iedere wijziging bewaart de vorige versie in audit_content_history.
@@ -36,11 +38,15 @@
 
   const phaseOptions = () => ns.content.phases.map((phase) => ({ value: phase.id, label: phase.label }));
   const unique = (values) => Array.from(new Set(values.filter(Boolean))).sort((a, b) => a.localeCompare(b, 'nl'));
+  const asOptions = (values) => values.map((value) => ({ value, label: value }));
+  // Lijsten waaruit je bij 'refs' kiest
+  const REF_LISTS = { usecase: 'usecases', tip: 'tips', training: 'trainings', phase: 'phases' };
+  const PUBLIC_WARNING = 'De site is openbaar bereikbaar: zet hier alleen informatie voor gebruikers. Geen configuratie, systeemprompts, technische instellingen of goedkeuringsdocumenten; voor de formele registratie link je naar het AI-register.';
 
   /* ---- Velden per soort ---------------------------------------------------------- */
   const SCHEMAS = {
     usecase: {
-      label: 'Usecases', one: 'usecase', add: 'Nieuwe usecase', route: 'usecase', ordered: true,
+      label: 'Usecases', one: 'usecase', many: 'usecases', add: 'Nieuwe usecase', route: 'usecase', ordered: true,
       meta: (data) => (ns.content.phaseById.get(data.phase) || {}).label || data.phase || '',
       fields: [
         { key: 'title', label: 'Titel', type: 'text', required: true },
@@ -69,7 +75,7 @@
       ]
     },
     prompt: {
-      label: 'Prompts', one: 'prompt', add: 'Nieuwe prompt', route: 'prompt', ordered: true,
+      label: 'Prompts', one: 'prompt', many: 'prompts', add: 'Nieuwe prompt', route: 'prompt', ordered: true,
       meta: (data) => (ns.content.phaseById.get(data.phase) || {}).label || data.phase || '',
       note: 'Prompts uit een usecase pas je aan bij die usecase.',
       fields: [
@@ -88,7 +94,7 @@
       ]
     },
     tip: {
-      label: 'Tips', one: 'tip', add: 'Nieuwe tip', route: 'tip', ordered: true,
+      label: 'Tips', one: 'tip', many: 'tips', add: 'Nieuwe tip', route: 'tip', ordered: true,
       meta: (data) => [data.category, data.release ? 'vrijdag ' + formatDate(data.release) : 'altijd open'].filter(Boolean).join(' · '),
       fields: [
         { key: 'title', label: 'Titel', type: 'text', required: true },
@@ -112,7 +118,7 @@
       ]
     },
     training: {
-      label: 'Trainingen', one: 'training', add: 'Nieuwe training', route: 'training', ordered: false,
+      label: 'Trainingen', one: 'training', many: 'trainingen', add: 'Nieuwe training', route: 'training', ordered: false,
       meta: (data) => [data.date ? formatDate(data.date) : '', data.category].filter(Boolean).join(' · '),
       fields: [
         { key: 'title', label: 'Titel', type: 'text', required: true },
@@ -141,8 +147,33 @@
         { key: 'added', label: 'Toegevoegd op', type: 'date', hint: 'Leeg = de datum van de training.' }
       ]
     },
+    agent: {
+      label: 'Agents & tools', one: 'agent', many: 'agents', add: 'Nieuwe agent', route: 'agent', ordered: true,
+      meta: (data) => [data.kind, data.status].filter(Boolean).join(' · '),
+      warning: PUBLIC_WARNING,
+      fields: [
+        { key: 'title', label: 'Naam', type: 'text', required: true },
+        { key: 'id', label: 'Adres (id)', type: 'id' },
+        { key: 'kind', label: 'Soort', type: 'select', options: () => asOptions(ns.content.AGENT_KINDS), required: true, half: true },
+        { key: 'status', label: 'Status', type: 'select', options: () => asOptions(ns.content.AGENT_STATUSES), required: true, half: true, hint: 'Gestopt: blijft vindbaar, onderaan en zonder Open-knop.' },
+        { key: 'icon', label: 'Icoon', type: 'icon', half: true },
+        { key: 'license', label: 'Licentie', type: 'license', half: true, choices: ['Geen licentie nodig (ook met de gratis Copilot Chat)', 'Licentie nodig (Microsoft 365 Copilot, of bij een extern product een eigen licentie)'] },
+        { key: 'summary', label: 'Samenvatting', type: 'textarea', required: true, hint: 'Eén of twee zinnen: wat is het en wat heb je eraan?' },
+        { key: 'description', label: 'Uitleg', type: 'textarea', hint: 'Waarvoor gebruik je het in de audit? Een lege regel begint een nieuwe alinea.' },
+        { key: 'access', label: 'Zo krijg je toegang', type: 'textarea', hint: 'Waar vind je het en wie regelt de toegang of licentie?' },
+        { key: 'link', label: 'Link om te openen', type: 'url', hint: 'Begint met https://. Opent in een nieuw tabblad.' },
+        { key: 'owner', label: 'Aanspreekpunt', type: 'text', hint: 'Liever een afdeling of functie dan een naam, bijv. ICT of het AI-team.' },
+        { key: 'notFor', label: 'Niet gebruiken voor', type: 'list', hint: 'Eén punt per regel' },
+        { key: 'phases', label: 'Fasen van de controle', type: 'refs', ref: 'phase' },
+        { key: 'usecases', label: 'Usecases hierbij', type: 'refs', ref: 'usecase' },
+        { key: 'trainings', label: 'Trainingen hierover', type: 'refs', ref: 'training' },
+        { key: 'tips', label: 'Tips hierbij', type: 'refs', ref: 'tip' },
+        { key: 'added', label: 'Toegevoegd op', type: 'date', half: true },
+        { key: 'registerUrl', label: 'Link naar het AI-register', type: 'url', half: true, hint: 'Optioneel. Alleen de link naar de registratie in de afgeschermde omgeving.' }
+      ]
+    },
     phase: {
-      label: 'Fasen', one: 'fase', add: 'Nieuwe fase', ordered: true,
+      label: 'Fasen', one: 'fase', many: 'fasen', add: 'Nieuwe fase', ordered: true,
       meta: (data) => data.short || '',
       note: 'De volgorde van de fasen is de volgorde van de filters. Een fase die nog gebruikt wordt, kun je niet verwijderen.',
       fields: [
@@ -163,7 +194,7 @@
       ]
     }
   };
-  const ORDER = ['usecase', 'prompt', 'tip', 'training', 'phase', 'setting'];
+  const ORDER = ['usecase', 'prompt', 'tip', 'training', 'agent', 'phase', 'setting'];
   const view = { type: '', status: 'live', query: '' }; // filters in de lijst
 
   /* ---- Rijen uit de database ------------------------------------------------------- */
@@ -272,10 +303,11 @@
         return { node: wrap(input), get: () => input.value, validate: () => requiredCheck(!input.value) };
       }
       case 'license': {
+        const labels = field.choices || ['Ook zonder licentie (gratis Copilot Chat)', 'Met Microsoft 365 Copilot-licentie'];
         const input = el('select', { className: 'field__input', attrs: { id, 'aria-describedby': described } }, [
           el('option', { attrs: { value: '' }, text: 'Niets tonen' }),
-          el('option', { attrs: { value: 'false' }, text: 'Ook zonder licentie (gratis Copilot Chat)' }),
-          el('option', { attrs: { value: 'true' }, text: 'Met Microsoft 365 Copilot-licentie' })
+          el('option', { attrs: { value: 'false' }, text: labels[0] }),
+          el('option', { attrs: { value: 'true' }, text: labels[1] })
         ]);
         input.value = value === true ? 'true' : value === false ? 'false' : '';
         return { node: wrap(input), get: () => (input.value === '' ? undefined : input.value === 'true'), validate: () => null };
@@ -298,13 +330,14 @@
         return { node: wrap(el('div', { className: 'icon-select' }, [preview, input])), get: () => input.value || undefined, validate: () => null };
       }
       case 'refs': {
-        const items = ns.content[field.ref === 'tip' ? 'tips' : 'usecases'];
+        const items = ns.content[REF_LISTS[field.ref]] || [];
         const selected = new Set(Array.isArray(value) ? value : []);
         const boxes = items.map((item) => {
           const boxId = nextId();
           const box = el('input', { attrs: { id: boxId, type: 'checkbox', value: item.id, checked: selected.has(item.id) } });
-          return el('label', { className: 'check check--compact', attrs: { for: boxId } }, [box, el('span', { text: item.title + (item.locked ? ' (op slot)' : '') })]);
+          return el('label', { className: 'check check--compact', attrs: { for: boxId } }, [box, el('span', { text: (item.title || item.label) + (item.locked ? ' (op slot)' : '') })]);
         });
+        if (!boxes.length) boxes.push(el('p', { className: 'field__hint', text: 'Nog niets om te kiezen.' }));
         const group = el('fieldset', { className: 'field field--wide refs' }, [el('legend', { className: 'field__label', text: field.label }), el('div', { className: 'refs__list' }, boxes)]);
         return {
           node: group,
@@ -531,7 +564,7 @@
     if (trash) {
       trash.addEventListener('click', async () => {
         if (type === 'phase' && usageOfPhase(existing.id)) {
-          toast(`Deze fase wordt nog gebruikt door ${usageOfPhase(existing.id)} usecase(s) of prompt(s). Kies daar eerst een andere fase.`, { tone: 'warning', duration: 6000 });
+          toast(`Deze fase wordt nog gebruikt door ${usageOfPhase(existing.id)} usecase(s), prompt(s) of agent(s). Kies daar eerst een andere fase.`, { tone: 'warning', duration: 6000 });
           return;
         }
         if (!(await confirm(`"${data.title || data.label || existing.id}" gaat naar de prullenbak. Collega's zien hem dan niet meer; je kunt hem terugzetten.`, { title: 'Naar de prullenbak?', confirmLabel: 'Naar de prullenbak', danger: true }))) return;
@@ -552,6 +585,7 @@
         existing && existing.updated_at ? el('p', { className: 'field__hint', text: 'Laatst opgeslagen: ' + new Date(existing.updated_at).toLocaleString('nl-NL', { dateStyle: 'medium', timeStyle: 'short' }) }) : null,
         type === 'prompt' ? el('p', { className: 'field__hint', text: SCHEMAS.prompt.note }) : null
       ]),
+      warningNotice(schema),
       form
     ]);
     // Na opbouw: beginstand vastleggen (voor 'niet-opgeslagen wijzigingen')
@@ -565,7 +599,10 @@
   const STATUS_LABEL = { published: 'Gepubliceerd', draft: 'Concept', trash: 'Prullenbak' };
 
   function usageOfPhase(phaseId) {
-    return allRows().filter((row) => (row.type === 'usecase' || row.type === 'prompt') && row.status !== 'trash' && row.data && row.data.phase === phaseId).length;
+    return allRows().filter((row) => row.status !== 'trash' && row.data && (
+      ((row.type === 'usecase' || row.type === 'prompt') && row.data.phase === phaseId) ||
+      (row.type === 'agent' && Array.isArray(row.data.phases) && row.data.phases.includes(phaseId))
+    )).length;
   }
 
   function listView(type) {
@@ -635,7 +672,7 @@
           const toTrash = el('button', { className: 'btn btn--quiet btn--icon btn--tiny', attrs: { type: 'button', 'aria-label': 'Naar de prullenbak: ' + (data.title || data.label || row.id), title: 'Naar de prullenbak' } }, [icon('trash')]);
           toTrash.addEventListener('click', async () => {
             if (type === 'phase' && usageOfPhase(row.id)) {
-              toast(`Deze fase wordt nog gebruikt door ${usageOfPhase(row.id)} usecase(s) of prompt(s). Kies daar eerst een andere fase.`, { tone: 'warning', duration: 6000 });
+              toast(`Deze fase wordt nog gebruikt door ${usageOfPhase(row.id)} usecase(s), prompt(s) of agent(s). Kies daar eerst een andere fase.`, { tone: 'warning', duration: 6000 });
               return;
             }
             if (!(await confirm(`"${data.title || data.label || row.id}" gaat naar de prullenbak. Collega's zien hem dan niet meer; je kunt hem terugzetten.`, { title: 'Naar de prullenbak?', confirmLabel: 'Naar de prullenbak', danger: true }))) return;
@@ -679,8 +716,14 @@
         el('a', { className: 'btn btn--primary btn--sm', attrs: { href: `#/beheer/inhoud/${type}/nieuw` } }, [icon('message-plus'), el('span', { text: schema.add })])
       ]),
       schema.note ? el('p', { className: 'field__hint', text: schema.note }) : null,
+      warningNotice(schema),
       listNode
     ]);
+  }
+
+  /** Waarschuwing bij een soort (bijv. agents: de site is openbaar). */
+  function warningNotice(schema) {
+    return schema.warning ? el('div', { className: 'notice notice--warning' }, [icon('alert'), el('div', {}, [el('p', { text: schema.warning })])]) : null;
   }
 
   /* ---- Overzetten, exporteren en importeren -------------------------------------------- */
@@ -692,7 +735,7 @@
       ])]);
     }
     const rows = ns.content.toRows();
-    const counts = ['usecase', 'prompt', 'tip', 'training', 'phase'].map((type) => `${rows.filter((r) => r.type === type).length} ${SCHEMAS[type].label.toLowerCase()}`).join(', ');
+    const counts = ['usecase', 'prompt', 'tip', 'training', 'agent', 'phase'].map((type) => `${rows.filter((r) => r.type === type).length} ${SCHEMAS[type].many}`).join(', ');
     const button = el('button', { className: 'btn btn--primary', attrs: { type: 'button' } }, [icon('download'), el('span', { text: 'Overzetten naar de database' })]);
     button.addEventListener('click', async () => {
       if (!(await confirm('Alle inhoud uit de bestanden wordt in de database gezet. Vanaf dan pas je alles hier aan en tonen alle collega\'s de inhoud uit de database.', { title: 'Inhoud overzetten?', confirmLabel: 'Overzetten' }))) return;
@@ -715,6 +758,44 @@
       ]),
       button
     ]);
+  }
+
+  /**
+   * De database is al leidend, dus 'Overzetten' draait niet opnieuw. Heeft een soort in de
+   * bestanden wél items en in de database nog geen enkele rij (ook niet in de prullenbak),
+   * bijvoorbeeld net na het toevoegen van agents, dan bied je aan die items toe te voegen.
+   */
+  function missingTypePanels() {
+    const fileRows = ns.content.toRows();
+    return ns.content.TYPES.filter((type) => SCHEMAS[type] && !rowsOf(type).length).map((type) => {
+      const rows = fileRows.filter((row) => row.type === type);
+      if (!rows.length) return null;
+      const schema = SCHEMAS[type];
+      const what = `${rows.length} ${rows.length === 1 ? schema.one : schema.many}`;
+      const label = `${what} uit de bestanden toevoegen`;
+      const button = el('button', { className: 'btn btn--primary btn--sm', attrs: { type: 'button' } }, [icon('download'), el('span', { text: label })]);
+      button.addEventListener('click', async () => {
+        if (!(await confirm(`De ${what} uit de bestanden (audit/data/) komen in de database en zijn direct zichtbaar voor alle collega's. Daarna pas je ze hier aan, zet je ze op concept of in de prullenbak.`, { title: `${schema.label} toevoegen?`, confirmLabel: 'Toevoegen' }))) return;
+        button.disabled = true;
+        button.querySelector('span').textContent = 'Bezig met toevoegen…';
+        try {
+          await ns.central.saveContent(rows);
+          await afterChange(`${what} toegevoegd`);
+        } catch (error) {
+          button.disabled = false;
+          button.querySelector('span').textContent = label;
+          toast('Toevoegen mislukt: ' + error.message, { tone: 'warning', duration: 8000 });
+        }
+      });
+      return el('div', { className: 'notice notice--cta seed' }, [
+        icon('info'),
+        el('div', {}, [
+          el('p', { className: 'notice__title', text: `Nieuw in de bestanden: ${schema.label.toLowerCase()}` }),
+          el('p', { text: `In de bestanden staan ${what} die nog niet in de database staan. Voeg ze eenmalig toe; daarna beheer je ze hier.` })
+        ]),
+        button
+      ]);
+    }).filter(Boolean);
   }
 
   function download(name, text) {
@@ -742,7 +823,7 @@
       try {
         const parsed = JSON.parse(await file.text());
         const rows = (Array.isArray(parsed) ? parsed : parsed.rows || []).filter((row) =>
-          row && ['meta', 'setting', 'phase', 'usecase', 'prompt', 'tip', 'training'].includes(row.type) && ID_PATTERN.test(row.id) && row.data && typeof row.data === 'object');
+          row && ['meta', 'setting'].concat(ns.content.TYPES).includes(row.type) && ID_PATTERN.test(row.id) && row.data && typeof row.data === 'object');
         if (!rows.length) throw new Error('geen bruikbare inhoud in dit bestand');
         if (!(await confirm(`${rows.length} items uit de back-up worden teruggezet. Items met hetzelfde adres worden overschreven; andere items blijven staan.`, { title: 'Back-up terugzetten?', confirmLabel: 'Terugzetten' }))) return;
         await ns.central.saveContent(rows.map((row) => ({ type: row.type, id: row.id, data: row.data, position: row.position || 0, status: ['published', 'draft', 'trash'].includes(row.status) ? row.status : 'draft' })));
@@ -776,7 +857,8 @@
 
     let body;
     let canLeave = null;
-    if (SCHEMAS[type].single || params[1]) {
+    const editing = Boolean(SCHEMAS[type].single || params[1]);
+    if (editing) {
       const result = editor(type, SCHEMAS[type].single ? SCHEMAS[type].single : params[1]);
       body = result.node || result;
       canLeave = result.canLeave || null;
@@ -785,6 +867,7 @@
     }
     return {
       node: el('div', { className: 'cms' }, [
+        ...(editing ? [] : missingTypePanels()),
         el('div', { className: 'cms__bar' }, [tabs, backupTools()]),
         body
       ]),

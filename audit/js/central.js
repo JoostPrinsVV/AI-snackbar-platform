@@ -4,7 +4,7 @@
    Hetzelfde Supabase-project als de AI Snackbar, met eigen tabellen
    (audit/setup/supabase-audit.sql):
 
-     audit_content      de inhoud: usecases, prompts, tips, trainingen, fasen, teksten
+     audit_content      de inhoud: usecases, prompts, tips, trainingen, agents, fasen, teksten
      audit_ideas        inzendingen uit de ideeënhub
      audit_idea_votes   'Ik ook'-stemmen (één per apparaat per inzending)
      audit_events       anonieme tellers: bekeken, afgespeeld, gekopieerd
@@ -169,7 +169,7 @@
   }
 
   /* ---- Anonieme tellers ----------------------------------------------------------- */
-  /** kind: 'view_usecase' | 'play_demo' | 'copy_prompt' | 'view_tip' | 'copy_tip' | 'view_training' | 'play_training'. Geen persoonsgegevens. */
+  /** kind: 'view_usecase' | 'play_demo' | 'copy_prompt' | 'view_tip' | 'copy_tip' | 'view_training' | 'play_training' | 'view_agent' | 'open_agent'. Geen persoonsgegevens. */
   function track(kind, itemId) {
     if (!enabled || trackingOff || !config.enableUsageStats || signedIn()) return; // beheerders tellen niet mee
     insert(TABLES.events, [{ namespace: config.namespace, kind, item_id: String(itemId || '').slice(0, 80) }])
@@ -293,6 +293,8 @@
     let detail = '';
     try {
       const data = await response.json();
+      // 23514: de controle in de database kent deze soort nog niet (bijv. agents)
+      if (data && data.code === '23514') return new Error('de database kent deze soort inhoud nog niet: voer audit/setup/supabase-audit.sql opnieuw uit');
       detail = data && data.message ? ': ' + data.message : '';
     } catch (error) {
       /* geen details */

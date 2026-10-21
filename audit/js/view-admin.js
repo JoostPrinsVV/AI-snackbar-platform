@@ -3,11 +3,11 @@
    --------------------------------------------------------------------------
    Voor het AI-team: inloggen met een Supabase-gebruiker van wie het
    e-mailadres in audit_admins staat (zie audit/setup/supabase-audit.sql).
-   - Inhoud: usecases, prompts, tips, trainingen, fasen en teksten aanpassen,
-     toevoegen en verwijderen (js/admin-content.js).
+   - Inhoud: usecases, prompts, tips, trainingen, agents & tools, fasen en
+     teksten aanpassen, toevoegen en verwijderen (js/admin-content.js).
    - Inzendingen: lezen (met naam en e-mail), status zetten, beantwoorden,
      publiceren in de hub, verwijderen en exporteren (CSV).
-   - Gebruik: anonieme tellers per usecase, demo, prompt, tip en training.
+   - Gebruik: anonieme tellers per usecase, demo, prompt, tip, training en agent.
    De sessie blijft bewaard zolang dit tabblad open is.
    ========================================================================== */
 (function (ns) {
@@ -243,6 +243,8 @@
         const tipCopies = count('copy_tip');
         const trainingViews = count('view_training');
         const trainingPlays = count('play_training');
+        const agentViews = count('view_agent');
+        const agentOpens = count('open_agent');
         const total = (map) => Array.from(map.values()).reduce((sum, n) => sum + n, 0);
         const sorted = (map) => Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
         const title = (lookup, id) => {
@@ -257,6 +259,8 @@
         const tipRows = Array.from(tipIds).map((id) => [title(ns.content.tipById, id), tipViews.get(id) || 0, tipCopies.get(id) || 0]).sort((a, b) => b[1] + b[2] - a[1] - a[2]);
         const trainingIds = new Set([...trainingViews.keys(), ...trainingPlays.keys()]);
         const trainingRows = Array.from(trainingIds).map((id) => [title(ns.content.trainingById, id), trainingViews.get(id) || 0, trainingPlays.get(id) || 0]).sort((a, b) => b[1] + b[2] - a[1] - a[2]);
+        const agentIds = new Set([...agentViews.keys(), ...agentOpens.keys()]);
+        const agentRows = Array.from(agentIds).map((id) => [title(ns.content.agentById, id), agentViews.get(id) || 0, agentOpens.get(id) || 0]).sort((a, b) => b[1] + b[2] - a[1] - a[2]);
 
         body.replaceChildren(
           el('div', { className: 'kpis' }, [
@@ -264,13 +268,15 @@
             ["Demo's gestart", total(plays)],
             ['Prompts gekopieerd', total(copies)],
             ['Tips bekeken', total(tipViews)],
-            ['Opnames geopend', total(trainingPlays)]
+            ['Opnames geopend', total(trainingPlays)],
+            ['Agents geopend', total(agentOpens)]
           ].map(([label, value]) => el('div', { className: 'kpi' }, [el('span', { className: 'kpi__value', text: String(value) }), el('span', { className: 'kpi__label', text: label })]))),
           el('div', { className: 'usage-grid' }, [
             table('Usecases', usecaseRows, ['Usecase', 'Bekeken', 'Demo gestart']),
             table('Meest gekopieerde prompts (top 20)', promptRows, ['Prompt', 'Gekopieerd']),
             table('Tips', tipRows, ['Tip', 'Bekeken', 'Voorbeeld gekopieerd']),
-            table('Trainingen', trainingRows, ['Training', 'Bekeken', 'Opname geopend'])
+            table('Trainingen', trainingRows, ['Training', 'Bekeken', 'Opname geopend']),
+            table('Agents & tools', agentRows, ['Agent', 'Bekeken', 'Geopend'])
           ]),
           el('p', { className: 'field__hint', text: 'Anonieme tellers: er wordt niet bijgehouden wie iets bekijkt of kopieert.' })
         );

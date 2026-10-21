@@ -7,13 +7,14 @@ Statische website (HTML, CSS, JavaScript), live via GitHub Pages op `<adres van 
 
 | Adres | Wat |
 | --- | --- |
-| `#/` | Startpagina: zoeken, de vier onderdelen, uitgelichte usecases en tips, nieuw toegevoegd |
+| `#/` | Startpagina: zoeken, de onderdelen, uitgelichte usecases en tips, nieuw toegevoegd |
 | `#/usecases`, `#/usecase/<id>` | Praktische usecases per fase van de controle, elk met demo, stappen, prompts en aandachtspunten |
 | `#/prompts`, `#/prompt/<id>` | Promptdatabase: zoeken, filteren, favorieten, plaatshouders invullen en kopiëren |
 | `#/tips`, `#/tip/<id>` | Tips & tricks, o.a. eigen instructies, Facilitator en geplande prompts |
 | `#/trainingen`, `#/training/<id>` | Opnames van trainingen en sessies om terug te kijken, met hoofdstukken en materiaal |
+| `#/agents`, `#/agent/<id>` | Agents & tools: welke AI-agents en -producten er zijn, waarvoor (en waarvoor niet) en hoe je toegang krijgt |
 | `#/ideeen` | Ideeënhub: idee, vraag, verzoek of prompt insturen; gepubliceerde inzendingen met antwoord en 'Ik ook' |
-| `#/zoeken/<woorden>` | Zoeken in usecases, prompts, tips en trainingen tegelijk |
+| `#/zoeken/<woorden>` | Zoeken in usecases, prompts, tips, trainingen en agents tegelijk |
 | `#/beheer` | Voor het AI-team: alle inhoud beheren, inzendingen beantwoorden en publiceren, gebruik bekijken |
 
 Ieder adres is deelbaar, bijvoorbeeld in Teams: `…/audit/#/tip/facilitator`.
@@ -26,15 +27,19 @@ Na het eenmalig instellen (zie 'Supabase instellen' hieronder) beheer je alle in
 1. Ga naar `#/beheer` (link 'Beheer' onderaan iedere pagina) en log in.
 2. De eerste keer: klik op **Overzetten naar de database**. De inhoud uit de bestanden gaat dan naar Supabase; vanaf
    dat moment tonen alle collega's de inhoud uit de database.
-3. Kies een soort (Usecases, Prompts, Tips, Trainingen, Fasen, Teksten) en klik op **Bewerken** of **Nieuwe …**.
-   Je kunt alles aanpassen: teksten, prompts (met plaatshouders), stappen, fase, icoon, licentie, demo of video,
-   de 'tip van de week'-datum, hoofdstukken en materiaal van trainingen, gekoppelde tips en usecases.
+3. Kies een soort (Usecases, Prompts, Tips, Trainingen, Agents & tools, Fasen, Teksten) en klik op **Bewerken** of
+   **Nieuwe …**. Je kunt alles aanpassen: teksten, prompts (met plaatshouders), stappen, fase, icoon, licentie, demo
+   of video, de 'tip van de week'-datum, hoofdstukken en materiaal van trainingen, gekoppelde tips en usecases.
 4. **Status:** *Gepubliceerd* (iedereen ziet het) of *Concept* (alleen jij als beheerder, met een label 'Concept').
    Zo kun je iets rustig voorbereiden en via **Bekijk op de site** controleren voordat je het publiceert.
 5. **Volgorde:** met de pijltjes in de lijst. **Verwijderen:** eerst naar de prullenbak (terug te zetten), daarna
    eventueel definitief. Iedere wijziging bewaart bovendien de vorige versie in `audit_content_history`.
-6. Op een pagina van een usecase, prompt, tip of training zie je als beheerder een balk met **Bewerk deze …**.
+6. Op een pagina van een usecase, prompt, tip, training of agent zie je als beheerder een balk met **Bewerk deze …**.
 7. **Back-up:** *Exporteer alles (JSON)* bewaart alle inhoud in één bestand; *Importeer back-up* zet zo'n bestand terug.
+8. **Nieuwe soort in de bestanden:** 'Overzetten' gebeurt maar één keer. Komt er later een soort bij (zoals agents)
+   die in de bestanden wél items heeft en in de database nog geen enkele, dan zie je bovenaan Beheer → Inhoud een
+   melding, bijvoorbeeld **5 agents uit de bestanden toevoegen**. Na bevestigen staan ze in de database en zijn ze
+   direct zichtbaar. Voer eerst `setup/supabase-audit.sql` opnieuw uit (zie hieronder), anders weigert de database ze.
 
 Je blijft ingelogd zolang het tabblad open is. Als beheerder tel je niet mee in de gebruiksstatistiek.
 
@@ -58,6 +63,7 @@ de terugval. Uitleg per veld staat bovenin elk bestand.
 | `data/prompts.js` | Losse prompts voor de promptdatabase |
 | `data/tips.js` | Tips & tricks |
 | `data/trainings.js` | Trainingen (opnames), met een voorbeeld onderaan om te kopiëren |
+| `data/agents.js` | Agents & tools (startinhoud: de Microsoft-standaard agents) |
 | `demos/scripts.js` | De gesprekken van de nagespeelde Copilot-demo's |
 
 - **Usecase toevoegen:** kopieer een blok `{ … }` in `data/usecases.js` en geef het een nieuwe `id`.
@@ -96,6 +102,26 @@ Een training toevoegen: kopieer het voorbeeld onderaan `data/trainings.js` en vu
 - **Nog geen opname:** laat `link` en `video` leeg. Ligt de datum in de toekomst, dan staat de training onder
   'Binnenkort'; daarna onder 'Terugkijken' met 'Opname volgt'.
 
+## Agents & tools
+
+Een catalogus van AI-agents en -producten, bekeken vanuit de gebruiker: wat is het, waarvoor gebruik je het (en
+waarvoor niet), hoe krijg je toegang en welke usecases, tips en trainingen horen erbij. Het formele AI-register blijft
+elders; een agent kan er met `registerUrl` naar linken (afgeschermde omgeving).
+
+> **Let op: deze site is openbaar bereikbaar.** Zet bij agents alleen informatie voor gebruikers. Nooit configuratie,
+> systeemprompts, technische instellingen, interne risicoanalyses of goedkeuringsdocumenten. Noem bij voorkeur een
+> afdeling of functie als aanspreekpunt, geen naam. Twijfel je? Laat het weg en link naar het AI-register.
+
+- **Soort:** *Microsoft-standaard* (onderdeel van Microsoft 365), *Eigen agent* (gemaakt door of voor Visser & Visser)
+  of *Extern product* (van een andere leverancier). Op de overzichtspagina filter je op soort en status.
+- **Status:** *Beschikbaar*, *Pilot*, *In ontwikkeling* of *Gestopt*. Een gestopte agent blijft vindbaar, staat
+  onderaan en heeft geen knop 'Openen'.
+- **Licentie:** bij Microsoft en eigen agents de Microsoft 365 Copilot-licentie; bij een extern product een eigen
+  licentie of account.
+- **Link:** de knop 'Openen' opent hem in een nieuw tabblad (alleen `https://`).
+- **Niet gebruiken voor:** een paar korte punten; ze staan als waarschuwing op de pagina.
+- Alle velden staan uitgelegd bovenin `data/agents.js`; in Beheer → Inhoud → Agents & tools vul je dezelfde velden in.
+
 ## Supabase instellen (eenmalig, voor beheer en ideeënhub)
 
 Beheer, de ideeënhub en de tellers gebruiken hetzelfde Supabase-project als de snackbar, met eigen tabellen. Tot die
@@ -117,9 +143,11 @@ storing de inzending ook per mail sturen.
 
 - Geen klantgegevens op het platform: alle demo's zijn fictief, en wat je in 'Invullen' typt wordt nergens bewaard.
 - In de browser bewaren we alleen favorieten, het thema, een willekeurige stem-code en de titels van je eigen inzendingen.
-- De tellers in Beheer zijn anoniem (welke usecase, demo, prompt, tip of training), zonder apparaat- of persoonsgegevens.
-  Heb je het SQL-bestand al eens uitgevoerd vóór de trainingen er waren? Voer het dan nog een keer uit, zodat ook de
-  tellers voor trainingen worden geaccepteerd (bestaande gegevens blijven staan).
+- De site en de repository zijn openbaar bereikbaar. Alles op het platform is informatie voor gebruikers; zet er nooit
+  configuratie, systeemprompts, goedkeuringsdocumenten, interne opnames of klantinformatie op.
+- De tellers in Beheer zijn anoniem (welke usecase, demo, prompt, tip, training of agent), zonder apparaat- of
+  persoonsgegevens. Heb je het SQL-bestand al eens uitgevoerd vóór de trainingen of agents er waren? Voer het dan nog
+  een keer uit, zodat ook die inhoud en tellers worden geaccepteerd (bestaande gegevens blijven staan).
 - De ideeënhub waarschuwt als een tekst op een BSN of IBAN lijkt.
 - Demo's draaien in een afgeschermd iframe (sandbox); de pagina staat alleen verbinding met Supabase toe (CSP).
 

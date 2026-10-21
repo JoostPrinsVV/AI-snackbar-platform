@@ -34,6 +34,8 @@
     trainings: [],
     trainingById: new Map(),
     trainingCategories: [],
+    agents: [],
+    agentById: new Map(),
     settings: {},
     source: 'bestanden', // 'bestanden' | 'database' | 'cache'
     updatedAt: '',
@@ -368,6 +370,68 @@
     state.trainingCategories = categories;
   }
 
+  /* ---- Agents & tools ------------------------------------------------------------------ */
+  const AGENT_KINDS = ['Microsoft-standaard', 'Eigen agent', 'Extern product'];
+  const AGENT_STATUSES = ['Beschikbaar', 'Pilot', 'In ontwikkeling', 'Gestopt'];
+  const KIND_ACCENTS = { 'Microsoft-standaard': 'steel', 'Eigen agent': 'deepteal', 'Extern product': 'rose' };
+
+  function loadAgents(raw) {
+    (Array.isArray(raw) ? raw : []).forEach((item, index) => {
+      const id = text(item && item.id);
+      if (!checkId(id, 'Agent', state.agentById)) return;
+      if (!text(item.title)) {
+        warn(`Agent '${id}' heeft geen titel; overgeslagen.`);
+        return;
+      }
+      let kind = text(item.kind);
+      if (!AGENT_KINDS.includes(kind)) {
+        warn(`Agent '${id}': onbekende soort '${kind}' (${AGENT_KINDS.join(', ')}); '${AGENT_KINDS[0]}' is gebruikt.`);
+        kind = AGENT_KINDS[0];
+      }
+      let status = text(item.status);
+      if (!AGENT_STATUSES.includes(status)) {
+        warn(`Agent '${id}': onbekende status '${status}' (${AGENT_STATUSES.join(', ')}); '${AGENT_STATUSES[0]}' is gebruikt.`);
+        status = AGENT_STATUSES[0];
+      }
+      const link = text(item.link);
+      if (link && !HTTPS_URL.test(link)) warn(`Agent '${id}': de link moet met https:// beginnen.`);
+      const registerUrl = text(item.registerUrl);
+      if (registerUrl && !HTTPS_URL.test(registerUrl)) warn(`Agent '${id}': de link naar het AI-register moet met https:// beginnen.`);
+      const agent = {
+        id,
+        order: index,
+        title: text(item.title),
+        kind,
+        accent: KIND_ACCENTS[kind],
+        summary: text(item.summary),
+        description: text(item.description),
+        phases: list(item.phases).filter((pid) => {
+          if (state.phaseById.has(pid)) return true;
+          warn(`Agent '${id}': onbekende fase '${pid}' (zie data/phases.js); overgeslagen.`);
+          return false;
+        }).map((pid) => state.phaseById.get(pid)),
+        status,
+        license: bool(item.license),
+        access: text(item.access),
+        link: HTTPS_URL.test(link) ? link : '',
+        owner: text(item.owner),
+        notFor: list(item.notFor),
+        usecases: list(item.usecases),
+        trainings: list(item.trainings),
+        tips: list(item.tips),
+        icon: text(item.icon) || 'robot',
+        added: text(item.added),
+        registerUrl: HTTPS_URL.test(registerUrl) ? registerUrl : '',
+        draft: item._draft === true
+      };
+      agent.stopped = agent.status === 'Gestopt';
+      state.agents.push(agent);
+      state.agentById.set(id, agent);
+    });
+    // Gestopte agents onderaan (verder de volgorde uit het bestand of Beheer)
+    state.agents.sort((a, b) => Number(a.stopped) - Number(b.stopped) || a.order - b.order);
+  }
+
   /* ---- Verwijzingen controleren ------------------------------------------------------ */
   function checkReferences() {
     state.trainings.forEach((training) => {
@@ -396,6 +460,16 @@
         return false;
       });
     });
+    const known = { usecases: ['usecaseById', 'usecase'], trainings: ['trainingById', 'training'], tips: ['tipById', 'tip'] };
+    state.agents.forEach((agent) => {
+      Object.entries(known).forEach(([field, [map, label]]) => {
+        agent[field] = agent[field].filter((id) => {
+          if (state[map].has(id)) return true;
+          warn(`Agent '${agent.id}' verwijst naar onbekende ${label} '${id}'.`);
+          return false;
+        });
+      });
+    });
   }
 
   /* ---- Zoeken -------------------------------------------------------------------- */
@@ -412,6 +486,9 @@
     state.trainings.forEach((training) => {
       training.haystack = normalize([training.title, training.subtitle, training.category, training.trainer, training.description, training.chapters.map((c) => c.title).join(' ')].join(' '));
     });
+    state.agents.forEach((agent) => {
+      agent.haystack = normalize([agent.title, agent.summary, agent.description, agent.kind, agent.status, agent.access, agent.owner, agent.notFor.join(' '), agent.phases.map((p) => p.label).join(' ')].join(' '));
+    });
   }
 
   function search(query) {
@@ -420,28 +497,35 @@
       usecases: state.usecases.filter((item) => matches(item.haystack, query)),
       prompts: state.prompts.filter((item) => matches(item.haystack, query)),
       tips: state.openTips.filter((item) => matches(item.haystack, query)),
-      trainings: state.trainings.filter((item) => matches(item.haystack, query))
+      trainings: state.trainings.filter((item) => matches(item.haystack, query)),
+      agents: state.agents.filter((item) => matches(item.haystack, query))
     };
   }
 
   /**
    * Recent toegevoegd, over alle soorten heen (nieuwste eerst). Bij dezelfde
-   * datum om en om een usecase, prompt en tip, zodat het lijstje gevarieerd blijft.
+   * datum om en om een usecase, prompt en tip, en hooguit de helft van één soort
+   * (zolang er genoeg andere is), zodat het lijstje gevarieerd blijft.
    */
   function recent(limit) {
-    const KIND_ORDER = { training: 0, usecase: 1, prompt: 2, tip: 3 };
+    const KIND_ORDER = { training: 0, agent: 1, usecase: 2, prompt: 3, tip: 4 };
+    const max = limit || 6;
     const entries = (kind, items) => items.filter((item) => item.added).map((item, rank) => ({ kind, item, added: item.added, rank }));
-    return []
+    const byDate = (a, b) => (a.added < b.added ? 1 : a.added > b.added ? -1 : a.rank - b.rank || KIND_ORDER[a.kind] - KIND_ORDER[b.kind]);
+    const all = []
       .concat(entries('training', state.trainings.filter((item) => item.hasRecording)))
+      .concat(entries('agent', state.agents.filter((item) => !item.stopped).sort((a, b) => b.order - a.order)))
       .concat(entries('usecase', state.usecases.slice().sort((a, b) => b.order - a.order)))
       .concat(entries('prompt', state.prompts.filter((item) => !item.usecase).sort((a, b) => b.order - a.order)))
       .concat(entries('tip', state.openTips.slice().sort((a, b) => b.order - a.order)))
-      .sort((a, b) => (a.added < b.added ? 1 : a.added > b.added ? -1 : a.rank - b.rank || KIND_ORDER[a.kind] - KIND_ORDER[b.kind]))
-      .slice(0, limit || 6);
+      .sort(byDate);
+    const perKind = {};
+    const picked = all.filter((entry) => (perKind[entry.kind] = (perKind[entry.kind] || 0) + 1) <= Math.ceil(max / 2)).slice(0, max);
+    return picked.concat(all.filter((entry) => !picked.includes(entry)).slice(0, max - picked.length)).sort(byDate);
   }
 
   /* ---- Bronnen: bestanden of database ------------------------------------------------ */
-  const TYPES = ['phase', 'usecase', 'prompt', 'tip', 'training'];
+  const TYPES = ['phase', 'usecase', 'prompt', 'tip', 'training', 'agent'];
   // Teksten die je in Beheer kunt aanpassen (de rest van de instellingen blijft in js/config.js)
   const SETTING_KEYS = ['applicationTitle', 'discipline', 'applicationSubtitle', 'rules'];
 
@@ -452,6 +536,7 @@
       prompts: [], promptById: new Map(),
       tips: [], tipById: new Map(), tipCategories: [], openTips: [], currentWeeklyTip: null, nextWeeklyTip: null,
       trainings: [], trainingById: new Map(), trainingCategories: [],
+      agents: [], agentById: new Map(),
       settings: {}, updatedAt: '', issues: []
     });
   }
@@ -462,7 +547,7 @@
     SETTING_KEYS.forEach((name) => {
       if (ns.config && ns.config[name] != null) setting[name] = ns.config[name];
     });
-    return { phase: ns.phases || [], usecase: ns.usecases || [], prompt: ns.prompts || [], tip: ns.tips || [], training: ns.trainings || [], setting };
+    return { phase: ns.phases || [], usecase: ns.usecases || [], prompt: ns.prompts || [], tip: ns.tips || [], training: ns.trainings || [], agent: ns.agents || [], setting };
   }
 
   /**
@@ -471,7 +556,7 @@
    */
   function fromRows(rows) {
     if (!Array.isArray(rows) || !rows.some((row) => row.type === 'meta' && row.id === 'bron')) return null;
-    const source = { phase: [], usecase: [], prompt: [], tip: [], training: [], setting: {}, updatedAt: '' };
+    const source = { phase: [], usecase: [], prompt: [], tip: [], training: [], agent: [], setting: {}, updatedAt: '' };
     rows.slice()
       .sort((a, b) => (a.position || 0) - (b.position || 0) || (a.id < b.id ? -1 : 1))
       .forEach((row) => {
@@ -517,10 +602,11 @@
     loadPrompts(src.prompt);
     loadTips(src.tip);
     loadTrainings(src.training);
+    loadAgents(src.agent);
     checkReferences();
     buildSearchIndex();
     return state;
   }
 
-  ns.content = Object.assign(state, { load, fromFiles, fromRows, toRows, search, recent, today, daysUntil, TYPES, SETTING_KEYS });
+  ns.content = Object.assign(state, { load, fromFiles, fromRows, toRows, search, recent, today, daysUntil, TYPES, SETTING_KEYS, AGENT_KINDS, AGENT_STATUSES });
 })(window.AIAudit);

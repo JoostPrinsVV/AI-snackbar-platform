@@ -7,6 +7,7 @@
      #/prompts               promptdatabase         #/prompt/<id>    één prompt
      #/tips                  tips & tricks          #/tip/<id>       één tip
      #/trainingen            trainingen             #/training/<id>  één training met opname
+     #/agents                agents & tools         #/agent/<id>     één agent of tool
      #/ideeen                ideeënhub              #/ideeen/vraag   met 'Vraag' alvast gekozen
      #/zoeken/<woorden>      zoeken
      #/beheer                beheer (inloggen)      #/beheer/inhoud  inhoud aanpassen
@@ -41,6 +42,8 @@
       tip: (params) => v.tips.renderDetail(params[0]),
       trainingen: () => v.trainings.renderList(),
       training: (params) => v.trainings.renderDetail(params[0]),
+      agents: () => v.agents.renderList(),
+      agent: (params) => v.agents.renderDetail(params[0]),
       ideeen: (params) => v.ideas.render(params, config),
       zoeken: (params) => v.search.render(params),
       beheer: (params) => v.admin.render(params)
@@ -48,7 +51,7 @@
   }
 
   // Bij welk menu-item hoort een route?
-  const NAV_FOR = { usecases: 'usecases', usecase: 'usecases', prompts: 'prompts', prompt: 'prompts', tips: 'tips', tip: 'tips', trainingen: 'trainingen', training: 'trainingen', ideeen: 'ideeen' };
+  const NAV_FOR = { usecases: 'usecases', usecase: 'usecases', prompts: 'prompts', prompt: 'prompts', tips: 'tips', tip: 'tips', trainingen: 'trainingen', training: 'trainingen', agents: 'agents', agent: 'agents', ideeen: 'ideeen' };
 
   function parseHash() {
     const raw = window.location.hash.replace(/^#\/?/, '');
@@ -80,7 +83,8 @@
     usecase: { type: 'usecase', map: 'usecaseById', label: 'deze usecase' },
     prompt: { type: 'prompt', map: 'promptById', label: 'deze prompt' },
     tip: { type: 'tip', map: 'tipById', label: 'deze tip' },
-    training: { type: 'training', map: 'trainingById', label: 'deze training' }
+    training: { type: 'training', map: 'trainingById', label: 'deze training' },
+    agent: { type: 'agent', map: 'agentById', label: 'deze agent' }
   };
 
   function editBar(parsed) {
