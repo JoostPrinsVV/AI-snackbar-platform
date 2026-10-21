@@ -113,7 +113,7 @@ Zet deze actielijst om in een planning voor de rest van deze week. Houd rekening
     license: true                       // leest je eigen mailbox en agenda
   },
   {
-    // Demo (fictieve jaarrekening): uitgebreide ICBO in Copilot Chat met het bestand als bijlage, twee prompts.
+    // Demo (fictieve concept-jaarrekening Amstelveen Sport B.V. 2024): ICBO in Copilot Chat met de PDF als bijlage, drie prompts.
     id: 'snack-02',
     title: 'ICBO op een jaarrekening',
     subtitle: 'Copilot loopt het concept uitgebreid na vóór afgifte',
@@ -124,11 +124,16 @@ Zet deze actielijst om in een planning voor de rest van deze week. Houd rekening
     accent: 'crimson',
     available: true,
     featured: false,
-    intro: 'Copilot doet als ervaren auditor een uitgebreide ICBO op een fictieve concept jaarrekening: volledigheid, aansluitingen, grondslagen en toelichting, analyse met de materialiteit, continuïteit en presentatie. Je krijgt een samenvatting, een bevindingentabel en vragen voor klant en team.',
+    intro: 'Copilot voert als samenstellend accountant een uitgebreide ICBO uit op de fictieve concept-jaarrekening van Amstelveen Sport B.V.: volledigheid, aansluitingen, grondslagen, analyse, continuïteit en presentatie. Daarna reviewt Copilot het eigen werk kritisch en maakt een reviewnotitie.',
     video: 'assets/videos/snack-02.mp4',
     poster: 'assets/posters/snack-02.jpg',
     captions: '',
-    prompt: `Je bent een ervaren auditor met veel MKB-kennis en voert een ICBO uit op de bijgevoegde concept jaarrekening [BESTANDSNAAM] van [ONDERNEMING], [RECHTSVORM], boekjaar [JAAR]. De jaarrekening is opgesteld volgens [BW2 TITEL 9 EN RJ / RJK / FISCALE GRONDSLAGEN] voor een [MICRO / KLEINE / MIDDELGROTE] rechtspersoon.
+    // Drie prompts na elkaar in dezelfde chat, ieder in een eigen blok met kopieerknop (veld prompts).
+    prompts: [
+      {
+        title: 'Stap 1 · ICBO uitvoeren',
+        hint: 'In Copilot Chat. Voeg de concept-jaarrekening (PDF) toe.',
+        text: `Je bent een ervaren samenstellend accountant met veel MKB-kennis. Je hebt de bijgevoegde concept-jaarrekening Jaarverslag-AmstelveenSport-2024-BV-Concept.pdf van Amstelveen Sport B.V., boekjaar 2024, samengesteld. Voer vóór oplevering aan de klant een ICBO uit. De jaarrekening is opgesteld volgens BW2 Titel 9 en RJ voor een middelgrote rechtspersoon.
 
 Beoordeel de jaarrekening op de volgende onderdelen.
 
@@ -143,12 +148,11 @@ B. Cijfermatige aansluitingen
 - Komen bedragen in de tekst overeen met de tabellen?
 
 C. Grondslagen en toelichting
-- Zijn er grondslagen voor alle materiële posten, en zijn die gelijk aan vorig jaar?
+- Zijn er grondslagen voor alle belangrijke posten, en zijn die gelijk aan vorig jaar?
 - Ontbreken toelichtingen die voor dit regime gebruikelijk of vereist zijn, zoals niet in de balans opgenomen verplichtingen, gebeurtenissen na balansdatum en het gemiddeld aantal werknemers?
 
-D. Analyse ten opzichte van vorig jaar & materialiteit
-- De materialiteit bedraagt [MATERIALITEIT] voor [JAAR] en de uitvoeringsmaterialiteit [UITVOERINGSMATERIALITEIT].
-- Analyseer posten en mutaties groter dan de uitvoeringsmaterialiteit.
+D. Analyse ten opzichte van vorig jaar
+- Analyseer posten en mutaties groter dan € 195.000 of 10% ten opzichte van vorig jaar.
 - Bereken de solvabiliteit, de current ratio en de brutomarge voor beide jaren en laat de berekening zien.
 
 E. Continuïteit
@@ -166,11 +170,59 @@ Werkwijze:
 - Gebruik uitsluitend de bijgevoegde stukken.
 - Reken na waar dat kan en laat je berekening zien.
 - Noem een wettelijke eis alleen met het artikel of het RJ-hoofdstuk als je daar zeker van bent; markeer het anders als "Nagaan".
-- Geef geen oordeel over de jaarrekening als geheel; benoem alleen bevindingen en vragen.
+- Geef geen oordeel over de jaarrekening als geheel; benoem alleen bevindingen en vragen.`
+      },
+      {
+        title: 'Stap 2 · Kritische review van de eigen ICBO',
+        hint: 'In dezelfde chat, direct na stap 1.',
+        text: `Review nu je eigen ICBO-uitkomst kritisch, alsof je de manager bent die het werk van een junior nakijkt. Ga ervan uit dat er fouten in zitten. Gebruik opnieuw uitsluitend de bijgevoegde stukken en lees de bronbedragen opnieuw uit de PDF, niet uit je eerdere antwoord.
 
-Daarna:
-Zet de bevindingen met belang "hoog" om in een korte reviewnotitie voor de opdrachtverantwoordelijke, met per punt de voorgestelde actie.`,
-    promptNote: 'Werkt met de gratis Copilot Chat: voeg de concept jaarrekening (en die van vorig jaar) toe met de paperclip en vul de materialiteit uit het dossier in. Gebruik voor de demo een fictieve jaarrekening; Copilot ondersteunt de ICBO, maar vervangt jouw oordeel niet.',
+Werk deze stappen een voor een af:
+
+1. Opdracht versus oplevering
+- Leg de oorspronkelijke opdracht naast je antwoord. Is ieder gevraagd onderdeel, iedere gevraagde kolom en iedere gevraagde lijst aanwezig?
+- Heb je ergens iets gedaan dat de opdracht uitdrukkelijk uitsloot?
+
+2. Interne consistentie
+- Vergelijk ieder bedrag, ieder verschil en iedere ratio in je samenvatting met de bevindingentabel en de ratio-analyse.
+- Gaat het overal om hetzelfde bedrag, hetzelfde boekjaar en dezelfde twee bronnen?
+
+3. Herberekening
+- Reken iedere berekening opnieuw na vanuit de bronbedragen.
+- Toon per berekening: bronbedragen met pagina, de berekening, de uitkomst en of die afwijkt van je eerdere uitkomst.
+
+4. Aansluitingen tussen onderdelen
+- Zoek ieder bedrag dat op meer dan één plek voorkomt (balans, winst-en-verliesrekening, kasstroomoverzicht, verloopoverzichten, toelichtingstabellen en lopende tekst) en kijk of het overal gelijk is, ook voor de vergelijkende cijfers.
+- Noem bij een verschil beide bedragen, beide pagina's en het verschil.
+
+5. Bevindingen dat iets ontbreekt
+- Doorzoek voor iedere bevinding waarin je stelt dat iets ontbreekt of alleen elders staat de volledige jaarrekening opnieuw: bestuursverslag, grondslagen, toelichting op de balans en toelichting op de winst-en-verliesrekening.
+- Staat het er toch, pas de bevinding dan aan of laat deze vervallen.
+
+6. Datums en perioden
+- Kijk of alle datums en perioden in de tekst logisch zijn ten opzichte van het boekjaar en de balansdatum, en of ze in het juiste onderdeel van de jaarrekening staan.
+
+7. Kwaliteit van de bevindingen
+- Haal punten die alleen bevestigen dat iets klopt uit de bevindingentabel en zet ze onder "Uitgevoerde checks zonder bevinding".
+- Ga na of het toegekende belang past bij de omvang ten opzichte van de analysegrens van € 195.000 en bij de aard van het punt.
+
+8. Oordeel
+- Ga na of je ergens een oordeel over de jaarrekening als geheel geeft, en verwijder dat.
+
+Lever op:
+1. Een correctielijst met per punt: wat er eerder stond, wat het moet zijn, de pagina en de berekening.
+2. Nieuwe bevindingen die je bij deze review hebt gevonden.
+3. De gecorrigeerde bevindingentabel met alle gevraagde kolommen.
+
+Vind je bij een stap geen fout, zeg dat dan expliciet. Verzin geen correcties.`
+      },
+      {
+        title: 'Stap 3 · Reviewnotitie voor de opdrachtverantwoordelijke',
+        hint: 'In dezelfde chat, na de review.',
+        text: `Zet de bevindingen met belang "hoog" om in een korte reviewnotitie voor de opdrachtverantwoordelijke, met per punt de voorgestelde actie.`
+      }
+    ],
+    promptNote: 'Werkt met de gratis Copilot Chat: voeg de concept-jaarrekening toe met de paperclip en gebruik de drie prompts na elkaar in dezelfde chat. Eigen dossier? Pas bestandsnaam, klant, boekjaar en analysegrens aan. Copilot ondersteunt de ICBO, maar vervangt jouw oordeel niet.',
     qrCode: 'assets/qr/snack-02.png',
     qrLabel: '',
     tip: 'Voeg ook de jaarrekening van vorig jaar toe. Dan kan Copilot de vergelijkende cijfers en grondslagen naast elkaar leggen.',
