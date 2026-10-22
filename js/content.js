@@ -345,22 +345,23 @@
    * Prompt in stappen: prompts: [{ title, hint, text }, ...] (max. 8). Iedere stap krijgt
    * een eigen blok met kopieerknop. Ongeldige stappen worden overgeslagen met een melding.
    */
-  function normalizePromptSteps(value, id, issues) {
+  function normalizePromptSteps(value, id, issues, label) {
+    const owner = label || `Snack '${id}'`;
     if (value === undefined || value === null || value === '') return [];
     if (!Array.isArray(value)) {
-      issues.push(issue('warning', `Snack '${id}': prompts moet een lijst zijn ([{ title, hint, text }, ...]); niet getoond.`, id));
+      issues.push(issue('warning', `${owner}: prompts moet een lijst zijn ([{ title, hint, text }, ...]); niet getoond.`, id));
       return [];
     }
     const steps = [];
     value.forEach((step, index) => {
       const body = step && typeof step === 'object' ? text(step.text, true) : '';
       if (!body) {
-        issues.push(issue('warning', `Snack '${id}': prompt ${index + 1} in prompts heeft geen text; overgeslagen.`, id));
+        issues.push(issue('warning', `${owner}: prompt ${index + 1} in prompts heeft geen text; overgeslagen.`, id));
         return;
       }
       steps.push(Object.freeze({ title: text(step.title) || 'Stap ' + (index + 1), hint: text(step.hint), text: body }));
     });
-    if (steps.length > 8) issues.push(issue('warning', `Snack '${id}': meer dan 8 prompts; alleen de eerste 8 worden getoond.`, id));
+    if (steps.length > 8) issues.push(issue('warning', `${owner}: meer dan 8 prompts; alleen de eerste 8 worden getoond.`, id));
     return Object.freeze(steps.slice(0, 8));
   }
 
@@ -412,9 +413,13 @@
         issues.push(issue('warning', `Inspiratieprompt '${id}': impact moet 1, 2 of 3 zijn; niet getoond.`, id));
       }
       const license = normalizeLicense(item.license, `Inspiratieprompt '${id}'`, id, issues);
+      // Meerdere prompts (stappen), net als bij de snacks: prompts en (zonder licentie) promptsBasic.
+      const owner = `Inspiratieprompt '${id}'`;
+      const steps = normalizePromptSteps(item.prompts, id, issues, owner);
       // Een versie zonder licentie heeft alleen zin naast een prompt mét licentie.
-      const promptBasic = license === true ? text(item.promptBasic, true) : '';
-      if (text(item.promptBasic) && license !== true) {
+      const stepsBasic = license === true ? normalizePromptSteps(item.promptsBasic, id, issues, owner + ' (promptsBasic)') : Object.freeze([]);
+      const promptBasic = license === true ? (stepsBasic.length ? joinPromptSteps(stepsBasic) : text(item.promptBasic, true)) : '';
+      if ((text(item.promptBasic) || item.promptsBasic) && license !== true) {
         issues.push(issue('warning', `Inspiratieprompt '${id}': promptBasic hoort bij license: true; niet getoond.`, id));
       }
       prompts.push(
@@ -427,9 +432,11 @@
           didYouKnow: text(item.didYouKnow),
           description: text(item.description),
           usefulFor: text(item.usefulFor),
-          prompt: text(item.prompt, true),
+          prompt: steps.length ? joinPromptSteps(steps) : text(item.prompt, true),
+          promptSteps: steps,
           promptNote: text(item.promptNote),
           promptBasic,
+          promptStepsBasic: stepsBasic,
           promptNoteBasic: promptBasic ? text(item.promptNoteBasic) : '',
           tip: text(item.tip)
         })

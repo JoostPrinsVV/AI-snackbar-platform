@@ -43,6 +43,9 @@
                   prompt een schakelaar 'Met licentie / Zonder licentie'. Zonder
                   promptBasic krijgt de prompt de badge 'Licentie' (licentie nodig).
      promptNoteBasic  Toelichting bij de versie zonder licentie.
+     prompts      Optioneel, in plaats van prompt: meerdere prompts, ieder in een eigen
+                  blok met kopieerknop: [{ title, hint, text }, ...] (zie data/snacks.js).
+     promptsBasic Idem, in plaats van promptBasic (versie zonder licentie).
    ========================================================================== */
 
 window.AISnackbar = window.AISnackbar || {};
@@ -65,7 +68,8 @@ Neem uitsluitend e-mails op waarin:
 - een deadline wordt genoemd;
 - ik een document moet beoordelen of aanleveren;
 - een afspraak of toezegging aan mij is gekoppeld;
-- een klant of collega op mijn reactie wacht.
+- een klant of collega op mijn reactie wacht;
+- een klant stukken aanlevert of ik nog op stukken van een klant wacht (bijv. voor de jaarrekening, een aangifte of de controle).
 
 Maak een tabel met:
 1. Afzender
@@ -73,7 +77,7 @@ Maak een tabel met:
 3. Ontvangstdatum
 4. Gevraagde actie
 5. Deadline
-6. Betrokken klant
+6. Betrokken klant en opdracht (bijv. jaarrekening 2025 of aangifte IB)
 7. Urgentie: hoog, middel of laag
 8. Aanbevolen eerstvolgende stap
 
@@ -98,7 +102,7 @@ Maak een chronologisch overzicht van:
 1. De belangrijkste besproken onderwerpen
 2. Door de klant gestelde vragen
 3. Door ons gestelde vragen
-4. Toegezegde documenten of informatie
+4. Toegezegde, aangeleverde en nog ontbrekende stukken (bijv. voor de jaarrekening of een aangifte)
 5. Openstaande acties voor mij
 6. Openstaande acties voor de klant
 7. Genoemde deadlines
@@ -139,7 +143,7 @@ Maak een tabel met:
 2. Afzender
 3. Onderwerp
 4. Ontvangstdatum
-5. Gevraagde reactie
+5. Gevraagde reactie (bijv. vraag over de jaarrekening, een aangifte, de administratie of een advies)
 6. Eventuele deadline
 7. Reden waarom de e-mail nog open lijkt te staan
 8. Concept voor de eerstvolgende actie
@@ -166,8 +170,9 @@ Geef uitsluitend:
 4. Gemaakte afspraken
 5. Toegezegde documenten
 6. Openstaande acties met verantwoordelijke
-7. Genoemde deadlines
-8. Punten waarover nog onduidelijkheid bestaat
+7. Genoemde deadlines en (fiscale) termijnen
+8. Genoemde bedragen
+9. Punten waarover nog onduidelijkheid bestaat
 
 Sluit af met een samenvatting van maximaal vijf zinnen waarin je de actuele status van de e-mailwisseling beschrijft.
 
@@ -182,8 +187,9 @@ Geef uitsluitend:
 4. Gemaakte afspraken
 5. Toegezegde documenten
 6. Openstaande acties met verantwoordelijke
-7. Genoemde deadlines
-8. Punten waarover nog onduidelijkheid bestaat
+7. Genoemde deadlines en (fiscale) termijnen
+8. Genoemde bedragen
+9. Punten waarover nog onduidelijkheid bestaat
 
 Sluit af met een samenvatting van maximaal vijf zinnen waarin je de actuele status van de e-mailwisseling beschrijft.
 
@@ -203,11 +209,12 @@ E-mailwisseling:
     didYouKnow: 'Wist je dat Copilot een uitgebreide klantmail punt voor punt kan beantwoorden zonder vragen over te slaan?',
     description: 'Laat Copilot een uitgebreide klantmail opsplitsen en punt voor punt beantwoorden.',
     usefulFor: 'Klantvragen',
-    prompt: `Analyseer de e-mail van [NAAM AFZENDER] over [ONDERWERP] van [DATUM].
+    prompts: [
+      {
+        title: 'Stap 1 · Alle punten op een rij',
+        hint: 'In Copilot Chat (tabblad Werk) of in Outlook met de e-mail geopend.',
+        text: `Je bent accountant bij Visser & Visser. Analyseer de e-mail van [NAAM AFZENDER] over [ONDERWERP] van [DATUM].
 
-Voer de opdracht in twee stappen uit.
-
-Stap 1:
 Maak een genummerde lijst van iedere afzonderlijke:
 - vraag;
 - verzoek;
@@ -215,21 +222,28 @@ Maak een genummerde lijst van iedere afzonderlijke:
 - toezegging;
 - bijlage waarnaar wordt verwezen.
 
-Stap 2:
-Schrijf een professioneel conceptantwoord waarin ieder punt in dezelfde volgorde wordt behandeld.
+Geef per punt aan of het een vakinhoudelijke vraag is (bijv. over de jaarrekening, een aangifte of de administratie) of een praktische vraag.`
+      },
+      {
+        title: 'Stap 2 · Conceptantwoord',
+        hint: 'In dezelfde chat.',
+        text: `Schrijf een professioneel conceptantwoord waarin ieder punt uit de lijst in dezelfde volgorde wordt behandeld.
 
-Gebruik een vriendelijke en zakelijke toon. Houd het antwoord beknopt, maar volledig. Voeg geen feiten, toezeggingen of deadlines toe die niet uit de e-mail of mijn onderstaande instructies blijken.
+Gebruik een vriendelijke en zakelijke toon. Houd het antwoord beknopt, maar volledig, en leg vaktermen kort uit. Voeg geen feiten, toezeggingen of deadlines toe die niet uit de e-mail of mijn onderstaande instructies blijken.
 
 Aanvullende informatie voor het antwoord:
 [VOEG HIER EVENTUELE INFORMATIE TOE]
 
-Markeer ontbrekende informatie met [AANVULLEN] in plaats van deze zelf in te vullen.`,
+Markeer ontbrekende informatie met [AANVULLEN] in plaats van deze zelf in te vullen.`
+      }
+    ],
     promptNote: 'Gebruik in Copilot Chat (tabblad Werk) of in Outlook met de e-mail geopend. Lees het concept altijd na voordat je het verstuurt.',
-    promptBasic: `Analyseer de klantmail die ik hieronder plak.
+    promptsBasic: [
+      {
+        title: 'Stap 1 · Alle punten op een rij',
+        hint: 'In Copilot Chat. Plak de e-mail onderaan.',
+        text: `Je bent accountant bij Visser & Visser. Analyseer de klantmail die ik hieronder plak.
 
-Voer de opdracht in twee stappen uit.
-
-Stap 1:
 Maak een genummerde lijst van iedere afzonderlijke:
 - vraag;
 - verzoek;
@@ -237,18 +251,24 @@ Maak een genummerde lijst van iedere afzonderlijke:
 - toezegging;
 - bijlage waarnaar wordt verwezen.
 
-Stap 2:
-Schrijf een professioneel conceptantwoord waarin ieder punt in dezelfde volgorde wordt behandeld.
-
-Gebruik een vriendelijke en zakelijke toon. Houd het antwoord beknopt, maar volledig. Voeg geen feiten, toezeggingen of deadlines toe die niet uit de e-mail of mijn onderstaande instructies blijken.
-
-Aanvullende informatie voor het antwoord:
-[VOEG HIER EVENTUELE INFORMATIE TOE]
-
-Markeer ontbrekende informatie met [AANVULLEN] in plaats van deze zelf in te vullen.
+Geef per punt aan of het een vakinhoudelijke vraag is (bijv. over de jaarrekening, een aangifte of de administratie) of een praktische vraag.
 
 E-mail:
-[PLAK HIER DE E-MAIL]`,
+[PLAK HIER DE E-MAIL]`
+      },
+      {
+        title: 'Stap 2 · Conceptantwoord',
+        hint: 'In dezelfde chat.',
+        text: `Schrijf een professioneel conceptantwoord waarin ieder punt uit de lijst in dezelfde volgorde wordt behandeld.
+
+Gebruik een vriendelijke en zakelijke toon. Houd het antwoord beknopt, maar volledig, en leg vaktermen kort uit. Voeg geen feiten, toezeggingen of deadlines toe die niet uit de e-mail of mijn onderstaande instructies blijken.
+
+Aanvullende informatie voor het antwoord:
+[VOEG HIER EVENTUELE INFORMATIE TOE]
+
+Markeer ontbrekende informatie met [AANVULLEN] in plaats van deze zelf in te vullen.`
+      }
+    ],
     promptNoteBasic: 'Werkt met de gratis Copilot Chat: plak de e-mail onderaan de prompt. Lees het concept altijd na voordat je het verstuurt.',
     tip: ''
   },
@@ -280,7 +300,7 @@ Maak de mail:
 - voorzien van een duidelijke onderwerpregel;
 - afgesloten met één concrete call-to-action.
 
-Behoud alle feiten en inhoudelijke nuances. Voeg geen nieuwe toezeggingen of informatie toe. Vermijd lange inleidingen, herhaling en onnodig formele taal.
+Behoud alle feiten en inhoudelijke nuances. Voeg geen nieuwe toezeggingen of informatie toe. Vermijd lange inleidingen, herhaling, onnodig formele taal en vakjargon; leg een vakterm kort uit als die nodig is.
 
 Conceptmail:
 [PLAK CONCEPTMAIL]`,
@@ -311,7 +331,7 @@ Zoek uitsluitend naar berichten waarin:
 Maak een tabel met:
 1. Datum
 2. Chat of kanaal
-3. Betrokken personen
+3. Betrokken personen en klant of opdracht
 4. Actie voor mij
 5. Deadline
 6. Status voor zover uit de berichten blijkt
@@ -330,7 +350,7 @@ Sorteer op deadline en daarna op datum. Neem sociale berichten, algemene mededel
     didYouKnow: 'Wist je dat Copilot een drukke projectchat kan omzetten in acties, verantwoordelijken en deadlines?',
     description: 'Zet een drukke projectchat om in acties, eigenaren en deadlines.',
     usefulFor: 'Projectoverleg',
-    prompt: `Analyseer de Teams-chat met de naam "[NAAM VAN DE CHAT]" over de periode [STARTDATUM] tot en met [EINDDATUM].
+    prompt: `Analyseer de Teams-chat met de naam "[NAAM VAN DE CHAT, bijv. Jaarrekening 2025 Klant X]" over de periode [STARTDATUM] tot en met [EINDDATUM].
 
 Maak een actielijst met:
 1. Actie
@@ -396,7 +416,8 @@ Structureer de uitkomst als volgt:
 4. Actiepunten met verantwoordelijke en deadline
 5. Openstaande vragen
 6. Verschillen van inzicht
-7. Afgesproken vervolg
+7. Afspraken over aan te leveren stukken en termijnen
+8. Afgesproken vervolg
 
 Maak duidelijk of informatie afkomstig is uit de transcriptie, vergaderchat of notities.
 
@@ -413,7 +434,8 @@ Structureer de uitkomst als volgt:
 4. Actiepunten met verantwoordelijke en deadline
 5. Openstaande vragen
 6. Verschillen van inzicht
-7. Afgesproken vervolg
+7. Afspraken over aan te leveren stukken en termijnen
+8. Afgesproken vervolg
 
 Presenteer een voorstel of discussiepunt niet als besluit. Vermeld "Niet benoemd" wanneer een verantwoordelijke of deadline ontbreekt.
 
@@ -445,7 +467,7 @@ Geef:
 3. Belangrijkste ontwikkelingen sinds het vorige overleg
 4. Eerder gemaakte afspraken
 5. Openstaande acties voor ons
-6. Openstaande acties voor de klant
+6. Openstaande acties voor de klant, zoals nog aan te leveren stukken
 7. Mogelijke knelpunten of onduidelijkheden
 8. Vijf concrete vragen die ik tijdens de afspraak kan stellen
 9. Een voorgestelde agenda voor het gesprek
@@ -464,7 +486,7 @@ Geef:
 2. Belangrijkste ontwikkelingen sinds het vorige overleg
 3. Eerder gemaakte afspraken
 4. Openstaande acties voor ons
-5. Openstaande acties voor de klant
+5. Openstaande acties voor de klant, zoals nog aan te leveren stukken
 6. Mogelijke knelpunten of onduidelijkheden
 7. Vijf concrete vragen die ik tijdens de afspraak kan stellen
 8. Een voorgestelde agenda voor het gesprek
@@ -485,7 +507,7 @@ Informatie:
     didYouKnow: 'Wist je dat Copilot op basis van eerdere communicatie een doelgerichte agenda voor je volgende overleg kan maken?',
     description: 'Maak van eerdere communicatie een doelgerichte agenda voor het volgende overleg.',
     usefulFor: 'Overlegvoorbereiding',
-    prompt: `Stel een agenda op voor de komende vergadering "[NAAM VERGADERING]" met [KLANT OF DEELNEMERS] op [DATUM].
+    prompt: `Stel een agenda op voor de komende vergadering "[NAAM VERGADERING, bijv. Bespreking jaarrekening 2025]" met [KLANT OF DEELNEMERS] op [DATUM].
 
 Gebruik:
 - de agenda-uitnodiging;
@@ -502,7 +524,7 @@ Maak een agenda voor maximaal [DUUR] minuten, als tabel met:
 
 Neem alleen onderwerpen op die uit de beschikbare informatie volgen. Plaats openstaande acties en beslispunten vooraan.`,
     promptNote: 'Gebruik in Microsoft 365 Copilot Chat (tabblad Werk). Deel de agenda daarna met de deelnemers.',
-    promptBasic: `Stel een agenda op voor de vergadering "[NAAM VERGADERING]" met [KLANT OF DEELNEMERS] op [DATUM].
+    promptBasic: `Stel een agenda op voor de vergadering "[NAAM VERGADERING, bijv. Bespreking jaarrekening 2025]" met [KLANT OF DEELNEMERS] op [DATUM].
 
 Gebruik uitsluitend de informatie die ik hieronder toevoeg:
 - relevante e-mails;
@@ -546,6 +568,7 @@ Gebruik de volgende structuur:
 Gebruik voor de actielijst een tabel met:
 - Actie
 - Verantwoordelijke
+- Organisatie (wij of klant)
 - Deadline
 - Bronpassage of tijdstip
 
@@ -565,6 +588,7 @@ Gebruik de volgende structuur:
 Gebruik voor de actielijst een tabel met:
 - Actie
 - Verantwoordelijke
+- Organisatie (wij of klant)
 - Deadline
 - Bronpassage of tijdstip
 
@@ -594,7 +618,7 @@ Gebruik relevante informatie uit de afgelopen [AANTAL] maanden uit:
 Structureer het overzicht als volgt:
 1. Kernactiviteiten van de klant
 2. Belangrijkste contactpersonen en hun rol
-3. Lopende opdrachten
+3. Lopende opdrachten (bijv. samenstelling, controle, aangiften) en hun status
 4. Recente ontwikkelingen
 5. Openstaande vragen en acties
 6. Belangrijke deadlines
@@ -623,7 +647,7 @@ Gebruik uitsluitend:
 - documenten die ik in deze chat toevoeg.
 
 Geef:
-1. Korte beschrijving van de onderneming
+1. Korte beschrijving van de onderneming, met rechtsvorm en (voor zover openbaar) omvang en aantal medewerkers
 2. Verdienmodel
 3. Producten en diensten
 4. Belangrijkste markten en klantgroepen
@@ -694,7 +718,7 @@ Maak een tabel met:
 5. Aanbevolen vervolgvraag aan de klant
 6. Betrokken discipline
 
-Presenteer dit als mogelijke gespreksonderwerpen, niet als vastgestelde commerciÃ«le kansen. Neem alleen signalen op die aantoonbaar uit de tekst volgen.
+Presenteer dit als mogelijke gespreksonderwerpen, niet als vastgestelde commerciële kansen. Neem alleen signalen op die aantoonbaar uit de tekst volgen.
 
 E-mails en notities:
 [PLAK HIER DE TEKST]`,
@@ -711,19 +735,30 @@ E-mails en notities:
     didYouKnow: 'Wist je dat Copilot een technische uitleg kan herschrijven in heldere taal op B1-niveau, zonder dat de inhoud verandert?',
     description: 'Herschrijf een technische uitleg naar heldere taal voor je klant.',
     usefulFor: 'Klantuitleg',
-    prompt: `Herschrijf de tekst hieronder voor een ondernemer zonder financiële achtergrond.
+    prompts: [
+      {
+        title: 'Stap 1 · Herschrijven in begrijpelijke taal',
+        hint: 'In Copilot Chat. Plak je uitleg onderaan.',
+        text: `Je bent accountant en legt iets uit aan een klant. Herschrijf de tekst hieronder voor een ondernemer zonder financiële achtergrond.
 
 Gebruik:
 - taalniveau B1;
 - korte zinnen;
-- één concreet voorbeeld.
+- één concreet voorbeeld uit de praktijk van een ondernemer.
 
-Laat alle bedragen, data en conclusies precies zoals ze zijn. Sluit af met maximaal drie punten: wat moet de klant doen of beslissen, en wanneer?
+Laat alle bedragen, data en conclusies precies zoals ze zijn, en leg vaktermen uit in gewone woorden. Sluit af met maximaal drie punten: wat moet de klant doen of beslissen, en wanneer?
 
 Tekst:
-[PLAK HIER JE UITLEG]`,
+[PLAK HIER JE UITLEG, bijv. over de jaarrekening of een aangifte]`
+      },
+      {
+        title: 'Stap 2 · Optioneel: vragen van de klant voorzien',
+        hint: 'In dezelfde chat.',
+        text: `Welke vragen zal de klant hier waarschijnlijk over stellen? Geef per vraag een kort antwoord, alleen op basis van de tekst.`
+      }
+    ],
     promptNote: 'Werkt ook met de gratis Copilot Chat. Controleer altijd of de vakinhoud nog klopt voordat je de tekst naar een klant stuurt.',
-    tip: 'Vraag daarna: "Welke vragen zal de klant hier waarschijnlijk over stellen?" Dan ben je voorbereid.'
+    tip: ''
   },
 
   /* ---- Documenten en rapportages --------------------------------------- */
@@ -736,7 +771,7 @@ Tekst:
     didYouKnow: 'Wist je dat Copilot een uitgebreid document kan terugbrengen tot de belangrijkste feiten, bedragen en aandachtspunten?',
     description: 'Haal de belangrijkste feiten, bedragen en aandachtspunten uit een omvangrijk document.',
     usefulFor: 'Lange documenten',
-    prompt: `Analyseer het bestand /[BESTANDSNAAM].
+    prompt: `Analyseer het bestand /[BESTANDSNAAM, bijv. een jaarverslag, taxatierapport of overeenkomst].
 
 Maak een eerste verkenning met:
 1. Doel en type document
@@ -752,7 +787,7 @@ Maak een eerste verkenning met:
 
 Gebruik uitsluitend dit bestand. Maak onderscheid tussen letterlijke documentinhoud en jouw interpretatie. Vermeld expliciet wanneer informatie niet in het document staat.`,
     promptNote: 'Typ / in Copilot Chat (tabblad Werk) en kies het bestand.',
-    promptBasic: `Analyseer het bijgevoegde bestand [BESTANDSNAAM].
+    promptBasic: `Analyseer het bijgevoegde bestand [BESTANDSNAAM, bijv. een jaarverslag, taxatierapport of overeenkomst].
 
 Maak een eerste verkenning met:
 1. Doel en type document
@@ -761,8 +796,8 @@ Maak een eerste verkenning met:
 4. Belangrijkste bedragen
 5. Belangrijkste data en deadlines
 6. Verplichtingen per betrokken partij
-7. Genoemde risicoâ€™s en onzekerheden
-8. Onderdelen die financiÃ«le verwerking kunnen beÃ¯nvloeden
+7. Genoemde risico’s en onzekerheden
+8. Onderdelen die financiële verwerking kunnen beïnvloeden
 9. Vijf vragen voor nadere beoordeling
 10. Relevante pagina- of paragraafverwijzingen
 
@@ -811,7 +846,7 @@ Identificeer alle inhoudelijk relevante wijzigingen in:
 - contractvoorwaarden;
 - verantwoordelijkheden;
 - conclusies;
-- risicoâ€™s;
+- risico’s;
 - toelichtingen;
 - opgenomen of verwijderde paragrafen.
 
@@ -948,13 +983,18 @@ Voeg geen processtappen of beheersingsmaatregelen toe die niet uit de bron blijk
     didYouKnow: 'Wist je dat Copilot onduidelijkheden, tegenstrijdigheden en ontbrekende onderbouwing in jouw conceptverslag kan signaleren?',
     description: 'Laat zwakke redeneringen, onduidelijkheden en ontbrekende onderbouwing vooraf signaleren.',
     usefulFor: 'Zelfreview',
-    prompt: `Review /[BESTANDSNAAM] als kritische vakinhoudelijke tweede lezer.
+    prompts: [
+      {
+        title: 'Stap 1 · Kritisch reviewen',
+        hint: 'Typ / in Copilot Chat (tabblad Werk) en kies je conceptverslag.',
+        text: `Review /[BESTANDSNAAM, bijv. een adviesrapport, managementletter of toelichting bij de jaarrekening] als kritische vakinhoudelijke tweede lezer, zoals een ervaren collega-accountant dat zou doen.
 
 Beoordeel het document op:
 - logische opbouw;
 - duidelijkheid;
 - volledigheid;
 - tegenstrijdigheden;
+- bedragen en percentages die niet overeenkomen tussen tekst en tabellen;
 - ononderbouwde aannames;
 - conclusies die niet aansluiten op de beschreven feiten;
 - ontbrekende bronverwijzingen;
@@ -969,15 +1009,27 @@ Maak een tabel met:
 4. Waarom dit aandacht vraagt
 5. Voorstel voor verbetering
 
-Maak daarna uitsluitend een herschreven versie van passages waarvoor aanpassing nodig is. Wijzig geen feiten of vaktechnische conclusies.`,
+Wijzig nog niets aan het document.`
+      },
+      {
+        title: 'Stap 2 · Passages herschrijven',
+        hint: 'In dezelfde chat.',
+        text: `Maak nu uitsluitend een herschreven versie van de passages waarvoor aanpassing nodig is. Zet per passage de oorspronkelijke en de herschreven tekst onder elkaar. Wijzig geen feiten, bedragen of vaktechnische conclusies.`
+      }
+    ],
     promptNote: 'Typ / in Copilot Chat (tabblad Werk) en kies je conceptverslag. Jij beslist welke verbeteringen je overneemt.',
-    promptBasic: `Review het bijgevoegde bestand [BESTANDSNAAM] als kritische vakinhoudelijke tweede lezer.
+    promptsBasic: [
+      {
+        title: 'Stap 1 · Kritisch reviewen',
+        hint: 'In Copilot Chat. Voeg je conceptverslag toe met de paperclip.',
+        text: `Review het bijgevoegde bestand [BESTANDSNAAM, bijv. een adviesrapport, managementletter of toelichting bij de jaarrekening] als kritische vakinhoudelijke tweede lezer, zoals een ervaren collega-accountant dat zou doen.
 
 Beoordeel het document op:
 - logische opbouw;
 - duidelijkheid;
 - volledigheid;
 - tegenstrijdigheden;
+- bedragen en percentages die niet overeenkomen tussen tekst en tabellen;
 - ononderbouwde aannames;
 - conclusies die niet aansluiten op de beschreven feiten;
 - ontbrekende bronverwijzingen;
@@ -992,7 +1044,14 @@ Maak een tabel met:
 4. Waarom dit aandacht vraagt
 5. Voorstel voor verbetering
 
-Maak daarna uitsluitend een herschreven versie van passages waarvoor aanpassing nodig is. Wijzig geen feiten of vaktechnische conclusies.`,
+Wijzig nog niets aan het document.`
+      },
+      {
+        title: 'Stap 2 · Passages herschrijven',
+        hint: 'In dezelfde chat.',
+        text: `Maak nu uitsluitend een herschreven versie van de passages waarvoor aanpassing nodig is. Zet per passage de oorspronkelijke en de herschreven tekst onder elkaar. Wijzig geen feiten, bedragen of vaktechnische conclusies.`
+      }
+    ],
     promptNoteBasic: 'Werkt met de gratis Copilot Chat: voeg je conceptverslag toe met de paperclip.',
     tip: ''
   },
@@ -1006,7 +1065,7 @@ Maak daarna uitsluitend een herschreven versie van passages waarvoor aanpassing 
     didYouKnow: 'Wist je dat Copilot in je mail, Teams-chats en bestanden dat ene document of besluit kan terugvinden, ook als je de bestandsnaam niet meer weet?',
     description: 'Laat Copilot dat ene document, besluit of bericht terugvinden in je mail, Teams en bestanden.',
     usefulFor: 'Terugzoeken',
-    prompt: `Zoek in mijn e-mails, Teams-chats en bestanden van de afgelopen [AANTAL] maanden naar [ONDERWERP, bijv. de afspraken over de nieuwe werkwijze voor urenregistratie].
+    prompt: `Zoek in mijn e-mails, Teams-chats en bestanden van de afgelopen [AANTAL] maanden naar [ONDERWERP, bijv. de afspraken met [KLANTNAAM] over het aanleveren van de jaarstukken].
 
 Geef de vijf meest relevante resultaten, met per resultaat:
 1. Onderwerp of bestandsnaam
@@ -1038,7 +1097,7 @@ De relevante kolommen zijn:
 - [KOLOM 3]
 
 Ik wil per regel het volgende berekenen:
-[GEWENSTE BEREKENING]
+[GEWENSTE BEREKENING, bijv. het aantal dagen na de vervaldatum of het btw-bedrag bij een bedrag inclusief btw]
 
 Schrijf:
 1. De exacte Excel-formule met gestructureerde tabelverwijzingen
@@ -1105,7 +1164,7 @@ Identificeer vervolgens:
 - tekenwisselingen;
 - ontbrekende of ongeldige waarden.
 
-Maak een tabel met de resultaten en formuleer per opvallende mutatie Ã©Ã©n neutrale onderzoeksvraag. Presenteer geen verklaringen als feit; noem een mogelijke verklaring alleen als hypothese die nog moet worden geverifieerd.`,
+Maak een tabel met de resultaten en formuleer per opvallende mutatie één neutrale onderzoeksvraag. Presenteer geen verklaringen als feit; noem een mogelijke verklaring alleen als hypothese die nog moet worden geverifieerd.`,
     promptNoteBasic: 'Werkt met de gratis Copilot Chat: voeg het Excelbestand toe met de paperclip. Controleer enkele berekeningen zelf.',
     tip: ''
   },
@@ -1171,7 +1230,7 @@ Signaleer:
 - relaties met meerdere oude posten;
 - ontbrekende factuur- of vervaldata.
 
-Maak drie categorieÃ«n:
+Maak drie categorieën:
 1. Direct opvolgen
 2. Nader beoordelen
 3. Reguliere opvolging
@@ -1277,33 +1336,44 @@ Gebruik alleen bedragen en percentages die in de tabel staan. Laat bij iedere be
     didYouKnow: 'Wist je dat Copilot afspraken, e-mailacties en deadlines kan samenbrengen tot een voorstel voor je werkweek?',
     description: 'Breng afspraken, acties en deadlines samen in een haalbaar weekvoorstel.',
     usefulFor: 'Weekplanning',
-    prompt: `Maak een conceptplanning voor mijn komende werkweek van [STARTDATUM] tot en met [EINDDATUM].
+    prompts: [
+      {
+        title: 'Stap 1 · Takenlijst uit je werkgegevens',
+        hint: 'In Microsoft 365 Copilot Chat (tabblad Werk).',
+        text: `Maak een overzicht van mijn taken voor de werkweek van [STARTDATUM] tot en met [EINDDATUM].
 
 Gebruik:
 - mijn agenda voor deze periode;
 - acties uit mijn ontvangen e-mails van de afgelopen [AANTAL] dagen;
 - acties die in mijn Teams-chats aan mij zijn toegewezen;
-- expliciet genoemde deadlines;
-- openstaande toezeggingen die ik zelf heb gedaan.
+- expliciet genoemde deadlines, zoals aangifte- en deponeringstermijnen;
+- openstaande toezeggingen die ik zelf heb gedaan, bijvoorbeeld aan klanten.
 
-Maak eerst een tabel met:
+Maak een tabel met:
 1. Taak
 2. Herkomst: e-mail, Teams of vergadering
-3. Betrokken klant of project
+3. Betrokken klant of opdracht
 4. Deadline
 5. Verwachte duur, alleen wanneer deze expliciet beschikbaar is
 6. Urgentie
 7. Bronverwijzing
 
-Maak daarna een voorstel per werkdag.
+Als de benodigde duur niet bekend is, vermeld dan "Zelf inschatten".`
+      },
+      {
+        title: 'Stap 2 · Voorstel per werkdag',
+        hint: 'In dezelfde chat.',
+        text: `Maak van deze takenlijst een voorstel per werkdag.
 
 Plan:
 - taken met een harde deadline eerst;
-- voorbereiding vóór de relevante vergadering;
+- voorbereiding vóór de relevante vergadering of klantbespreking;
 - voldoende ruimte tussen afspraken;
 - geen werkzaamheden op reeds bezette momenten.
 
-Als de benodigde duur niet bekend is, vermeld dan "Zelf inschatten". Presenteer de planning als voorstel en verander geen afspraken in mijn agenda.`,
+Presenteer de planning als voorstel en verander geen afspraken in mijn agenda.`
+      }
+    ],
     promptNote: 'Gebruik in Microsoft 365 Copilot Chat (tabblad Werk). Zet de blokken daarna zelf in je agenda.',
     tip: ''
   },
@@ -1317,10 +1387,14 @@ Als de benodigde duur niet bekend is, vermeld dan "Zelf inschatten". Presenteer 
     didYouKnow: 'Wist je dat Copilot vanaf een harde deadline een terugrekenplanning kan maken, met tussenstappen, buffer en rekening houdend met je agenda?',
     description: 'Maak vanaf een harde deadline een haalbare terugrekenplanning met buffer.',
     usefulFor: 'Deadlines',
-    prompt: `Ik moet [OPDRACHT, bijv. een conceptjaarrekening] uiterlijk [DATUM] opleveren.
+    prompts: [
+      {
+        title: 'Stap 1 · Terugrekenplanning',
+        hint: 'In Microsoft 365 Copilot Chat (tabblad Werk).',
+        text: `Ik moet [OPDRACHT, bijv. een conceptjaarrekening] uiterlijk [DATUM] opleveren.
 
 Maak een terugrekenplanning vanaf die deadline:
-- verdeel het werk in logische stappen;
+- verdeel het werk in logische stappen (bijv. stukken opvragen, verwerken, review, bespreking met de klant);
 - geef per stap een tijdsinschatting en de datum waarop die stap uiterlijk klaar moet zijn;
 - plan minimaal twee werkdagen buffer in;
 - houd rekening met de afspraken die al in mijn agenda staan.
@@ -1331,12 +1405,23 @@ Zet het in een tabel met:
 3. Uiterlijk klaar
 4. Wat ik nodig heb van anderen
 
-Presenteer de planning als voorstel en verander geen afspraken in mijn agenda.`,
+Presenteer de planning als voorstel en verander geen afspraken in mijn agenda.`
+      },
+      {
+        title: 'Stap 2 · Optioneel: mail aan je team',
+        hint: 'In dezelfde chat.',
+        text: `Maak hier een korte mail van aan mijn team met wat ik van wie nodig heb, en wanneer.`
+      }
+    ],
     promptNote: 'Gebruik in Microsoft 365 Copilot Chat (tabblad Werk). Controleer de planning en zet de blokken daarna zelf in je agenda.',
-    promptBasic: `Ik moet [OPDRACHT, bijv. een conceptjaarrekening] uiterlijk [DATUM] opleveren.
+    promptsBasic: [
+      {
+        title: 'Stap 1 · Terugrekenplanning',
+        hint: 'In Copilot Chat. Noem onderaan je vaste afspraken.',
+        text: `Ik moet [OPDRACHT, bijv. een conceptjaarrekening] uiterlijk [DATUM] opleveren.
 
 Maak een terugrekenplanning vanaf die deadline:
-- verdeel het werk in logische stappen;
+- verdeel het werk in logische stappen (bijv. stukken opvragen, verwerken, review, bespreking met de klant);
 - geef per stap een tijdsinschatting en de datum waarop die stap uiterlijk klaar moet zijn;
 - plan minimaal twee werkdagen buffer in;
 - houd rekening met mijn vaste afspraken hieronder.
@@ -1350,9 +1435,16 @@ Zet het in een tabel met:
 Presenteer de planning als voorstel.
 
 Mijn vaste afspraken in deze periode:
-[NOEM PER AFSPRAAK DE DATUM, TIJD EN OMSCHRIJVING]`,
+[NOEM PER AFSPRAAK DE DATUM, TIJD EN OMSCHRIJVING]`
+      },
+      {
+        title: 'Stap 2 · Optioneel: mail aan je team',
+        hint: 'In dezelfde chat.',
+        text: `Maak hier een korte mail van aan mijn team met wat ik van wie nodig heb, en wanneer.`
+      }
+    ],
     promptNoteBasic: 'Werkt met de gratis Copilot Chat: noem zelf je vaste afspraken. Copilot kijkt dan niet in je agenda en plant niets in.',
-    tip: 'Werk je samen? Vraag daarna: "Maak hier een korte mail van met wat ik van wie nodig heb, en wanneer."'
+    tip: ''
   },
   {
     // Aanvullend voorstel

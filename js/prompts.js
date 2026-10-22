@@ -151,6 +151,7 @@
         license: snack.license,
         prompt: snack.prompt,
         promptSteps: snack.promptSteps,
+        promptStepsBasic: [],
         promptNote: snack.promptNote,
         promptBasic: '',
         promptNoteBasic: '',
@@ -179,7 +180,8 @@
       impact: item.impact,
       license: item.license,
       prompt: item.prompt,
-      promptSteps: [],
+      promptSteps: item.promptSteps,
+      promptStepsBasic: item.promptStepsBasic,
       promptNote: item.promptNote,
       promptBasic: item.promptBasic,
       promptNoteBasic: item.promptNoteBasic,
@@ -530,8 +532,8 @@
     });
     refs.variantHint.textContent = t(basic ? 'promptsVariantHintBasic' : 'promptsVariantHintLicensed');
 
-    // Meerdere prompts (stappen, alleen bij snacks): ieder een eigen blok met kopieerknop.
-    const steps = basic ? [] : entry.promptSteps;
+    // Meerdere prompts (stappen): ieder een eigen blok met kopieerknop, ook bij de versie zonder licentie.
+    const steps = basic ? entry.promptStepsBasic : entry.promptSteps;
     refs.promptLabel.textContent = steps.length ? t('promptStepsLabel', { count: steps.length }) : t('promptLabel');
     refs.prompt.hidden = steps.length > 0;
     ns.promptSteps.render(refs.steps, steps, { canCopy: true });
