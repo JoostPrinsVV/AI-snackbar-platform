@@ -18,6 +18,12 @@
       "runtimeExecutable": "powershell",
       "runtimeArgs": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "C:\\Users\\jprins\\AppData\\Local\\Temp\\claude\\C--Users-jprins-GitHub-ai-snackbar\\2cd1ae4b-b085-4786-bda6-ac15d7fa3918\\scratchpad\\serve.ps1", "-Root", "C:\\Users\\jprins\\GitHub\\ai-cockpit-audit", "-Port", "8795"],
       "port": 8795
+    },
+    {
+      "name": "cockpit-concept",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "C:\\Users\\jprins\\AppData\\Local\\Temp\\claude\\C--Users-jprins-GitHub-ai-snackbar\\2cd1ae4b-b085-4786-bda6-ac15d7fa3918\\scratchpad\\serve.ps1", "-Root", "C:\\Users\\jprins\\AppData\\Local\\Temp\\claude\\C--Users-jprins-GitHub-ai-snackbar\\2cd1ae4b-b085-4786-bda6-ac15d7fa3918\\scratchpad\\cockpit-concept", "-Port", "8796"],
+      "port": 8796
     }
   ]
 }
