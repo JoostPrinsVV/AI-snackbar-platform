@@ -59,7 +59,7 @@
     }
   }
 
-  /** Dit tabblad blijft open: een beheerder logde in, of sloot de snackbar zelf. */
+  /** Dit tabblad blijft open: een beheerder logde in op het gesloten-scherm. */
   function rememberAdmin() {
     try {
       window.sessionStorage.setItem(flagKey(), '1');
@@ -186,7 +186,6 @@
   ns.closed = {
     init,
     isShown,
-    preview: () => show(true),
-    rememberAdmin
+    preview: () => show(true)
   };
 })(window.AISnackbar);

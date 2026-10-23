@@ -414,9 +414,7 @@
     live.openButton.disabled = true;
     const result = await ns.central.setClosed(closed);
     if (result === 'ok') {
-      // Zelf niet buitengesloten worden bij herladen.
-      if (closed) ns.closed.rememberAdmin();
-      toast(closed ? 'De snackbar is gesloten voor bezoekers van het online adres. Dit tabblad blijft voor jou open.' : 'De snackbar is weer open voor iedereen.', { tone: 'success', icon: closed ? 'lock' : 'check-circle', duration: 7000 });
+      toast(closed ? 'De snackbar is gesloten op het online adres. Na herladen zie je zelf ook het gesloten-scherm; log daar in via Beheerder.' : 'De snackbar is weer open voor iedereen.', { tone: 'success', icon: closed ? 'lock' : 'check-circle', duration: 8000 });
     } else {
       const messages = {
         missing: 'Nog niet ingericht: voer eerst tools/supabase-update-closed.sql uit in Supabase.',
