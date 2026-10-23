@@ -254,10 +254,10 @@ window.AISnackbar.texts = {
 
     /* ---- Gesloten ('Even gesloten'-scherm, js/closed.js) -------------- */
     closedSign: 'Gesloten',
-    closedEyebrow: 'Even gesloten wegens verbouwing',
-    closedTitle: 'De frituur staat even uit',
-    closedText: 'De AI Snackbar is momenteel gesloten. We verhuizen de keuken naar een nieuwe {organization}-omgeving en hopen je daar zo snel mogelijk weer te bedienen, met verse prompts en warme bitterballen.',
-    closedFooter: 'Tot snel aan de toonbank!',
+    closedEyebrow: '{title}',
+    closedTitle: 'Wij zijn tijdelijk gesloten',
+    closedText: 'De AI Snackbar verhuist naar een nieuwe {organization}-omgeving. We hopen je daar zo snel mogelijk weer te bedienen met onze snacks en bijgerechten.',
+    closedFooter: 'Tot snel!',
     closedAdminButton: 'Beheerder',
     closedAdminHint: 'Log in met je beheerdersaccount van de snackbar. Daarna blijft dit tabblad open.',
     closedEmailLabel: 'E-mailadres',
