@@ -252,6 +252,24 @@ window.AISnackbar.texts = {
     kioskPaused: 'Automatische reset staat uit',
     kioskResumed: 'Automatische reset staat weer aan.',
 
+    /* ---- Gesloten ('Even gesloten'-scherm, js/closed.js) -------------- */
+    closedSign: 'Gesloten',
+    closedEyebrow: 'Even gesloten wegens verbouwing',
+    closedTitle: 'De frituur staat even uit',
+    closedText: 'De AI Snackbar is momenteel gesloten. We verhuizen de keuken naar een nieuwe {organization}-omgeving en hopen je daar zo snel mogelijk weer te bedienen, met verse prompts en warme bitterballen.',
+    closedFooter: 'Tot snel aan de toonbank!',
+    closedAdminButton: 'Beheerder',
+    closedAdminHint: 'Log in met je beheerdersaccount van de snackbar. Daarna blijft dit tabblad open.',
+    closedEmailLabel: 'E-mailadres',
+    closedPasswordLabel: 'Wachtwoord',
+    closedSubmit: 'Openen',
+    closedMissing: 'Vul je e-mailadres en wachtwoord in.',
+    closedLoginFailed: 'Inloggen is niet gelukt. Controleer je e-mailadres en wachtwoord.',
+    closedNotAdmin: 'Dit account is geen beheerder van de snackbar.',
+    closedOffline: 'Geen verbinding. Probeer het zo nog eens.',
+    closedUnlockedToast: 'Je bent binnen als beheerder. Voor bezoekers is de snackbar nog gesloten.',
+    closedPreviewClose: 'Voorbeeld sluiten',
+
     /* ---- Fouten -------------------------------------------------------- */
     fatalTitle: 'Er ging iets mis',
     fatalText: 'Herlaad de pagina om de AI Snackbar opnieuw te starten.',

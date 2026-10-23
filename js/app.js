@@ -111,6 +111,8 @@
     ns.onRuntimeError = (entry) => {
       if (state.config.debugMode) ns.ui.toast('Technische fout: ' + entry.message, { tone: 'warning', duration: 6000 });
     };
+    // Als laatste: sluit het welkomstscherm weer als de snackbar gesloten blijkt.
+    ns.closed.init({ config, onShow: () => ns.kiosk.pause('closed'), onHide: () => ns.kiosk.resume('closed') });
     document.documentElement.classList.add('is-ready');
   }
 

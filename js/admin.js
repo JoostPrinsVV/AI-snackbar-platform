@@ -71,7 +71,7 @@
 
   /** Eén ingang voor alle manieren om admin te openen: eerst de code, dan het scherm. */
   function requestAccess() {
-    if (!isEnabled() || dialog.open || code.dialog.open) return;
+    if (!isEnabled() || dialog.open || code.dialog.open || ns.closed.isShown()) return;
     if (unlocked || !ctx.config.adminCode) {
       open();
       return;
@@ -290,6 +290,7 @@
     container.replaceChildren(
       el('div', { className: 'admin__grid' }, [
         renderContentSection(snacks),
+        renderClosedSection(),
         renderKioskSection(),
         renderMediaSection(snacks),
         renderQuickOpenSection(snacks),
@@ -299,6 +300,7 @@
       ].filter(Boolean))
     );
     updateLive();
+    refreshClosed();
     runMediaCheck();
   }
 
@@ -363,6 +365,67 @@
     if (!central.enabled) return status('muted', 'uit (alleen op dit apparaat; zie docs/SUPABASE.md)');
     if (central.lastError) return status('warn', `${central.url} · ${central.pending} wachtend · ${central.lastError}`);
     return status('ok', `${central.url} · ${central.pending ? central.pending + ' wachtend' : 'alles verstuurd'}`);
+  }
+
+  /**
+   * Snackbar sluiten: het online adres (snackbar én promptpagina) toont dan alleen het
+   * 'Even gesloten'-scherm (js/closed.js). Centraal in Supabase, dus meteen op alle apparaten.
+   */
+  function renderClosedSection() {
+    const central = ns.central.isEnabled();
+    const signedIn = central && Boolean(ns.central.signedIn());
+    live.closedStatus = el('span', { text: central ? 'Bezig met ophalen…' : '' });
+    live.closeButton = button('Snackbar sluiten', 'lock', () => changeClosed(true), true);
+    live.openButton = button('Weer openen', 'check-circle', () => changeClosed(false), true);
+    const preview = button('Voorbeeld bekijken', 'info', () => {
+      close();
+      ns.closed.preview();
+    });
+    if (!central) live.closedStatus.append(status('muted', 'werkt alleen met centrale opslag; zonder kun je siteClosed in js/config.js gebruiken'));
+
+    return section('Snackbar sluiten', 'lock', [
+      el('p', { className: 'admin__intro', text: 'Sluit de snackbar én de promptpagina voor iedereen op het online adres: bezoekers zien dan alleen een ‘Even gesloten’-scherm. Tablets met een lokale kopie blijven gewoon werken. Zelf kom je erin door op dat scherm bij ‘Beheerder’ in te loggen (hetzelfde account als bij Dashboard → Inloggen).' }),
+      kv([['Online adres', live.closedStatus]]),
+      ctx.config.siteClosed ? el('p', {}, status('warn', 'siteClosed staat aan in js/config.js: het online adres blijft dicht, wat je hier ook kiest.')) : null,
+      central && !signedIn ? el('p', {}, status('warn', 'Log eerst in via het tabblad Dashboard (Inloggen); daarna kun je hier openen en sluiten.')) : null,
+      el('div', { className: 'admin__buttons' }, central ? [live.closeButton, live.openButton, preview] : [preview])
+    ].filter(Boolean));
+  }
+
+  async function refreshClosed() {
+    const node = live.closedStatus;
+    if (!node || !ns.central.isEnabled()) return;
+    const state = await ns.central.readClosed(5000);
+    if (node !== live.closedStatus) return; // intussen opnieuw opgebouwd
+    const labels = {
+      open: status('ok', 'open'),
+      closed: status('warn', 'gesloten voor bezoekers'),
+      missing: status('warn', 'nog niet ingericht: voer tools/supabase-update-closed.sql uit in Supabase'),
+      unknown: status('muted', 'onbekend (geen verbinding met Supabase)')
+    };
+    node.replaceChildren(labels[state]);
+    const signedIn = Boolean(ns.central.signedIn());
+    live.closeButton.disabled = !signedIn || state === 'closed' || state === 'missing';
+    live.openButton.disabled = !signedIn || state === 'open' || state === 'missing';
+  }
+
+  async function changeClosed(closed) {
+    live.closeButton.disabled = true;
+    live.openButton.disabled = true;
+    const result = await ns.central.setClosed(closed);
+    if (result === 'ok') {
+      // Zelf niet buitengesloten worden bij herladen.
+      if (closed) ns.closed.rememberAdmin();
+      toast(closed ? 'De snackbar is gesloten voor bezoekers van het online adres. Dit tabblad blijft voor jou open.' : 'De snackbar is weer open voor iedereen.', { tone: 'success', icon: closed ? 'lock' : 'check-circle', duration: 7000 });
+    } else {
+      const messages = {
+        missing: 'Nog niet ingericht: voer eerst tools/supabase-update-closed.sql uit in Supabase.',
+        denied: 'Geen beheerdersrechten: log opnieuw in via het tabblad Dashboard.',
+        failed: 'Dat lukte niet (geen verbinding?). Probeer het opnieuw.'
+      };
+      toast(messages[result] || messages.failed, { tone: 'warning', duration: 7000 });
+    }
+    refreshClosed();
   }
 
   function kioskReason() {

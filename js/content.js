@@ -53,6 +53,7 @@
     resetCode: '',
     adminKeySequence: 'beheer',
     adminLongPressSeconds: 3,
+    siteClosed: false,
     debugMode: false
   };
 

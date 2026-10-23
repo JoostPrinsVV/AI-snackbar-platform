@@ -336,6 +336,58 @@
     return response.json();
   }
 
+  /* ---- Snackbar sluiten ('Even gesloten'-scherm, js/closed.js) -------------------- */
+  /**
+   * Staat de snackbar centraal op gesloten? Voor iedereen leesbaar.
+   * @returns {Promise<'open'|'closed'|'missing'|'unknown'>} missing = tabel ontbreekt nog
+   *   (tools/supabase-update-closed.sql), unknown = geen verbinding of te traag
+   */
+  async function readClosed(timeoutMs) {
+    if (!enabled) return 'unknown';
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const query = `?select=closed&namespace=eq.${encodeURIComponent(config.storageNamespace)}`;
+      const response = await request('/rest/v1/snackbar_settings' + query, { headers: headers(null), signal: controller.signal });
+      if (response.status === 404) return 'missing';
+      if (!response.ok) return 'unknown';
+      const rows = await response.json();
+      return rows.length && rows[0].closed === true ? 'closed' : 'open';
+    } catch (error) {
+      return 'unknown';
+    } finally {
+      window.clearTimeout(timer);
+    }
+  }
+
+  /**
+   * Snackbar openen of sluiten. Alleen voor een ingelogde beheerder.
+   * @returns {Promise<'ok'|'missing'|'denied'|'failed'>}
+   */
+  async function setClosed(closed) {
+    if (!signedIn()) return 'denied';
+    try {
+      const response = await request('/rest/v1/rpc/snackbar_set_closed', {
+        method: 'POST',
+        headers: headers(admin.token),
+        body: JSON.stringify({ p_namespace: config.storageNamespace, p_closed: closed })
+      });
+      if (response.ok) return 'ok';
+      console.warn('[AI Snackbar] Openen/sluiten geweigerd:', response.status, await response.text());
+      if (response.status === 404) return 'missing';
+      return response.status === 401 || response.status === 403 ? 'denied' : 'failed';
+    } catch (error) {
+      return 'failed';
+    }
+  }
+
+  /** Is het ingelogde account beheerder van de snackbar (tabel snackbar_admins)? */
+  async function isAdmin() {
+    if (!signedIn()) return false;
+    const response = await request('/rest/v1/rpc/is_snackbar_admin', { method: 'POST', headers: headers(admin.token), body: '{}' });
+    return response.ok && (await response.json()) === true;
+  }
+
   function status() {
     return {
       enabled,
@@ -365,6 +417,9 @@
     deletePromptRequests,
     deleteLicenseRequests,
     resetAll,
+    readClosed,
+    setClosed,
+    isAdmin,
     status
   };
 })(window.AISnackbar);

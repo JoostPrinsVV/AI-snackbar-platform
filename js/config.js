@@ -84,5 +84,12 @@ window.AISnackbar.config = {
                                         // centraal wissen kan bovendien alleen na inloggen als beheerder. Leeg = knop uit
   adminKeySequence: 'beheer',           // Typ dit woord op het toetsenbord om de codevraag te openen
   adminLongPressSeconds: 3,             // ...of houd het logo zo lang ingedrukt
-  debugMode: false                      // true = extra technische meldingen in de console en op het scherm
+
+  /* ---- Snackbar sluiten ------------------------------------------------ */
+  // Openen en sluiten doe je gewoon in Admin → Beheer & test (centraal: geldt meteen op alle apparaten).
+  // Gesloten = op het online adres alleen een 'Even gesloten'-scherm; beheerders loggen daar in.
+  // Tablets met een lokale kopie blijven altijd open.
+  siteClosed: false,                    // true = online adres vast dicht, ook als Supabase even niet bereikbaar is
+
+  debugMode: false                     // true = extra technische meldingen in de console en op het scherm
 };

@@ -3974,6 +3974,158 @@ dialog[open] .modal__panel {
   font-size: var(--fs-xs);
 }
 
+/* ---- Gesloten ('Even gesloten'-scherm, js/closed.js) ------------------- */
+/* Even niets tonen terwijl we navragen of de snackbar open is (hooguit enkele seconden). */
+.is-closed-check body {
+  visibility: hidden;
+}
+
+.is-closed body > :not(.closed) {
+  display: none !important;
+}
+
+.closed {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow: hidden auto;
+  background:
+    radial-gradient(60vmax 60vmax at 8% 105%, rgba(0, 180, 156, 0.2), transparent 70%),
+    radial-gradient(55vmax 55vmax at 100% 0%, rgba(239, 23, 77, 0.16), transparent 70%),
+    var(--vv-navy-900);
+  color: var(--color-on-dark);
+}
+
+.closed__awning {
+  position: relative;
+  height: clamp(2.5rem, 8vh, 5rem);
+}
+
+.closed__content {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 46rem;
+  margin-inline: auto;
+  padding: calc(var(--awning-stripe) / 2 + var(--space-5) + env(safe-area-inset-top)) var(--gutter) calc(var(--space-6) + env(safe-area-inset-bottom));
+  text-align: center;
+}
+
+/* Bordje 'Gesloten' aan een touwtje, zacht schommelend */
+.closed__sign {
+  display: grid;
+  justify-items: center;
+  margin-bottom: var(--space-2);
+  transform-origin: 50% 0;
+  animation: closed-swing 3.4s var(--ease-in-out) infinite;
+}
+
+.closed__sign::before {
+  content: '';
+  width: 8.5rem;
+  height: 2.4rem;
+  background: var(--color-on-dark-muted);
+  clip-path: polygon(50% 0, 100% 100%, calc(100% - 3px) 100%, 50% 5px, 3px 100%, 0 100%);
+}
+
+.closed__board {
+  padding: 0.5rem 1.6rem 0.55rem;
+  border: 3px solid var(--vv-white);
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+  box-shadow: var(--shadow-button);
+  font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.3rem);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.14em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.closed__eyebrow {
+  color: var(--color-highlight-on-dark);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+}
+
+.closed__title {
+  color: var(--vv-white);
+  font-size: clamp(2.1rem, 1.3rem + 2.8vw, 3.6rem);
+  letter-spacing: -0.02em;
+}
+
+.closed__text {
+  max-width: 40ch;
+  color: var(--color-on-dark-muted);
+  font-size: clamp(1.1rem, 0.9rem + 0.6vw, 1.4rem);
+}
+
+.closed__footer {
+  color: var(--vv-white);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+}
+
+.closed__admin {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  margin-top: var(--space-6);
+}
+
+.closed__form {
+  display: grid;
+  gap: var(--space-3);
+  width: min(100%, 24rem);
+  padding: var(--space-5);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xl);
+  color: var(--color-text);
+  text-align: left;
+}
+
+.closed__hint {
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+}
+
+.closed__form .code__error:empty {
+  display: none;
+}
+
+.closed__preview {
+  margin-top: var(--space-6);
+}
+
+@keyframes closed-swing {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+/* Ook op de promptpagina (die laadt responsive.css niet) */
+@media (prefers-reduced-motion: reduce) {
+  .closed__sign {
+    animation: none;
+  }
+}
+
+.reduce-motion .closed__sign {
+  animation: none;
+}
+
 /* ==========================================================================
    Overgangen en animaties
    ========================================================================== */

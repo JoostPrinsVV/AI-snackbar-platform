@@ -120,6 +120,7 @@
     renderInspiration();
     window.addEventListener('hashchange', route);
     route();
+    ns.closed.init({ config: deviceConfig });
     document.documentElement.classList.remove('no-js');
   }
 
