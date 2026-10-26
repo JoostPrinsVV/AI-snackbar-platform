@@ -137,6 +137,7 @@
       surpriseButton: byId('surprise-button'),
       surpriseHint: byId('surprise-hint'),
       promptsButton: byId('prompts-button'),
+      policyButton: byId('policy-button'),
       heroCta: byId('hero-cta')
     });
   }
@@ -201,11 +202,15 @@
     // 'Alle prompts' alleen op een eigen apparaat: de promptpagina heeft geen kioskreset en
     // gaat uit van een eigen telefoon (onthoudt bijv. het e-mailadres voor een tweede prompt).
     const prompts = !config.kioskMode;
+    // 'AI-beleid' ook alleen op een eigen apparaat: op de tablet zou je de snackbar verlaten (en geen kioskreset meer hebben).
+    const policy = !config.kioskMode && Boolean(config.aiPolicyUrl);
     dom.surpriseButton.hidden = !surprise;
     dom.promptsButton.hidden = !prompts;
-    // Bij twee knoppen is 'Wij kiezen een snack voor je' niet meer eenduidig.
-    dom.surpriseHint.hidden = !surprise || prompts;
-    dom.heroCta.hidden = !surprise && !prompts;
+    dom.policyButton.hidden = !policy;
+    if (policy) dom.policyButton.href = config.aiPolicyUrl;
+    // Bij meer knoppen is 'Wij kiezen een snack voor je' niet meer eenduidig.
+    dom.surpriseHint.hidden = !surprise || prompts || policy;
+    dom.heroCta.hidden = !surprise && !prompts && !policy;
     // Vanaf een lokaal bestand opent 'prompts/' een mapoverzicht in plaats van de pagina.
     // '?kiosk=0' (lokaal testen als eigen apparaat) gaat mee, zodat je ook zo terugkomt.
     dom.promptsButton.href = (window.location.protocol === 'file:' ? 'prompts/index.html' : 'prompts/') + window.location.search;

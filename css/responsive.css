@@ -486,6 +486,16 @@
     gap: var(--space-2);
   }
 
+  /* Met de knop AI-beleid: twee knoppen naast elkaar, AI-beleid eronder over de volle breedte */
+  .hero__buttons:has(> .hero__policy:not([hidden])) {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hero__buttons .hero__policy {
+    grid-column: 1 / -1;
+  }
+
   .hero__buttons .btn {
     width: 100%;
     min-height: 3.5rem;

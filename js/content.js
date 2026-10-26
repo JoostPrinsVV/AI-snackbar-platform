@@ -18,6 +18,7 @@
     audienceName: '',
     eventName: '',
     eventDates: '',
+    aiPolicyUrl: '',
     language: 'nl',
     theme: 'licht',
     logoPath: '',
@@ -149,6 +150,10 @@
     if (config.logoPath && isExternal(config.logoPath)) {
       issues.push(issue('warning', 'logoPath verwijst naar internet; alleen lokale bestanden zijn toegestaan.'));
       config.logoPath = '';
+    }
+    if (config.aiPolicyUrl && !/^https:\/\/[^\s"'<>]+$/i.test(config.aiPolicyUrl)) {
+      issues.push(issue('warning', "aiPolicyUrl moet een volledig https://-adres zijn; de knop 'AI-beleid' staat uit."));
+      config.aiPolicyUrl = '';
     }
     config.adminKeySequence = config.adminKeySequence.toLowerCase().replace(/[^a-z0-9]/g, '');
     if (!/^\d{4,8}$/.test(config.adminCode)) {

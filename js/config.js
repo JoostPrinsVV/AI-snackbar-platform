@@ -26,6 +26,8 @@ window.AISnackbar.config = {
   audienceName: 'Accountants B.V.',
   eventName: 'Boost & Learn',
   eventDates: '26 & 27 oktober 2026',
+  // Knop 'AI-beleid' bovenaan de snackkaart (alleen op een eigen telefoon/laptop, opent in een nieuw tabblad); leeg = geen knop
+  aiPolicyUrl: 'https://serviceplein.visser-visser.nl/knowledgebase/onderwerpen/informatiebeveiliging/algemeen-beleid/ai-beleid',
 
   /* ---- Taal, thema en logo -------------------------------------------- */
   language: 'nl',                       // Teksten staan in data/texts.js

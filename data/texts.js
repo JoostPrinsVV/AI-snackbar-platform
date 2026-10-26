@@ -30,6 +30,8 @@ window.AISnackbar.texts = {
     surpriseButton: 'Verras mij',
     surpriseHint: 'Wij kiezen een snack voor je',
     promptsButton: 'Alle prompts',        // naar de promptpagina (alleen op een eigen apparaat)
+    policyButton: 'AI-beleid',            // naar het AI-beleid op het intranet (aiPolicyUrl, alleen op een eigen apparaat)
+    newTabHint: '(opent in een nieuw tabblad)', // alleen voor schermlezers
     menuTitle: 'Vandaag op de kaart',   // alleen voor schermlezers
     menuHint: 'Raak een snack aan om te beginnen',
     cardNumber: 'Nr. {number}',
