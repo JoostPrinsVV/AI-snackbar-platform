@@ -7,9 +7,11 @@
    in de snackbar én op de promptpagina. Een lokale kopie (tablets bij de
    stand) blijft altijd open.
 
-   Een beheerder komt erin door op het scherm in te loggen (Supabase Auth,
-   hetzelfde account als het dashboard). Dat tabblad blijft daarna open tot
-   het wordt gesloten: alleen een vlag in sessionStorage, geen persoonsgegevens.
+   Collega's met de pincode (closedPin) openen hem met die pincode; wie hem
+   niet weet, stuurt de contactpersoon (closedContactName/-Url) een bericht.
+   Een beheerder kan ook inloggen (Supabase Auth, hetzelfde account als het
+   dashboard). Dat tabblad blijft daarna open tot het wordt gesloten: alleen
+   een vlag in sessionStorage, geen persoonsgegevens.
 
    Let op: een drempel tegen doorsturen, geen beveiliging. Wie de losse
    bestanden op het online adres opvraagt, kan de inhoud nog steeds lezen.
@@ -59,8 +61,8 @@
     }
   }
 
-  /** Dit tabblad blijft open: een beheerder logde in op het gesloten-scherm. */
-  function rememberAdmin() {
+  /** Dit tabblad blijft open: iemand opende de snackbar met de pincode of als beheerder. */
+  function rememberUnlocked() {
     try {
       window.sessionStorage.setItem(flagKey(), '1');
     } catch (error) {
@@ -101,9 +103,12 @@
 
   function build(preview) {
     const { el, t } = ns.ui;
-    let action = null;
-    if (preview) action = previewButton();
-    else if (ns.central.isEnabled()) action = adminArea();
+    const config = ctx.config;
+    const actions = [
+      config.closedPin ? pinArea(preview) : null,
+      preview ? previewButton() : null,
+      !preview && ns.central.isEnabled() ? adminArea() : null
+    ];
     return el('section', { className: 'closed on-dark', attrs: { 'aria-labelledby': 'closed-title', 'aria-describedby': 'closed-text' } }, [
       el('div', { className: 'closed__awning', attrs: { 'aria-hidden': 'true' } }, el('div', { className: 'awning-edge' })),
       el('div', { className: 'closed__content' }, [
@@ -112,7 +117,7 @@
         el('h1', { className: 'closed__title', attrs: { id: 'closed-title', tabindex: '-1' }, text: t('closedTitle') }),
         el('p', { className: 'closed__text', attrs: { id: 'closed-text' }, text: t('closedText') }),
         el('p', { className: 'closed__footer', text: t('closedFooter') }),
-        action
+        ...actions
       ])
     ]);
   }
@@ -120,6 +125,58 @@
   function previewButton() {
     const { el, icon, t } = ns.ui;
     return el('button', { className: 'btn btn--surprise closed__preview', attrs: { type: 'button' }, on: { click: hide } }, [icon('close'), el('span', { text: t('closedPreviewClose') })]);
+  }
+
+  /* ---- Openen met pincode ---------------------------------------------------- */
+  // preview: in het voorbeeld vanuit beheer onthouden we niets (het tabblad van de beheerder blijft gewoon dicht na herladen).
+  function pinArea(preview) {
+    const { el, icon, t } = ns.ui;
+    const config = ctx.config;
+    const pin = el('input', {
+      className: 'license__input closed__pin',
+      attrs: { id: 'closed-pin', type: 'password', inputmode: 'numeric', autocomplete: 'off', maxlength: '8', 'aria-describedby': 'closed-pin-error' }
+    });
+    const error = el('p', { className: 'code__error', attrs: { id: 'closed-pin-error', role: 'alert' } });
+    const form = el('form', { className: 'closed__form', attrs: { id: 'closed-pin-form', novalidate: true } }, [
+      el('p', { className: 'closed__hint', text: t('closedPinIntro') }),
+      field(pin, t('closedPinLabel')),
+      error,
+      el('button', { className: 'btn btn--primary', attrs: { type: 'submit' } }, [icon('key'), el('span', { text: t('closedPinSubmit') })]),
+      config.closedContactUrl ? contactLink() : null
+    ]);
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const value = pin.value.trim();
+      if (!value) {
+        error.textContent = t('closedPinMissing');
+        pin.focus();
+        return;
+      }
+      if (value !== config.closedPin) {
+        error.textContent = t('closedPinWrong');
+        pin.value = '';
+        pin.focus();
+        return;
+      }
+      if (!preview) rememberUnlocked();
+      hide();
+      ns.ui.toast(t('closedPinUnlockedToast'), { tone: 'success', duration: 6000 });
+    });
+    return form;
+  }
+
+  function contactLink() {
+    const { el, icon, t } = ns.ui;
+    const config = ctx.config;
+    return el('div', { className: 'closed__contact' }, [
+      el('p', { className: 'closed__hint', text: t('closedContactHint') }),
+      el('a', { className: 'btn btn--secondary', attrs: { href: config.closedContactUrl, target: '_blank', rel: 'noopener noreferrer' } }, [
+        icon('send'),
+        el('span', { text: t('closedContactButton', { contact: config.closedContactName }) }),
+        el('span', { className: 'sr-only', text: t('newTabHint') })
+      ])
+    ]);
   }
 
   /* ---- Inloggen als beheerder ------------------------------------------------ */
@@ -159,7 +216,7 @@
         password.focus();
         return;
       }
-      rememberAdmin();
+      rememberUnlocked();
       hide();
       ns.ui.toast(t('closedUnlockedToast'), { tone: 'success', duration: 7000 });
     });

@@ -55,6 +55,9 @@
     adminKeySequence: 'beheer',
     adminLongPressSeconds: 3,
     siteClosed: false,
+    closedPin: '',
+    closedContactName: '',
+    closedContactUrl: '',
     debugMode: false
   };
 
@@ -154,6 +157,18 @@
     if (config.aiPolicyUrl && !/^https:\/\/[^\s"'<>]+$/i.test(config.aiPolicyUrl)) {
       issues.push(issue('warning', "aiPolicyUrl moet een volledig https://-adres zijn; de knop 'AI-beleid' staat uit."));
       config.aiPolicyUrl = '';
+    }
+    if (config.closedPin && !/^\d{4,8}$/.test(config.closedPin)) {
+      issues.push(issue('warning', 'closedPin moet uit 4 tot 8 cijfers bestaan; het pincodeveld op het gesloten-scherm staat uit.'));
+      config.closedPin = '';
+    }
+    if (config.closedContactUrl && !/^(https:\/\/|mailto:)[^\s"'<>]+$/i.test(config.closedContactUrl)) {
+      issues.push(issue('warning', "closedContactUrl moet een https://- of mailto:-adres zijn; de knop 'Stuur een berichtje' staat uit."));
+      config.closedContactUrl = '';
+    }
+    if (config.closedContactUrl && !config.closedContactName) {
+      issues.push(issue('warning', "closedContactUrl is ingevuld zonder closedContactName; de knop 'Stuur een berichtje' staat uit."));
+      config.closedContactUrl = '';
     }
     config.adminKeySequence = config.adminKeySequence.toLowerCase().replace(/[^a-z0-9]/g, '');
     if (!/^\d{4,8}$/.test(config.adminCode)) {

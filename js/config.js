@@ -92,6 +92,10 @@ window.AISnackbar.config = {
   // Gesloten = op het online adres alleen een 'Even gesloten'-scherm; beheerders loggen daar in.
   // Tablets met een lokale kopie blijven altijd open.
   siteClosed: false,                    // true = online adres vast dicht, ook als Supabase even niet bereikbaar is
+  closedPin: '26102026',                // Pincode om de gesloten snackbar toch te openen (4-8 cijfers; geldt voor dat tabblad). Leeg = geen pincodeveld.
+                                        // Let op: leesbaar in dit bestand, dus een drempel, geen beveiliging
+  closedContactName: 'Joost Prins',     // 'Weet je de pincode niet? Stuur ... een berichtje'
+  closedContactUrl: 'https://teams.microsoft.com/l/chat/0/0?users=jprins@visser-visser.nl&message=Hoi%20Joost%2C%20mag%20ik%20de%20pincode%20van%20de%20AI%20Snackbar%3F', // Teams-chat (of mailto:); leeg = geen knop
 
   debugMode: false                     // true = extra technische meldingen in de console en op het scherm
 };
