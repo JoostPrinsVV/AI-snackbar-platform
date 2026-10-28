@@ -381,6 +381,31 @@
     }
   }
 
+  /* ---- Status van aanvragen (keuzelijst in het Dashboard) --------------------------- */
+  /**
+   * Status van 'Mail mij'-verzoeken of licentieaanvragen wijzigen. Alleen voor een ingelogde beheerder.
+   * @param {'prompt'|'license'} kind
+   * @param {number[]} ids
+   * @param {'nieuw'|'bezig'|'gereageerd'} value
+   * @returns {Promise<'ok'|'missing'|'denied'|'failed'>} missing = tools/supabase-update-status.sql nog niet uitgevoerd
+   */
+  async function setRequestStatus(kind, ids, value) {
+    if (!signedIn()) return 'denied';
+    try {
+      const response = await request('/rest/v1/rpc/snackbar_set_status', {
+        method: 'POST',
+        headers: headers(admin.token),
+        body: JSON.stringify({ p_kind: kind, p_namespace: config.storageNamespace, p_ids: ids, p_status: value })
+      });
+      if (response.ok) return 'ok';
+      console.warn('[AI Snackbar] Status wijzigen geweigerd:', response.status, await response.text());
+      if (response.status === 404) return 'missing';
+      return response.status === 401 || response.status === 403 ? 'denied' : 'failed';
+    } catch (error) {
+      return 'failed';
+    }
+  }
+
   /** Is het ingelogde account beheerder van de snackbar (tabel snackbar_admins)? */
   async function isAdmin() {
     if (!signedIn()) return false;
@@ -419,6 +444,7 @@
     resetAll,
     readClosed,
     setClosed,
+    setRequestStatus,
     isAdmin,
     status
   };

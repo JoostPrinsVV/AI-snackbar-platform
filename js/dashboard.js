@@ -338,6 +338,113 @@
     ]);
   }
 
+  /* ---- Status van aanvragen ('Mail mij' en licentie) --------------------------------
+     Bijhouden op welke aanvragen we al gereageerd hebben. De status staat centraal
+     (kolom status, tools/supabase-update-status.sql) en wijzigt via ns.central. */
+  const STATUSES = [
+    { value: 'nieuw', label: 'Nog niet gereageerd' },
+    { value: 'bezig', label: 'Mee bezig' },
+    { value: 'gereageerd', label: 'Gereageerd' }
+  ];
+  const STATUS_ORDER = STATUSES.map((item) => item.value);
+  const statusFilter = { prompt: 'alle', license: 'alle' };
+
+  /** Zonder de kolom (SQL nog niet uitgevoerd) geen keuzelijsten. */
+  function hasStatus(rows) {
+    return rows.every((row) => STATUS_ORDER.includes(row.status));
+  }
+
+  /** Stand van een groep = de minst ver gevorderde: een nieuwe vraag na je reactie staat weer op 'nieuw'. */
+  function groupStatus(items) {
+    return STATUS_ORDER[Math.min(...items.map((item) => Math.max(0, STATUS_ORDER.indexOf(item.status))))];
+  }
+
+  function statusLabel(value) {
+    const found = STATUSES.find((item) => item.value === value);
+    return found ? found.label : '';
+  }
+
+  function openCount(groups, withStatus) {
+    if (!withStatus || !groups.length) return '';
+    return ` · ${number(groups.filter((group) => group.status === 'nieuw').length)} nog niet gereageerd`;
+  }
+
+  function statusHint(withStatus) {
+    return withStatus ? null : el('p', { className: 'admin__intro', text: 'Bijhouden op welke aanvragen je gereageerd hebt? Voer eenmalig tools/supabase-update-status.sql uit (SQL Editor → Run) en klik op Vernieuwen.' });
+  }
+
+  function statusFilterControl(kind, groups, withStatus) {
+    if (!withStatus || !groups.length) return null;
+    const id = `dash-filter-${kind}`;
+    const options = [{ value: 'alle', label: `Alle (${number(groups.length)})` }].concat(
+      STATUSES.map((item) => ({ value: item.value, label: `${item.label} (${number(groups.filter((group) => group.status === item.value).length)})` }))
+    );
+    const select = el('select', { className: 'dash__status', attrs: { id } }, options.map((option) => el('option', { attrs: { value: option.value }, text: option.label })));
+    select.value = statusFilter[kind];
+    select.addEventListener('change', () => {
+      statusFilter[kind] = select.value;
+      draw();
+      const again = document.getElementById(id);
+      if (again) again.focus();
+    });
+    return el('div', { className: 'dash__status-filter' }, [el('label', { className: 'dash__label-caption', attrs: { for: id }, text: 'Toon' }), select]);
+  }
+
+  /**
+   * Lijst met per groep (persoon of aanvraag) een keuzelijst voor de status.
+   * content(group) = inhoud van de regel, label(group) = naam van de keuzelijst voor schermlezers.
+   */
+  function requestList(kind, groups, content, label, withStatus) {
+    const filter = withStatus ? statusFilter[kind] : 'alle';
+    const shown = groups.filter((group) => filter === 'alle' || group.status === filter);
+    if (!shown.length) return el('p', { className: 'admin__intro', text: `Geen aanvragen met de status '${statusLabel(filter)}'.` });
+    return el(
+      'ul',
+      { className: 'admin__comments', attrs: { role: 'list' } },
+      shown.map((group) =>
+        el('li', { className: 'dash__request' + (group.status === 'gereageerd' ? ' is-done' : '') }, [
+          el('div', { className: 'dash__request-text' }, content(group)),
+          withStatus ? statusSelect(kind, group, label(group)) : null
+        ])
+      )
+    );
+  }
+
+  function statusSelect(kind, group, label) {
+    const id = `dash-status-${kind}-${group.items[0].id}`;
+    const select = el(
+      'select',
+      { className: 'dash__status', attrs: { id, 'aria-label': label } },
+      STATUSES.map((item) => el('option', { attrs: { value: item.value }, text: item.label }))
+    );
+    select.value = group.status;
+    select.addEventListener('change', async () => {
+      const value = select.value;
+      select.disabled = true;
+      const result = await ns.central.setRequestStatus(kind, group.items.map((item) => item.id), value);
+      if (result !== 'ok') {
+        select.disabled = false;
+        select.value = group.status;
+        const messages = {
+          missing: 'De statusfunctie ontbreekt nog in Supabase: voer tools/supabase-update-status.sql uit.',
+          denied: 'Geen beheerdersrechten: log opnieuw in.',
+          failed: 'Status opslaan mislukt. Controleer de verbinding en probeer het opnieuw.'
+        };
+        toast(messages[result], { tone: 'warning', duration: 6000 });
+        return;
+      }
+      group.items.forEach((item) => {
+        item.status = value;
+      });
+      toast(`Status: ${statusLabel(value)}.`, { tone: 'success', icon: 'check-circle', duration: 2500 });
+      draw();
+      // Valt de regel buiten het filter, dan de focus op het filter.
+      const again = document.getElementById(id) || document.getElementById(`dash-filter-${kind}`);
+      if (again) again.focus();
+    });
+    return select;
+  }
+
   /* 'Mail mij deze prompt': wie wil welke prompt, plus export en wissen na het mailen */
   function renderRequests(requests, rows) {
     // Aanvragen komen uit de snackbar én van de promptpagina (snacks en inspiratieprompts).
@@ -362,33 +469,36 @@
       people.set(row.email, list);
     });
     const sorted = Array.from(people.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+    const withStatus = hasStatus(requests);
+    // Status per persoon: je mailt iemand één keer met alle gevraagde prompts.
+    const groups = sorted.map(([email, items]) => ({ email, items, status: groupStatus(items) }));
 
-    const list = sorted.length
-      ? el(
-          'ul',
-          { className: 'admin__comments', attrs: { role: 'list' } },
-          sorted.map(([email, items]) =>
-            el('li', {}, [
-              el('span', { className: 'admin__comment-meta', text: items.map((item) => labels.get(item.snack_id) || item.snack_id).join(' · ') }),
-              el('span', { className: 'admin__comment-text', text: email })
-            ])
-          )
+    const list = groups.length
+      ? requestList(
+          'prompt',
+          groups,
+          (group) => [
+            el('span', { className: 'admin__comment-meta', text: group.items.map((item) => labels.get(item.snack_id) || item.snack_id).join(' · ') }),
+            el('span', { className: 'admin__comment-text', text: group.email })
+          ],
+          (group) => `Status voor ${group.email}`,
+          withStatus
         )
       : el('p', { className: 'admin__intro', text: 'Nog niemand heeft om een prompt gevraagd.' });
 
     const mailingCsv = () => {
-      const lines = [['E-mailadres', 'Titels', 'Prompts']];
-      sorted.forEach(([email, items]) => {
+      const lines = [['E-mailadres', 'Status', 'Titels', 'Prompts']];
+      groups.forEach(({ email, items, status }) => {
         const snacks = items.map((item) => prompts.get(item.snack_id)).filter(Boolean);
-        lines.push([email, snacks.map((snack) => snack.title).join(', '), snacks.map((snack) => `${snack.title}:\n${snack.prompt}`).join('\n\n')]);
+        lines.push([email, statusLabel(status), snacks.map((snack) => snack.title).join(', '), snacks.map((snack) => `${snack.title}:\n${snack.prompt}`).join('\n\n')]);
       });
       return toCsv(lines);
     };
     const requestsCsv = () => {
-      const lines = [['E-mailadres', 'Titel', 'Prompt', 'Aangevraagd op']];
+      const lines = [['E-mailadres', 'Status', 'Titel', 'Prompt', 'Aangevraagd op']];
       requests.forEach((row) => {
         const snack = prompts.get(row.snack_id);
-        lines.push([row.email, snack ? snack.title : row.snack_id, snack ? snack.prompt : '', localParts(row.created_at).minute.replace('T', ' ')]);
+        lines.push([row.email, statusLabel(row.status), snack ? snack.title : row.snack_id, snack ? snack.prompt : '', localParts(row.created_at).minute.replace('T', ' ')]);
       });
       return toCsv(lines);
     };
@@ -412,8 +522,10 @@
       }
     });
 
-    return section(`Mail mij deze prompt (${plural(people.size, 'persoon', 'personen')}, ${plural(requests.length, 'prompt', 'prompts')})`, 'mail', [
+    return section(`Mail mij deze prompt (${plural(people.size, 'persoon', 'personen')}, ${plural(requests.length, 'prompt', 'prompts')}${openCount(groups, withStatus)})`, 'mail', [
       el('p', { className: 'admin__intro', text: 'Mail na afloop iedereen de gevraagde prompt(s) en wis daarna de adressen; dat is wat we bij het invullen beloven.' }),
+      statusHint(withStatus),
+      statusFilterControl('prompt', groups, withStatus),
       list,
       el('div', { className: 'admin__buttons' }, [
         actionButton('Mailinglijst per persoon (CSV)', 'download', () => downloadFile(`mailinglijst-${fileStamp()}.csv`, mailingCsv(), 'text/csv')),
@@ -430,24 +542,28 @@
         el('p', { className: 'admin__intro', text: 'De tabel voor licentieaanvragen ontbreekt nog in Supabase. Voer tools/supabase-update-license.sql uit (SQL Editor → Run).' })
       ]);
     }
-    const newest = licenses.slice().reverse();
+    const withStatus = hasStatus(licenses);
     const at = (row) => localParts(row.created_at).minute.replace('T', ' ');
-    const list = newest.length
-      ? el(
-          'ul',
-          { className: 'admin__comments', attrs: { role: 'list' } },
-          newest.map((row) =>
-            el('li', {}, [
-              el('span', { className: 'admin__comment-meta', text: `${at(row)} · ${row.name} · ${row.email}` }),
-              el('span', { className: 'admin__comment-text', text: row.motivation })
-            ])
-          )
+    const groups = licenses
+      .slice()
+      .reverse()
+      .map((row) => ({ items: [row], status: groupStatus([row]) }));
+    const list = groups.length
+      ? requestList(
+          'license',
+          groups,
+          ({ items: [row] }) => [
+            el('span', { className: 'admin__comment-meta', text: `${at(row)} · ${row.name} · ${row.email}` }),
+            el('span', { className: 'admin__comment-text', text: row.motivation })
+          ],
+          ({ items: [row] }) => `Status voor ${row.name}`,
+          withStatus
         )
       : el('p', { className: 'admin__intro', text: 'Nog geen licentieaanvragen.' });
 
     const licensesCsv = () => {
-      const lines = [['Aangevraagd op', 'Naam', 'E-mailadres', 'Toelichting']];
-      licenses.forEach((row) => lines.push([at(row), row.name, row.email, row.motivation]));
+      const lines = [['Aangevraagd op', 'Status', 'Naam', 'E-mailadres', 'Toelichting']];
+      licenses.forEach((row) => lines.push([at(row), statusLabel(row.status), row.name, row.email, row.motivation]));
       return toCsv(lines);
     };
 
@@ -470,8 +586,10 @@
       }
     });
 
-    return section(`Licentieaanvragen (${number(licenses.length)})`, 'key', [
+    return section(`Licentieaanvragen (${number(licenses.length)}${openCount(groups, withStatus)})`, 'key', [
       el('p', { className: 'admin__intro', text: 'Exporteer de aanvragen voor de beoordeling en wis ze daarna; dat beloven we bij het invullen. "Alles resetten" wist deze aanvragen niet.' }),
+      statusHint(withStatus),
+      statusFilterControl('license', groups, withStatus),
       list,
       el('div', { className: 'admin__buttons' }, [
         actionButton('Licentieaanvragen (CSV)', 'download', () => downloadFile(`licentieaanvragen-${fileStamp()}.csv`, licensesCsv(), 'text/csv')),

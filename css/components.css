@@ -3750,6 +3750,50 @@ dialog[open] .modal__panel {
   overflow-wrap: anywhere;
 }
 
+/* Aanvragen ('Mail mij', licentie) met een statuskeuze rechts */
+.admin__comments .dash__request {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-3);
+}
+
+.dash__request-text {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.dash__request.is-done .admin__comment-text {
+  color: var(--color-text-muted);
+}
+
+.dash__status {
+  min-height: 2.75rem;
+  padding: 0.4rem 0.6rem;
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--fs-sm);
+}
+
+.dash__status:focus {
+  border-color: var(--color-focus);
+}
+
+.dash__status:disabled {
+  opacity: 0.6;
+}
+
+.dash__status-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
 .kv {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
