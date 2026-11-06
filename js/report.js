@@ -40,9 +40,9 @@
           el('p', { className: 'report__meta', text: [data.subtitle, data.source].filter(Boolean).join(' · ') })
         ]),
         tiles(data.tiles),
-        el('div', { className: 'report__columns' }, [highlights(data), followUp(data) || hourlyBlock(data.hourly)]),
+        el('div', { className: 'report__columns' }, [highlights(data), followUp(data) || dailyBlock(data.hourly, data.generatedAt)]),
         perSnack(data.rows, data.ratingLabels),
-        data.requests || data.licenses ? hourlyBlock(data.hourly) : null
+        data.requests || data.licenses ? dailyBlock(data.hourly, data.generatedAt) : null
       ]),
       footer()
     ]);
@@ -171,32 +171,32 @@
     return node;
   }
 
-  /* Drukte per uur van de dag, opgeteld over alle dagen */
-  function hourlyBlock(hourly) {
-    const keys = Object.keys(hourly || {});
-    if (!keys.length) return section('Drukte per uur', [el('p', { className: 'report__empty', text: 'Nog geen activiteit gemeten.' })]);
-    const days = new Set(keys.map((key) => key.slice(0, 10))).size;
-    const byHour = {};
-    keys.forEach((key) => {
-      const hour = Number(key.slice(11, 13));
-      byHour[hour] = (byHour[hour] || 0) + hourly[key];
-    });
-    const hours = Object.keys(byHour).map(Number);
-    const first = Math.min(...hours);
-    const last = Math.max(...hours);
-    const max = Math.max(...Object.values(byHour));
-    const peak = hours.find((hour) => byHour[hour] === max); // alleen het drukste uur krijgt een getal
-    const columns = [];
-    for (let hour = first; hour <= last; hour += 1) {
-      const value = byHour[hour] || 0;
-      columns.push(el('div', { className: 'report__col' }, [
-        el('span', { className: 'report__col-value', text: hour === peak ? number(value) : '' }),
-        scaled(el('span', { className: 'report__col-bar' }), value / max),
-        el('span', { className: 'report__col-tick', text: String(hour) })
-      ]));
+  /* Drukte per dag: de afgelopen 7 dagen tot en met de dag van het rapport (ook dagen zonder gebruik) */
+  function dailyBlock(hourly, end) {
+    const pad = (n) => String(n).padStart(2, '0');
+    const days = [];
+    for (let back = 6; back >= 0; back -= 1) {
+      const date = new Date(end.getFullYear(), end.getMonth(), end.getDate() - back);
+      days.push({ date, key: `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`, value: 0 });
     }
-    return section('Drukte per uur', [
-      el('p', { className: 'report__note', text: `Keer een snack geopend per uur van de dag${days > 1 ? `, opgeteld over ${days} dagen` : ''}.` }),
+    // De tellers staan per uur ('JJJJ-MM-DDTUU', lokale tijd): optellen per dag
+    Object.keys(hourly || {}).forEach((key) => {
+      const day = days.find((item) => item.key === key.slice(0, 10));
+      if (day) day.value += hourly[key];
+    });
+    const total = days.reduce((sum, day) => sum + day.value, 0);
+    const max = Math.max(1, ...days.map((day) => day.value));
+    const columns = days.map((day) => el('div', { className: 'report__col' }, [
+      el('span', { className: 'report__col-value', text: day.value ? number(day.value) : '' }),
+      scaled(el('span', { className: 'report__col-bar' }), day.value / max),
+      el('span', { className: 'report__col-tick' }, [
+        el('span', { className: 'report__col-day', text: day.date.toLocaleDateString('nl-NL', { weekday: 'short' }) }),
+        day.date.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })
+      ])
+    ]));
+    const range = `${days[0].date.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' })} t/m ${days[6].date.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' })}`;
+    return section('Drukte per dag', [
+      el('p', { className: 'report__note', text: total ? `Keer een snack geopend per dag, ${range}: samen ${number(total)}×.` : `Geen snacks geopend van ${range}.` }),
       el('div', { className: 'report__cols' }, columns)
     ]);
   }

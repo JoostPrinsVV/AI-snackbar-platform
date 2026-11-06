@@ -4741,7 +4741,14 @@ dialog[open] .modal__panel {
   border-top: 0.3mm solid var(--report-line);
   color: var(--report-ink-muted);
   font-size: 7.5pt;
+  line-height: 1.25;
   text-align: center;
+}
+
+.report__col-day {
+  display: block;
+  color: var(--report-ink);
+  font-weight: var(--fw-bold);
 }
 
 .report__footer {
