@@ -256,3 +256,24 @@
   --accent-deepteal-wash: rgba(0, 143, 142, 0.24);
   --accent-navy-wash: rgba(90, 109, 184, 0.28);
 }
+
+/* ---- Rapport (afdrukken als pdf, js/report.js) ------------------------------
+   Altijd licht en in de huisstijl (V&V design system: ink, ink-muted, surface-subtle,
+   line), ook als de app in het donkere thema staat. */
+.report {
+  --report-ink: var(--vv-navy);
+  --report-ink-muted: #4b5578;      /* 7,9:1 op wit, 7,3:1 op surface-subtle */
+  --report-surface: var(--vv-white);
+  --report-surface-subtle: #f1f6f9;
+  --report-line: #d6dfe8;
+  --report-accent: var(--vv-teal);   /* vlakken en bullets, geen tekst op wit */
+  --report-band: var(--vv-navy);
+  --report-on-band-accent: var(--vv-teal); /* 6,1:1 op donkerblauw */
+  --report-pillar-rood: var(--vv-crimson);
+  --report-pillar-turquoise: var(--vv-teal);
+  --report-pillar-petrol: var(--vv-steel);
+  --chart-positive: #007a69;
+  --chart-neutral: #9aa1b3;
+  --chart-negative: #d2123f;
+  --chart-series: #28899f;
+}

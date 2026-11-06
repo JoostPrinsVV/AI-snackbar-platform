@@ -229,6 +229,7 @@
     tooltip = el('div', { className: 'dash-tooltip', attrs: { role: 'tooltip', hidden: true } });
     const parts = [
       renderCentral(sets),
+      renderReport(sets, data, rows, central),
       renderSource(sets, central),
       ctx.config.enableLocalAnalytics ? null : el('p', { className: 'admin__intro' }, 'Let op: anonieme statistiek staat uit (enableLocalAnalytics), dus geopend/gestart/bezoekers worden niet geteld.'),
       renderTiles(data, rows),
@@ -655,13 +656,59 @@
     return el('details', { className: 'dash-details dash__local' }, [el('summary', { text: 'Dit apparaat: naam, export en import (zonder internet)' }), block]);
   }
 
-  /* Kerncijfers */
-  function renderTiles(data, rows) {
+  /* Rapport: één A4-pagina in de huisstijl met de cijfers die je nu ziet (js/report.js) */
+  function renderReport(sets, data, rows, central) {
+    return el('div', { className: 'dash__report' }, [
+      actionButton('Rapport (pdf)', 'download', () => ns.report.print(reportData(sets, data, rows, central))),
+      el('p', { className: 'admin__intro', text: 'Eén pagina met de cijfers hieronder. Kies in het afdrukvenster "Opslaan als PDF".' })
+    ]);
+  }
+
+  function reportData(sets, data, rows, central) {
+    const config = ctx.config;
+    let source = imports.length ? `Samengevoegd: ${plural(sets.length, 'tablet', 'tablets')}` : 'Bron: dit apparaat';
+    if (central) {
+      const tablets = sets.filter((set) => set.deviceKind === 'kiosk').length;
+      source = `Centraal: ${plural(sets.length, 'apparaat', 'apparaten')} (${plural(tablets, 'tablet', 'tablets')}, ${plural(sets.length - tablets, 'telefoon/laptop', 'telefoons/laptops')})`;
+    }
+    const logo = document.getElementById('brand-logo');
+    const licenses = central && config.enableLicenseRequests ? centralData.licenses : null;
+    return {
+      title: [config.applicationTitle, config.discipline].filter(Boolean).join(' '),
+      subtitle: [config.eventName, config.eventDates].filter(Boolean).join(', '),
+      source,
+      generatedAt: new Date(),
+      organization: config.organizationName,
+      logoSrc: logo && !logo.hidden && logo.naturalWidth ? logo.src : '',
+      logoAlt: config.logoAlt,
+      tiles: tileData(data, rows),
+      rows,
+      hourly: data.hourly,
+      requests: central ? requestSummary(centralData.requests) : null,
+      licenses: licenses ? { total: licenses.length, open: hasStatus(licenses) ? licenses.filter((row) => row.status === 'nieuw').length : null } : null,
+      ratingLabels: ratingLabels()
+    };
+  }
+
+  /** 'Mail mij' in aantallen: personen, prompts en (met statuskolom) personen zonder reactie. */
+  function requestSummary(requests) {
+    const people = new Map();
+    requests.forEach((row) => people.set(row.email, (people.get(row.email) || []).concat(row)));
+    const open = hasStatus(requests) ? Array.from(people.values()).filter((items) => groupStatus(items) === 'nieuw').length : null;
+    return { people: people.size, prompts: requests.length, open };
+  }
+
+  function ratingLabels() {
+    return ns.feedback.RATINGS.reduce((map, option) => Object.assign(map, { [option.value]: ns.ui.t(option.label).replace(/!$/, '') }), {});
+  }
+
+  /* Kerncijfers: [label, waarde, toelichting] (ook voor het rapport) */
+  function tileData(data, rows) {
     const plays = rows.reduce((sum, row) => sum + row.plays, 0);
     const completions = rows.reduce((sum, row) => sum + row.completions, 0);
     const ratingTotal = rows.reduce((sum, row) => sum + row.ratingTotal, 0);
     const happy = rows.reduce((sum, row) => sum + row.rating.happy, 0);
-    const tiles = [
+    return [
       ['Bezoekers', data.visits, 'Bezoeken waarin minstens één snack is geopend'],
       ['Snacks geopend', data.opensTotal, `Verras mij ${number(data.surprises)}× gebruikt`],
       ["Demo's gestart", plays, 'Demo vanaf het begin gestart'],
@@ -669,10 +716,13 @@
       ['Beoordelingen', ratingTotal, `${percent(happy, ratingTotal)} ${ns.ui.t('ratingHappy').replace(/!$/, '')}`],
       ['Vragen & opmerkingen', data.comments.length, `bij ${new Set(data.comments.map((item) => item.snackId)).size} snack(s)`]
     ];
+  }
+
+  function renderTiles(data, rows) {
     return el(
       'div',
       { className: 'dash__tiles' },
-      tiles.map(([label, value, note]) =>
+      tileData(data, rows).map(([label, value, note]) =>
         el('div', { className: 'stat-tile' }, [
           el('p', { className: 'stat-tile__label', text: label }),
           el('p', { className: 'stat-tile__value', text: number(value) }),
@@ -685,7 +735,7 @@
   /* Per demo: tabel met balken (de tabel is meteen de toegankelijke weergave) */
   function renderPerDemo(rows) {
     const maxOpens = Math.max(1, ...rows.map((row) => row.opens));
-    const labels = ns.feedback.RATINGS.reduce((map, option) => Object.assign(map, { [option.value]: ns.ui.t(option.label).replace(/!$/, '') }), {});
+    const labels = ratingLabels();
 
     const legend = el(
       'ul',

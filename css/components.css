@@ -4363,3 +4363,432 @@ dialog[open] .modal__panel {
     transform: rotate(360deg);
   }
 }
+
+/* ==========================================================================
+   Rapport (js/report.js): het dashboard als één A4-pagina in de huisstijl.
+   Alleen zichtbaar tijdens het afdrukken ('Opslaan als PDF'). Rechte hoeken,
+   geen schaduwen of verlopen; rond alleen bij de pilaren en de bullets.
+   ========================================================================== */
+.dash__report {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+}
+
+.report {
+  display: none;
+}
+
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+@media print {
+  html.is-printing body > :not(.report) {
+    display: none !important;
+  }
+
+  html.is-printing,
+  html.is-printing body {
+    background: var(--vv-white);
+  }
+
+  html.is-printing .report {
+    display: flex;
+  }
+}
+
+.report {
+  flex-direction: column;
+  width: 210mm;
+  height: 296mm; /* net onder A4: nooit een lege tweede pagina */
+  overflow: hidden;
+  background: var(--report-surface);
+  color: var(--report-ink);
+  font-family: var(--font-sans);
+  font-size: 9.5pt;
+  line-height: 1.4;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.report p,
+.report h1,
+.report h2 {
+  margin: 0;
+}
+
+.report__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8mm;
+  padding: 7mm 14mm;
+  background: var(--report-band);
+  color: var(--vv-white);
+}
+
+.report__logo {
+  display: block;
+  width: auto;
+  height: 9mm;
+}
+
+.report__wordmark {
+  font-size: 15pt;
+  font-weight: var(--fw-bold);
+}
+
+.report__stamp {
+  display: grid;
+  justify-items: end;
+  gap: 0.5mm;
+  font-size: 8.5pt;
+  text-align: right;
+}
+
+.report__kind {
+  color: var(--report-on-band-accent);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.report__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5mm;
+  min-height: 0;
+  padding: 7mm 14mm 0;
+}
+
+.report__title {
+  color: var(--report-ink);
+  font-size: 20pt;
+  font-weight: var(--fw-bold);
+  line-height: 1.15;
+}
+
+.report__meta {
+  margin-top: 1.5mm;
+  color: var(--report-ink-muted);
+  font-size: 9pt;
+}
+
+.report__tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3mm;
+}
+
+.report__tile {
+  padding: 3mm 4mm 3.5mm;
+  border-top: 1mm solid var(--report-accent);
+  background: var(--report-surface-subtle);
+}
+
+.report__tile-value {
+  font-size: 20pt;
+  font-weight: var(--fw-bold);
+  line-height: 1.1;
+}
+
+.report__tile-label {
+  margin-top: 1mm;
+  font-size: 9pt;
+  font-weight: var(--fw-bold);
+}
+
+.report__tile-note,
+.report__note,
+.report__empty {
+  color: var(--report-ink-muted);
+  font-size: 8pt;
+}
+
+.report__columns {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 7mm;
+}
+
+.report__heading {
+  margin-bottom: 2.5mm;
+  padding-bottom: 1.5mm;
+  border-bottom: 0.4mm solid var(--report-line);
+  color: var(--report-ink);
+  font-size: 10.5pt;
+  font-weight: var(--fw-bold);
+}
+
+/* Ronde bullets in turquoise (huisstijl) */
+.report__bullets {
+  display: grid;
+  gap: 1.8mm;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.report__bullets li {
+  position: relative;
+  padding-left: 4.5mm;
+}
+
+.report__bullets li::before {
+  content: '';
+  position: absolute;
+  top: 0.45em;
+  left: 0;
+  width: 2mm;
+  height: 2mm;
+  border-radius: 50%;
+  background: var(--report-accent);
+}
+
+.report__follow-grid {
+  display: grid;
+  gap: 3.5mm;
+}
+
+.report__follow-value {
+  font-size: 16pt;
+  font-weight: var(--fw-bold);
+  line-height: 1.1;
+}
+
+.report__follow-label {
+  font-size: 9pt;
+  font-weight: var(--fw-bold);
+}
+
+.report__legend {
+  display: flex;
+  gap: 4mm;
+  margin: 0 0 2mm;
+  padding: 0;
+  color: var(--report-ink-muted);
+  font-size: 8pt;
+  list-style: none;
+}
+
+.report__legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5mm;
+}
+
+.report__swatch {
+  display: inline-block;
+  width: 3mm;
+  height: 3mm;
+}
+
+.report__swatch--positive {
+  background: var(--chart-positive);
+}
+
+.report__swatch--neutral {
+  background: var(--chart-neutral);
+}
+
+.report__swatch--negative {
+  background: var(--chart-negative);
+}
+
+.report__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8.5pt;
+}
+
+.report__table th,
+.report__table td {
+  padding: 1.5mm 2mm;
+  border-bottom: 0.3mm solid var(--report-line);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.report__table th:first-child,
+.report__table td:first-child {
+  padding-left: 0;
+}
+
+/* Meten of alles op één pagina past (js/report.js → fit): wel opgemaakt, niet te zien */
+.report.report--measure {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: -400mm;
+  visibility: hidden;
+}
+
+.report__rest td {
+  color: var(--report-ink-muted);
+  font-size: 8pt;
+}
+
+.report--dense .report__table {
+  font-size: 7.5pt;
+}
+
+.report--dense .report__table th,
+.report--dense .report__table td {
+  padding-top: 0.9mm;
+  padding-bottom: 0.9mm;
+}
+
+.report--dense .report__body {
+  gap: 4mm;
+}
+
+.report--dense .report__cols {
+  height: 22mm;
+}
+
+.report--dense .report__col-bar {
+  height: calc(var(--share, 0) * 14mm);
+}
+
+.report__table thead th {
+  color: var(--report-ink-muted);
+  font-size: 7.5pt;
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.report__table tbody th {
+  font-weight: var(--fw-bold);
+}
+
+.report__table .num {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.report__bar,
+.report__rating {
+  display: flex;
+  align-items: center;
+  gap: 2mm;
+  white-space: nowrap;
+}
+
+.report__bar-fill {
+  display: block;
+  width: calc(var(--share, 0) * 22mm);
+  min-width: 0.5mm;
+  height: 2.6mm;
+  background: var(--chart-series);
+}
+
+.report__stack {
+  display: flex;
+  gap: 0.4mm;
+  width: 22mm;
+  height: 2.6mm;
+}
+
+.report__stack-part {
+  display: block;
+  flex: var(--share, 0) 0 0px;
+}
+
+.report__note {
+  margin-bottom: 2mm;
+}
+
+.report__cols {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.2mm;
+  height: 27mm;
+}
+
+.report__col {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.report__col-value {
+  min-height: 1.3em;
+  font-size: 7.5pt;
+  font-weight: var(--fw-bold);
+}
+
+.report__col-bar {
+  display: block;
+  width: 100%;
+  max-width: 9mm;
+  height: calc(var(--share, 0) * 18mm);
+  background: var(--chart-series);
+}
+
+.report__col-tick {
+  width: 100%;
+  margin-top: 0.8mm;
+  padding-top: 0.8mm;
+  border-top: 0.3mm solid var(--report-line);
+  color: var(--report-ink-muted);
+  font-size: 7.5pt;
+  text-align: center;
+}
+
+.report__footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8mm;
+  padding: 5mm 14mm 9mm;
+  color: var(--report-ink-muted);
+  font-size: 7.5pt;
+}
+
+/* Drie merkpilaren: even dik, volledig rond, rood onderop, de andere twee erover in multiply */
+.report__pillars {
+  position: relative;
+  flex: none;
+  width: 30mm;
+  height: 12mm;
+}
+
+.report__pillar {
+  position: absolute;
+  height: 3mm;
+  border-radius: var(--radius-pill);
+  transform: rotate(-28deg);
+  transform-origin: 0 50%;
+}
+
+.report__pillar--rood {
+  bottom: 0;
+  left: 2mm;
+  width: 26mm;
+  background: var(--report-pillar-rood);
+}
+
+.report__pillar--turquoise {
+  bottom: 0;
+  left: 9mm;
+  width: 18mm;
+  background: var(--report-pillar-turquoise);
+  mix-blend-mode: multiply;
+}
+
+.report__pillar--petrol {
+  bottom: 0;
+  left: 15mm;
+  width: 12mm;
+  background: var(--report-pillar-petrol);
+  mix-blend-mode: multiply;
+}
